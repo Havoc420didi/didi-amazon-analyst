@@ -78,7 +78,7 @@ export default function InventoryDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {loading ? '-' : `¥${stats?.total_daily_revenue.toLocaleString() || '0'}`}
+              {loading ? '-' : `$${stats?.total_daily_revenue.toLocaleString() || '0'}`}
             </div>
             <p className="text-xs text-muted-foreground">所有库存点合计</p>
           </CardContent>
@@ -91,7 +91,7 @@ export default function InventoryDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {loading ? '-' : `¥${stats?.total_ad_spend.toLocaleString() || '0'}`}
+              {loading ? '-' : `$${stats?.total_ad_spend.toLocaleString() || '0'}`}
             </div>
             <p className="text-xs text-muted-foreground">日均广告投入</p>
           </CardContent>

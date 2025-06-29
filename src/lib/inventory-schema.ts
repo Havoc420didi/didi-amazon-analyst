@@ -111,6 +111,52 @@ export function transformExcelRowToRecord(
   };
 }
 
+// 库存记录接口 (API返回格式)
+export interface InventoryRecord {
+  id: number;
+  asin: string;
+  product_name: string;
+  sales_person: string;
+  warehouse_location: string;
+  date: string;
+  fba_available: number;
+  fba_in_transit: number;
+  local_warehouse: number;
+  total_inventory: number;
+  avg_sales: number;
+  daily_revenue: number;
+  inventory_turnover_days: number | null;
+  inventory_status: string | null;
+  ad_impressions: number;
+  ad_clicks: number;
+  ad_spend: number;
+  ad_orders: number;
+  ad_ctr: number | null;
+  ad_conversion_rate: number | null;
+  acos: number | null;
+  created_at: string;
+  updated_at: string;
+  analysis_count?: number; // 分析次数
+}
+
+// 库存统计接口
+export interface InventoryStats {
+  total_products: number;
+  total_inventory: number;
+  total_daily_revenue: number;
+  total_ad_spend: number;
+  inventory_status_distribution: { [key in InventoryStatus]: number };
+  warehouse_distribution: { [key in WarehouseLocation]: number };
+}
+
+// 库存趋势接口
+export interface InventoryTrend {
+  date: string;
+  total_inventory: number;
+  daily_revenue: number;
+  ad_spend: number;
+}
+
 // 类型导出
 export type CreateInventoryRecord = z.infer<typeof CreateInventoryRecordSchema>;
 export type InventoryFilterParams = z.infer<typeof InventoryFilterParamsSchema>;

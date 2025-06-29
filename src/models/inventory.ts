@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { inventoryRecords } from '@/db/schema';
+import { inventoryRecords, aiAnalysisTasks } from '@/db/schema';
 import { and, eq, gte, lte, desc, asc, ilike, sql, count } from 'drizzle-orm';
 import { 
   CreateInventoryRecord, 
@@ -190,7 +190,7 @@ export async function getInventoryRecords(
 }
 
 /**
- * 获取最新的库存记录 (每个ASIN+库存点的最新记录)
+ * 获取最新的库存记录 (每个ASIN+库存点的最新记录，包含分析数量)
  */
 export async function getLatestInventoryRecords(
   params: Omit<InventoryFilterParams, 'date_from' | 'date_to'> = {}
@@ -215,22 +215,22 @@ export async function getLatestInventoryRecords(
     .from(inventoryRecords);
 
   // 构建筛选条件
-  const conditions = [sql`rn = 1`];
+  const conditions = [sql`latest.rn = 1`];
 
   if (sales_person) {
-    conditions.push(sql`sales_person = ${sales_person}`);
+    conditions.push(sql`latest.sales_person = ${sales_person}`);
   }
 
   if (asin) {
-    conditions.push(sql`asin ILIKE ${'%' + asin + '%'}`);
+    conditions.push(sql`latest.asin ILIKE ${'%' + asin + '%'}`);
   }
 
   if (warehouse_location) {
-    conditions.push(sql`warehouse_location = ${warehouse_location}`);
+    conditions.push(sql`latest.warehouse_location = ${warehouse_location}`);
   }
 
   if (inventory_status) {
-    conditions.push(sql`inventory_status = ${inventory_status}`);
+    conditions.push(sql`latest.inventory_status = ${inventory_status}`);
   }
 
   const whereClause = and(...conditions);
@@ -243,19 +243,78 @@ export async function getLatestInventoryRecords(
 
   const [{ total }] = await countQuery;
 
-  // 获取分页数据
+  // 获取分页数据，联合查询分析数量
   const orderByClause = sort_order === 'desc' ? sql`${sql.identifier(sort_by)} DESC` : sql`${sql.identifier(sort_by)} ASC`;
 
-  const records = await db()
-    .select()
+  const recordsWithAnalysisCount = await db()
+    .select({
+      id: sql`latest.id`,
+      asin: sql`latest.asin`,
+      product_name: sql`latest.product_name`,
+      sales_person: sql`latest.sales_person`,
+      warehouse_location: sql`latest.warehouse_location`,
+      date: sql`latest.date`,
+      fba_available: sql`latest.fba_available`,
+      fba_in_transit: sql`latest.fba_in_transit`,
+      local_warehouse: sql`latest.local_warehouse`,
+      total_inventory: sql`latest.total_inventory`,
+      avg_sales: sql`latest.avg_sales`,
+      daily_revenue: sql`latest.daily_revenue`,
+      inventory_turnover_days: sql`latest.inventory_turnover_days`,
+      inventory_status: sql`latest.inventory_status`,
+      ad_impressions: sql`latest.ad_impressions`,
+      ad_clicks: sql`latest.ad_clicks`,
+      ad_spend: sql`latest.ad_spend`,
+      ad_orders: sql`latest.ad_orders`,
+      ad_ctr: sql`latest.ad_ctr`,
+      ad_conversion_rate: sql`latest.ad_conversion_rate`,
+      acos: sql`latest.acos`,
+      created_at: sql`latest.created_at`,
+      updated_at: sql`latest.updated_at`,
+      // 添加分析数量统计
+      analysis_count: sql<number>`COALESCE(COUNT(${aiAnalysisTasks.id}), 0)`.as('analysis_count')
+    })
     .from(latestRecordsQuery.as('latest'))
+    .leftJoin(
+      aiAnalysisTasks,
+      and(
+        eq(sql`latest.asin`, aiAnalysisTasks.asin),
+        eq(sql`latest.warehouse_location`, aiAnalysisTasks.warehouse_location),
+        eq(aiAnalysisTasks.status, 'completed')
+      )
+    )
     .where(whereClause)
+    .groupBy(
+      sql`latest.id`,
+      sql`latest.asin`,
+      sql`latest.product_name`,
+      sql`latest.sales_person`,
+      sql`latest.warehouse_location`,
+      sql`latest.date`,
+      sql`latest.fba_available`,
+      sql`latest.fba_in_transit`,
+      sql`latest.local_warehouse`,
+      sql`latest.total_inventory`,
+      sql`latest.avg_sales`,
+      sql`latest.daily_revenue`,
+      sql`latest.inventory_turnover_days`,
+      sql`latest.inventory_status`,
+      sql`latest.ad_impressions`,
+      sql`latest.ad_clicks`,
+      sql`latest.ad_spend`,
+      sql`latest.ad_orders`,
+      sql`latest.ad_ctr`,
+      sql`latest.ad_conversion_rate`,
+      sql`latest.acos`,
+      sql`latest.created_at`,
+      sql`latest.updated_at`
+    )
     .orderBy(orderByClause)
     .limit(limit)
     .offset((page - 1) * limit);
 
   return {
-    data: records.map(record => transformDbRecordToApi(record as any)),
+    data: recordsWithAnalysisCount.map(record => transformDbRecordToApiWithAnalysisCount(record as any)),
     pagination: {
       page,
       limit,
@@ -416,7 +475,39 @@ function transformDbRecordToApi(record: any): InventoryRecord {
     ad_ctr: record.ad_ctr ? Number(record.ad_ctr) : null,
     ad_conversion_rate: record.ad_conversion_rate ? Number(record.ad_conversion_rate) : null,
     acos: record.acos ? Number(record.acos) : null,
-    created_at: record.created_at?.toISOString() || '',
-    updated_at: record.updated_at?.toISOString() || '',
+    created_at: record.created_at ? new Date(record.created_at).toISOString() : '',
+    updated_at: record.updated_at ? new Date(record.updated_at).toISOString() : '',
+  };
+}
+
+/**
+ * 数据库记录转换为API格式 (包含分析数量)
+ */
+function transformDbRecordToApiWithAnalysisCount(record: any): InventoryRecord {
+  return {
+    id: record.id,
+    asin: record.asin,
+    product_name: record.product_name,
+    sales_person: record.sales_person,
+    warehouse_location: record.warehouse_location,
+    date: record.date,
+    fba_available: record.fba_available,
+    fba_in_transit: record.fba_in_transit,
+    local_warehouse: record.local_warehouse,
+    total_inventory: record.total_inventory,
+    avg_sales: Number(record.avg_sales),
+    daily_revenue: Number(record.daily_revenue),
+    inventory_turnover_days: record.inventory_turnover_days ? Number(record.inventory_turnover_days) : null,
+    inventory_status: record.inventory_status,
+    ad_impressions: record.ad_impressions,
+    ad_clicks: record.ad_clicks,
+    ad_spend: Number(record.ad_spend),
+    ad_orders: record.ad_orders,
+    ad_ctr: record.ad_ctr ? Number(record.ad_ctr) : null,
+    ad_conversion_rate: record.ad_conversion_rate ? Number(record.ad_conversion_rate) : null,
+    acos: record.acos ? Number(record.acos) : null,
+    created_at: record.created_at ? new Date(record.created_at).toISOString() : '',
+    updated_at: record.updated_at ? new Date(record.updated_at).toISOString() : '',
+    analysis_count: Number(record.analysis_count) || 0, // 添加分析数量
   };
 }

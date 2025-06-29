@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,32 +20,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { BarChart3, Search, Filter } from 'lucide-react';
+import { BarChart3, Search, Filter, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
-interface InventoryRecord {
-  id: number;
-  asin: string;
-  product_name: string;
-  sales_person: string;
-  warehouse_location: string;
-  date: string;
-  fba_available: number;
-  fba_in_transit: number;
-  local_warehouse: number;
-  total_inventory: number;
-  avg_sales: number;
-  daily_revenue: number;
-  inventory_turnover_days: number | null;
-  inventory_status: string | null;
-  ad_impressions: number;
-  ad_clicks: number;
-  ad_spend: number;
-  ad_orders: number;
-  ad_ctr: number | null;
-  ad_conversion_rate: number | null;
-  acos: number | null;
-}
+import { InventoryRecord } from '@/lib/inventory-schema';
 
 interface ApiResponse {
   success: boolean;
@@ -77,6 +54,15 @@ export default function InventoryDataTable() {
     inventory_status: ''
   });
 
+  // ASIN搜索输入状态（用于防抖）
+  const [asinInput, setAsinInput] = useState('');
+  
+  // 业务员列表
+  const [salesPersonList, setSalesPersonList] = useState<string[]>([]);
+  
+  // 库存点列表
+  const [warehouseLocationList, setWarehouseLocationList] = useState<string[]>([]);
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -89,6 +75,7 @@ export default function InventoryDataTable() {
         )
       });
 
+      console.log('搜索参数:', Object.fromEntries(params));
       const response = await fetch(`/api/inventory?${params}`);
       const result: ApiResponse = await response.json();
       
@@ -105,12 +92,57 @@ export default function InventoryDataTable() {
     }
   };
 
+  // 防抖处理ASIN搜索
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      setFilters(prev => ({ ...prev, asin: asinInput }));
+      setPagination(prev => ({ ...prev, page: 1 })); // 搜索时重置到第一页
+    }, 500); // 500ms防抖延迟
+
+    return () => clearTimeout(debounceTimer);
+  }, [asinInput]);
+
+  // 获取业务员列表
+  const fetchSalesPersonList = async () => {
+    try {
+      const response = await fetch('/api/inventory/sales-persons');
+      const result = await response.json();
+      if (result.success) {
+        setSalesPersonList(result.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch sales persons:', error);
+    }
+  };
+
+  // 获取库存点列表
+  const fetchWarehouseLocationList = async () => {
+    try {
+      const response = await fetch('/api/inventory/warehouse-locations');
+      const result = await response.json();
+      if (result.success) {
+        setWarehouseLocationList(result.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch warehouse locations:', error);
+    }
+  };
+
+  // 初始化
+  useEffect(() => {
+    setAsinInput(filters.asin);
+    fetchSalesPersonList();
+    fetchWarehouseLocationList();
+  }, []);
+
   useEffect(() => {
     fetchData();
   }, [pagination.page, filters]);
 
   const handleFilterChange = (field: string, value: string) => {
-    setFilters(prev => ({ ...prev, [field]: value }));
+    // 将 "all" 转换为空字符串
+    const filterValue = value === 'all' ? '' : value;
+    setFilters(prev => ({ ...prev, [field]: filterValue }));
     setPagination(prev => ({ ...prev, page: 1 })); // 重置到第一页
   };
 
@@ -142,57 +174,67 @@ export default function InventoryDataTable() {
         
         {/* 筛选条件 */}
         <div className="flex flex-wrap gap-4 mt-4">
-          <div className="flex-1 min-w-[200px]">
+          <div className="flex-1 min-w-[200px] relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="搜索ASIN"
-              value={filters.asin}
-              onChange={(e) => handleFilterChange('asin', e.target.value)}
-              className="w-full"
+              value={asinInput}
+              onChange={(e) => setAsinInput(e.target.value)}
+              className="w-full pl-10 pr-10"
             />
+            {asinInput && (
+              <button
+                onClick={() => setAsinInput('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
           
           <Select
-            value={filters.sales_person}
+            value={filters.sales_person || 'all'}
             onValueChange={(value) => handleFilterChange('sales_person', value)}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="选择业务员" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">全部业务员</SelectItem>
-              <SelectItem value="张三">张三</SelectItem>
-              <SelectItem value="李四">李四</SelectItem>
-              <SelectItem value="王五">王五</SelectItem>
+              <SelectItem value="all">全部业务员</SelectItem>
+              {salesPersonList.map((person) => (
+                <SelectItem key={person} value={person}>
+                  {person}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
           <Select
-            value={filters.warehouse_location}
+            value={filters.warehouse_location || 'all'}
             onValueChange={(value) => handleFilterChange('warehouse_location', value)}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="选择库存点" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">全部库存点</SelectItem>
-              <SelectItem value="英国">英国</SelectItem>
-              <SelectItem value="欧盟">欧盟</SelectItem>
-              <SelectItem value="加拿大">加拿大</SelectItem>
-              <SelectItem value="澳大利亚">澳大利亚</SelectItem>
-              <SelectItem value="美国">美国</SelectItem>
-              <SelectItem value="日本">日本</SelectItem>
+              <SelectItem value="all">全部库存点</SelectItem>
+              {warehouseLocationList.map((location) => (
+                <SelectItem key={location} value={location}>
+                  {location}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
           <Select
-            value={filters.inventory_status}
+            value={filters.inventory_status || 'all'}
             onValueChange={(value) => handleFilterChange('inventory_status', value)}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="库存状态" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">全部状态</SelectItem>
+              <SelectItem value="all">全部状态</SelectItem>
               <SelectItem value="库存不足">库存不足</SelectItem>
               <SelectItem value="周转合格">周转合格</SelectItem>
               <SelectItem value="周转超标">周转超标</SelectItem>
@@ -223,6 +265,7 @@ export default function InventoryDataTable() {
                   <TableHead className="text-right">总库存</TableHead>
                   <TableHead className="text-right">日均销售额</TableHead>
                   <TableHead>库存状态</TableHead>
+                  <TableHead className="text-center">分析次数</TableHead>
                   <TableHead>日期</TableHead>
                   <TableHead className="text-right">操作</TableHead>
                 </TableRow>
@@ -245,10 +288,15 @@ export default function InventoryDataTable() {
                       {record.total_inventory.toLocaleString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      ¥{record.daily_revenue.toLocaleString()}
+                      ${record.daily_revenue.toLocaleString()}
                     </TableCell>
                     <TableCell>
                       {getInventoryStatusBadge(record.inventory_status)}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="outline" className="text-xs">
+                        {record.analysis_count || 0}
+                      </Badge>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {record.date}

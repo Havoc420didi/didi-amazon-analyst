@@ -188,3 +188,42 @@ export const inventoryRecords = pgTable(
     ),
   ]
 );
+
+// AI Analysis Tasks table
+export const aiAnalysisTasks = pgTable(
+  "ai_analysis_tasks",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    task_number: varchar({ length: 20 }).notNull().unique(),
+    asin: varchar({ length: 50 }).notNull(),
+    warehouse_location: varchar({ length: 50 }).notNull(),
+    status: varchar({ length: 20 }).notNull().default('pending'), // pending, processing, completed, failed
+    executor: varchar({ length: 100 }).notNull(),
+    
+    // 数据快照 (JSON存储，快速开发)
+    product_data: text('product_data').notNull(),
+    
+    // AI结果
+    analysis_content: text(),
+    ai_model: varchar({ length: 50 }).default('deepseek-chat'),
+    processing_time: integer(), // 处理时间(毫秒)
+    tokens_used: integer(),
+    
+    // 评价系统
+    rating: integer(), // 1-5星评价，null表示未评价
+    rating_feedback: text(), // 评价反馈文字
+    
+    created_at: timestamp({ withTimezone: true }).defaultNow(),
+    completed_at: timestamp({ withTimezone: true }),
+    updated_at: timestamp({ withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    // 基础索引
+    index("idx_ai_analysis_asin_warehouse").on(table.asin, table.warehouse_location),
+    index("idx_ai_analysis_status").on(table.status),
+    index("idx_ai_analysis_created_at").on(table.created_at),
+    index("idx_ai_analysis_executor").on(table.executor),
+    // 任务编号唯一索引
+    uniqueIndex("unique_task_number").on(table.task_number),
+  ]
+);

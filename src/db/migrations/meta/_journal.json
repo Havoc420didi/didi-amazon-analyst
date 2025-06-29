@@ -15,6 +15,13 @@
       "when": 1751189208336,
       "tag": "0001_needy_hobgoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1751200801656,
+      "tag": "0002_dapper_thanos",
+      "breakpoints": true
     }
   ]
 }

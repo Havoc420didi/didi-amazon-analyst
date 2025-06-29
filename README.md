@@ -2,8 +2,6 @@
 
 Your AI-powered Amazon operations director for data-driven business optimization.
 
-![preview](preview.png)
-
 ## Overview
 
 Amazon Analyst is an intelligent Amazon operations analysis platform that provides 24/7 monitoring, AI-driven insights, and actionable recommendations to optimize your Amazon business performance.
