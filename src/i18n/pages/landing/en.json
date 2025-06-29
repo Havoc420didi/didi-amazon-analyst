@@ -1,0 +1,398 @@
+{
+  "template": "amazon-analyst",
+  "theme": "light",
+  "header": {
+    "brand": {
+      "title": "Amazon Analyst",
+      "logo": {
+        "src": "/logo.png",
+        "alt": "Amazon Analyst"
+      },
+      "url": "/"
+    },
+    "nav": {
+      "items": [
+        {
+          "title": "Amazon Data Analysis",
+          "url": "/analysis",
+          "icon": "RiBarChartBoxLine"
+        },
+        {
+          "title": "Product Data Analysis",
+          "url": "/inventory",
+          "icon": "RiArchiveDrawerLine"
+        }
+      ]
+    },
+    "buttons": [],
+    "show_sign": true,
+    "show_theme": true,
+    "show_locale": true
+  },
+  "hero": {
+    "title": "Your AI Amazon Operations Director",
+    "highlight_text": "AI Operations Director",
+    "description": "Monitor product performance data 24/7 and provide your operations team with clear, actionable instructions through deep data analysis.",
+    "announcement": {
+      "label": "New Feature",
+      "title": "🎉 Now supporting ad campaign analysis and optimization suggestions!",
+      "url": "/#feature"
+    },
+    "tip": "💡 Register now to start your intelligent operations journey",
+    "buttons": [],
+    "show_happy_users": true,
+    "show_badge": false
+  },
+  "branding": {
+    "title": "Amazon Analyst is powered by modern technology",
+    "items": [
+      {
+        "title": "Next.js",
+        "image": {
+          "src": "/imgs/logos/nextjs.svg",
+          "alt": "Next.js"
+        }
+      },
+      {
+        "title": "React",
+        "image": {
+          "src": "/imgs/logos/react.svg",
+          "alt": "React"
+        }
+      },
+      {
+        "title": "TailwindCSS",
+        "image": {
+          "src": "/imgs/logos/tailwindcss.svg",
+          "alt": "TailwindCSS"
+        }
+      },
+      {
+        "title": "Shadcn/UI",
+        "image": {
+          "src": "/imgs/logos/shadcn.svg",
+          "alt": "Shadcn/UI"
+        }
+      },
+      {
+        "title": "Supabase",
+        "image": {
+          "src": "/imgs/logos/supabase.svg",
+          "alt": "Supabase"
+        }
+      }
+    ]
+  },
+  "introduce": {
+    "name": "introduce",
+    "title": "What is an AI Amazon Operations Director?",
+    "label": "Introduction",
+    "description": "We are more than just a data analysis tool; we are a tireless operations expert dedicated to improving the efficiency and profitability of your Amazon business.",
+    "image": {
+      "src": "/imgs/features/1.png"
+    },
+    "items": [
+      {
+        "title": "24/7 Data Monitoring",
+        "description": "Track sales, inventory, rankings, and advertising data around the clock, never missing any critical changes.",
+        "icon": "RiTimerFlashLine"
+      },
+      {
+        "title": "Intelligent Analysis & Insights",
+        "description": "Leverage advanced AI algorithms to turn complex data into profound market insights and business opportunities.",
+        "icon": "RiLightbulbFlashLine"
+      },
+      {
+        "title": "Generate Actionable Instructions",
+        "description": "Automatically generate clear, specific operational instructions that your team can execute immediately, without guesswork.",
+        "icon": "RiFileList2Line"
+      }
+    ]
+  },
+  "feature": {
+    "name": "feature",
+    "title": "Core Features",
+    "description": "Unleash your team's potential and let AI handle complex analysis and decision-making.",
+    "items": [
+      {
+        "title": "Real-time Sales & Profit Tracking",
+        "description": "Real-time sales and profit analysis for each SKU, so you can always grasp the health of your business.",
+        "icon": "RiBarChart2Line"
+      },
+      {
+        "title": "Smart Inventory Management",
+        "description": "Forecast replenishment needs, avoid stockouts or overstocking, and maximize capital efficiency.",
+        "icon": "RiArchiveDrawerLine"
+      },
+      {
+        "title": "PPC Campaign Optimization",
+        "description": "Analyze ad performance, provide keyword and bid optimization suggestions to improve ROI.",
+        "icon": "RiAdvertisementLine"
+      },
+      {
+        "title": "Competitor Monitoring",
+        "description": "Track competitors' prices, reviews, rankings, and keyword strategies to stay ahead.",
+        "icon": "RiSpyLine"
+      },
+      {
+        "title": "Automated Operational Instructions",
+        "description": "Generate processing instructions and notify operators immediately when key events are detected (e.g., negative reviews, hijacking).",
+        "icon": "RiRobot2Line"
+      },
+      {
+        "title": "Custom Reports",
+        "description": "Generate multi-dimensional data reports according to your needs, supporting export and sharing.",
+        "icon": "RiFileChartLine"
+      }
+    ]
+  },
+  "stats": {
+    "name": "stats",
+    "label": "Stats",
+    "title": "Amazon Sellers Trust Amazon Analyst",
+    "description": "for powerful insights and efficient operations.",
+    "icon": "FaRegHeart",
+    "items": [
+      {
+        "title": "Active Sellers",
+        "label": "500+",
+        "description": "Worldwide"
+      },
+      {
+        "title": "Data Points",
+        "label": "1M+",
+        "description": "Analyzed Daily"
+      },
+      {
+        "title": "Average ROI",
+        "label": "45%",
+        "description": "Improvement"
+      }
+    ]
+  },
+  "testimonial": {
+    "name": "testimonial",
+    "label": "Testimonial",
+    "title": "What Amazon Sellers Say About Amazon Analyst",
+    "description": "Hear from Amazon sellers and teams who improved their operations efficiency with Amazon Analyst.",
+    "icon": "GoThumbsup",
+    "items": [
+      {
+        "title": "John Smith",
+        "label": "Electronics Category Big Seller",
+        "description": "After using Amazon Analyst, our advertising ACOS dropped from 35% to 22%, and inventory turnover improved by 40%. The AI-generated operational recommendations are incredibly accurate, and team efficiency has improved significantly!",
+        "image": {
+          "src": "/imgs/users/1.png"
+        }
+      },
+      {
+        "title": "Emma Rodriguez",
+        "label": "Home & Garden Operations Director",
+        "description": "Love the competitor monitoring feature - it detects hijackers and price changes in real-time. AI helped us adjust strategies promptly, monthly sales increased by 60%, and negative review rate dropped below 0.8%.",
+        "image": {
+          "src": "/imgs/users/2.png"
+        }
+      },
+      {
+        "title": "Mike Johnson",
+        "label": "Baby Products Individual Seller",
+        "description": "As an individual seller, this tool is like hiring a professional operations manager. Automated restock alerts and keyword optimization suggestions freed me from tedious daily tasks to focus on product development.",
+        "image": {
+          "src": "/imgs/users/3.png"
+        }
+      },
+      {
+        "title": "Michael Chen",
+        "label": "Sports & Outdoors Brand CEO",
+        "description": "The data visualization is excellent - you can immediately see which products need attention. AI analysis helped us discover seasonal sales patterns, and our proactive inventory strategy saved us from $3M in stockout losses.",
+        "image": {
+          "src": "/imgs/users/4.png"
+        }
+      },
+      {
+        "title": "Sarah Williams",
+        "label": "Beauty & Personal Care Operations Manager",
+        "description": "We optimized our team from 12 to 8 people, but efficiency actually improved. Every morning we receive AI-generated operational reports, clearly knowing what to do today and the priorities. Operations standardization has greatly improved.",
+        "image": {
+          "src": "/imgs/users/5.png"
+        }
+      },
+      {
+        "title": "David Kim",
+        "label": "Pet Supplies Cross-border E-commerce Founder",
+        "description": "Expanding from North America to 5 European sites, Amazon Analyst helped us quickly understand each market's characteristics. Unified multi-site data management made our decisions more scientific, ROI improved by 85%.",
+        "image": {
+          "src": "/imgs/users/6.png"
+        }
+      }
+    ]
+  },
+  "faq": {
+    "name": "faq",
+    "label": "FAQ",
+    "title": "Frequently Asked Questions about Amazon Analyst",
+    "description": "Have other questions? Feel free to contact our customer service team.",
+    "items": [
+      {
+        "title": "Is my Amazon store data secure?",
+        "description": "Absolutely. We use Amazon's official SP-API for authorized connections, and all data is transmitted and stored with bank-level encryption. We will never use your data for any other purpose."
+      },
+      {
+        "title": "Are the AI-generated operational instructions reliable?",
+        "description": "Our AI model is trained on millions of Amazon operational scenarios and makes decisions based on your real-time data. The instructions are designed to provide best practice recommendations, but the final execution authority remains with your team."
+      },
+      {
+        "title": "Is the setup process complicated? How long does it take?",
+        "description": "It's very simple. You just need to connect your store to our system through the official Amazon authorization process. The whole process usually takes no more than 5 minutes."
+      },
+      {
+        "title": "Which Amazon marketplaces are supported?",
+        "description": "We currently support major Amazon marketplaces including North America (USA, Canada, Mexico), Europe (UK, Germany, France, Italy, Spain, etc.), and Japan."
+      },
+      {
+        "title": "Is this tool suitable for individual sellers or teams?",
+        "description": "It's suitable for both. For individual sellers, it can be your powerful virtual assistant; for teams, it can standardize operational procedures, improve collaboration efficiency, and allow senior operators to focus on higher-level strategies."
+      },
+      {
+        "title": "Do you offer a trial?",
+        "description": "Yes, we offer a 14-day free trial where you can experience all the core features, no credit card required."
+      }
+    ]
+  },
+  "cta": {
+    "name": "cta",
+    "title": "Unlock Your Store's Full Potential",
+    "description": "Start your 14-day free trial and see how AI-driven insights can boost your sales and streamline your operations. No credit card required.",
+    "buttons": [
+      {
+        "title": "Start Your Free Trial",
+        "url": "/#pricing",
+        "target": "_self",
+        "icon": "GoArrowUpRight"
+      },
+      {
+        "title": "Watch a Demo",
+        "url": "/#showcase",
+        "target": "_self",
+        "variant": "outline"
+      }
+    ]
+  },
+  "footer": {
+    "name": "footer",
+    "brand": {
+      "title": "Amazon Analyst",
+      "description": "Amazon Analyst is an AI-powered Amazon operations analysis tool that provides intelligent insights and recommendations to optimize your operations strategy and improve efficiency and profitability.",
+      "logo": {
+        "src": "/logo.png",
+        "alt": "Amazon Analyst"
+      },
+      "url": "/"
+    },
+    "copyright": "© 2025 • Amazon Analyst All rights reserved.",
+    "nav": {
+      "items": [
+        {
+          "title": "About",
+          "children": [
+            {
+              "title": "Features",
+              "url": "/#feature",
+              "target": "_self"
+            },
+            {
+              "title": "Showcases",
+              "url": "/#showcase",
+              "target": "_self"
+            },
+            {
+              "title": "Pricing",
+              "url": "/#pricing",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "Resources",
+          "children": [
+            {
+              "title": "User Guide",
+              "url": "/posts",
+              "target": "_self"
+            },
+            {
+              "title": "API Documentation",
+              "url": "/api-keys",
+              "target": "_self"
+            },
+            {
+              "title": "Help Center",
+              "url": "/#faq",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "Friends",
+          "children": [
+            {
+              "title": "ThinkAny",
+              "url": "https://thinkany.ai",
+              "target": "_blank"
+            },
+            {
+              "title": "HeyBeauty",
+              "url": "https://heybeauty.ai",
+              "target": "_blank"
+            },
+            {
+              "title": "Pagen",
+              "url": "https://pagen.so",
+              "target": "_blank"
+            }
+          ]
+        }
+      ]
+    },
+    "social": {
+      "items": [
+        {
+          "title": "X",
+          "icon": "RiTwitterXFill",
+          "url": "https://x.com/amazonanalyst",
+          "target": "_blank"
+        },
+        {
+          "title": "Github",
+          "icon": "RiGithubFill",
+          "url": "https://github.com/amazonanalyst",
+          "target": "_blank"
+        },
+        {
+          "title": "Discord",  
+          "icon": "RiDiscordFill",
+          "url": "https://discord.gg/amazonanalyst",
+          "target": "_blank"
+        },
+        {
+          "title": "Email",
+          "icon": "RiMailLine",
+          "url": "mailto:support@amazonanalyst.ai",
+          "target": "_self"
+        }
+      ]
+    },
+    "agreement": {
+      "items": [
+        {
+          "title": "Privacy Policy",
+          "url": "/privacy-policy"
+        },
+        {
+          "title": "Terms of Service",
+          "url": "/terms-of-service"
+        }
+      ]
+    }
+  }
+}

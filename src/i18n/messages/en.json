@@ -1,0 +1,336 @@
+{
+  "metadata": {
+    "title": "AI Amazon Operations Director | Your Intelligent Data Analysis Expert",
+    "description": "Amazon Analyst is a professional Amazon data analysis tool that monitors product performance data 24/7 and provides your operations team with clear, actionable instructions through deep data analysis.",
+    "keywords": "Amazon analytics, AI Amazon Operations Director, Amazon sales data, e-commerce data analysis, Amazon operations optimization, AI data analysis"
+  },
+  "user": {
+    "sign_in": "Sign In",
+    "sign_out": "Sign Out",
+    "credits": "Credits",
+    "api_keys": "API Keys",
+    "my_orders": "My Orders",
+    "user_center": "User Center",
+    "admin_system": "Admin System"
+  },
+  "sign_modal": {
+    "sign_in_title": "Sign In",
+    "sign_in_description": "Sign in to your account",
+    "sign_up_title": "Sign Up",
+    "sign_up_description": "Create an account",
+    "email_title": "Email",
+    "email_placeholder": "Input your email here",
+    "password_title": "Password",
+    "password_placeholder": "Input your password here",
+    "forgot_password": "Forgot password?",
+    "or": "Or",
+    "continue": "Continue",
+    "no_account": "Don't have an account?",
+    "email_sign_in": "Sign in with Email",
+    "google_sign_in": "Sign in with Google",
+    "github_sign_in": "Sign in with GitHub",
+    "close_title": "Close",
+    "cancel_title": "Cancel"
+  },
+  "my_orders": {
+    "title": "My Orders",
+    "description": "orders paid with ShipAny.",
+    "no_orders": "No orders found",
+    "tip": "",
+    "activate_order": "Activate Order",
+    "actived": "Activated",
+    "join_discord": "Join Discord",
+    "read_docs": "Read Docs",
+    "table": {
+      "order_no": "Order No",
+      "email": "Email",
+      "product_name": "Product Name",
+      "amount": "Amount",
+      "paid_at": "Paid At",
+      "github_username": "GitHub Username",
+      "status": "Status"
+    }
+  },
+  "my_credits": {
+    "title": "My Credits",
+    "left_tip": "left credits: {left_credits}",
+    "no_credits": "No credits records",
+    "recharge": "Recharge",
+    "table": {
+      "trans_no": "Trans No",
+      "trans_type": "Trans Type",
+      "credits": "Credits",
+      "updated_at": "Updated At",
+      "status": "Status"
+    }
+  },
+  "api_keys": {
+    "title": "API Keys",
+    "tip": "Please keep your apikey safe to avoid leaks",
+    "no_api_keys": "No API Keys",
+    "create_api_key": "Create API Key",
+    "table": {
+      "name": "Name",
+      "key": "Key",
+      "created_at": "Created At"
+    },
+    "form": {
+      "name": "Name",
+      "name_placeholder": "API Key Name",
+      "submit": "Submit"
+    }
+  },
+  "analysis": {
+    "title": "Data Analysis",
+    "description": "Upload Excel files for AI intelligent analysis",
+    "page_title": "Amazon Data Analysis",
+    "tabs": {
+      "upload": "Upload Data",
+      "preview": "Data Preview",
+      "analysis": "AI Analysis", 
+      "results": "Analysis Results"
+    },
+    "upload": {
+      "title": "Upload Excel File",
+      "description": "Supports .xlsx and .xls format Amazon operational data files"
+    },
+    "preview": {
+      "title": "Data Preview",
+      "description": "File: {filename} | Total {count} rows of data",
+      "start_analysis": "Start Analysis"
+    },
+    "ai_analysis": {
+      "title": "AI Intelligent Analysis",
+      "description": "Use AI large models to analyze your Amazon operational data",
+      "content_description": "AI will analyze your data and provide the following content:",
+      "features": {
+        "sales_trend": "Sales data trend analysis",
+        "product_performance": "Product performance evaluation",
+        "inventory_optimization": "Inventory optimization recommendations", 
+        "marketing_strategy": "Marketing strategy recommendations",
+        "competitive_analysis": "Competitive analysis insights"
+      },
+      "start_button": "Start AI Analysis",
+      "analyzing_button": "AI Analyzing..."
+    },
+    "upload_component": {
+      "drag_drop_text": "Drag files here, or click to select files",
+      "select_file": "Select File",
+      "processing": "Processing...",
+      "file_format_error": "File format error",
+      "file_format_description": "Please upload Excel files (.xlsx or .xls format)",
+      "file_too_large": "File too large",
+      "file_size_description": "File size cannot exceed 10MB",
+      "processing_file": "Processing file...",
+      "processing_description": "Parsing Excel file, please wait",
+      "processing_success": "File processed successfully",
+      "processing_success_description": "Successfully loaded {rows} rows of data, {columns} columns",
+      "processing_failed": "File processing failed",
+      "upload_title": "Upload Excel File",
+      "supported_formats": "Supports .xlsx and .xls formats, max 10MB",
+      "supported_data_types": "Supported data types:",
+      "data_types": {
+        "sales": "Sales data (sales volume, revenue, time, etc.)",
+        "product": "Product data (ASIN, title, price, inventory, etc.)",
+        "advertising": "Advertising data (clicks, impressions, conversion rate, etc.)",
+        "review": "Review data (rating, review count, etc.)",
+        "inventory": "Inventory data (inbound, outbound, stock levels, etc.)"
+      }
+    },
+    "data_visualization": {
+      "total_rows": "Total Rows",
+      "total_columns": "Total Columns",
+      "total_pages": "Total Pages", 
+      "data_completeness": "Data Completeness",
+      "column_info": "Column Information",
+      "column_info_description": "Data table column structure and types",
+      "data_preview": "Data Preview",
+      "data_preview_description": "Showing rows {start}-{end} of {total} total",
+      "show_partial_columns": "Show Partial Columns",
+      "show_all_columns": "Show All Columns",
+      "more_columns": "+{count} columns",
+      "page_info": "Page {current} of {total}",
+      "previous_page": "Previous",
+      "next_page": "Next"
+    },
+    "analysis_results": {
+      "analysis_summary": "Analysis Summary",
+      "export_report": "Export Report",
+      "key_insights": "Key Insights",
+      "key_insights_description": "Important findings from data analysis",
+      "optimization_suggestions": "Optimization Suggestions",
+      "optimization_suggestions_description": "Action recommendations based on analysis results",
+      "priority": {
+        "high": "High",
+        "medium": "Medium", 
+        "low": "Low"
+      },
+      "priority_suffix": " Priority",
+      "category": "Category",
+      "expected_impact": "Expected Impact",
+      "export": {
+        "title": "Amazon Data Analysis Report",
+        "summary_title": "Analysis Summary",
+        "insights_title": "Key Insights",
+        "recommendations_title": "Optimization Suggestions",
+        "value_label": "Value",
+        "category_label": "Category",
+        "description_label": "Description",
+        "impact_label": "Expected Impact",
+        "generated_time": "Generated Time"
+      }
+    },
+    "messages": {
+      "no_data_error": "Error",
+      "no_data_description": "No data available for analysis, please upload an Excel file first",
+      "analysis_start": "Start Analysis",
+      "analysis_start_description": "AI is analyzing your data, this may take a few minutes...",
+      "analysis_success": "Analysis Complete",
+      "analysis_success_description": "AI analysis completed, you can view the analysis results",
+      "analysis_failed": "Analysis Failed",
+      "analysis_retry": "Analysis failed, please try again", 
+      "invalid_result": "Analysis result format error"
+    }
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "News, resources, and updates about ShipAny",
+    "read_more_text": "Read More"
+  },
+  "my_invites": {
+    "title": "My Invites",
+    "description": "View your invite records",
+    "no_invites": "No invite records found",
+    "my_invite_link": "My Invite Link",
+    "edit_invite_link": "Edit Invite Link",
+    "copy_invite_link": "Copy Invite Link",
+    "invite_code": "Invite Code",
+    "invite_tip": "Invite 1 friend to buy ShipAny, reward $50.",
+    "invite_balance": "Invite Reward Balance",
+    "total_invite_count": "Total Invite Count",
+    "total_paid_count": "Total Paid Count",
+    "total_award_amount": "Total Award Amount",
+    "update_invite_code": "Set Invite Code",
+    "update_invite_code_tip": "Input your custom invite code",
+    "update_invite_button": "Save",
+    "no_orders": "You can't invite others before you bought ShipAny",
+    "no_affiliates": "You're not allowed to invite others, please contact us to apply for permission.",
+    "table": {
+      "invite_time": "Invite Time",
+      "invite_user": "Invite User",
+      "status": "Status",
+      "reward_percent": "Reward Percent",
+      "reward_amount": "Reward Amount",
+      "pending": "Pending",
+      "completed": "Completed"
+    }
+  },
+  "feedback": {
+    "title": "Feedback",
+    "description": "We'd love to hear what went well or how we can improve the product experience.",
+    "submit": "Submit",
+    "loading": "Submitting...",
+    "contact_tip": "Other ways to contact us",
+    "rating_tip": "How do you feel about ShipAny?",
+    "placeholder": "Leave your words here..."
+  },
+  "inventory": {
+    "title": "Product Data Analysis",
+    "description": "Manage and analyze Amazon product data with multi-dimensional filtering and historical tracking",
+    "page_title": "Product Data Analysis",
+    "upload": {
+      "title": "Data Upload",
+      "description": "Upload Excel files to import product data, supporting batch updates and historical data management",
+      "select_file": "Select File",
+      "drag_drop": "Drag files here or click to select",
+      "supported_formats": "Supports .xlsx, .xls, .csv formats, max 10MB",
+      "select_date": "Data Date",
+      "date_description": "Select the date corresponding to this upload data",
+      "start_upload": "Start Upload",
+      "uploading": "Uploading...",
+      "download_template": "Download Template",
+      "file_selected": "File Selected",
+      "reselect": "Reselect"
+    },
+    "stats": {
+      "total_inventory": "Total Inventory",
+      "daily_revenue": "Daily Revenue",
+      "ad_spend": "Ad Spend",
+      "inventory_alerts": "Inventory Alerts",
+      "total_products": "products",
+      "all_warehouses": "All warehouses combined",
+      "daily_ad_spend": "Daily ad investment",
+      "low_stock_products": "Low stock products"
+    },
+    "filters": {
+      "title": "Filter Conditions",
+      "sales_person": "Sales Person",
+      "asin": "ASIN",
+      "warehouse_location": "Warehouse",
+      "inventory_status": "Inventory Status",
+      "date_from": "Start Date",
+      "date_to": "End Date",
+      "apply": "Apply Filters",
+      "reset": "Reset",
+      "search_asin": "Search ASIN",
+      "select_sales_person": "Select Sales Person",
+      "select_warehouse": "Select Warehouse",
+      "select_status": "Select Status",
+      "all": "All"
+    },
+    "table": {
+      "asin": "ASIN",
+      "product_name": "Product Name",
+      "sales_person": "Sales Person",
+      "warehouse_location": "Warehouse",
+      "total_inventory": "Total Inventory",
+      "avg_sales": "Avg Sales",
+      "daily_revenue": "Daily Revenue",
+      "turnover_days": "Turnover Days",
+      "inventory_status": "Inventory Status",
+      "ad_spend": "Ad Spend",
+      "acos": "ACOS",
+      "date": "Date",
+      "actions": "Actions",
+      "view_details": "View Details"
+    },
+    "status": {
+      "low_stock": "Low Stock",
+      "normal": "Normal Turnover",
+      "overstock": "Overstock"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "-",
+      "of": "of",
+      "records": "records",
+      "page": "Page",
+      "pages": "of",
+      "total_pages": "pages",
+      "first": "First",
+      "previous": "Previous",
+      "next": "Next",
+      "last": "Last"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "export": "Export",
+      "upload_data": "Upload Data",
+      "back_to_list": "Back to List",
+      "view_results": "View Upload Results"
+    },
+    "messages": {
+      "no_data": "No data available",
+      "adjust_filters": "Please adjust filters or upload new data",
+      "records_total": "records",
+      "filters_active": "filters active",
+      "upload_success": "Upload successful",
+      "upload_failed": "Upload failed",
+      "processing": "Processing...",
+      "total_rows": "Total Rows",
+      "success_count": "Success",
+      "error_count": "Error",
+      "error_details": "Error Details"
+    }
+  }
+}

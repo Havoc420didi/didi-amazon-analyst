@@ -1,0 +1,334 @@
+{
+  "template": "amazon-analyst",
+  "theme": "light",
+  "header": {
+    "brand": {
+      "title": "Amazon Analyst",
+      "logo": {
+        "src": "/logo.png",
+        "alt": "Amazon Analyst"
+      },
+      "url": "/"
+    },
+    "nav": {
+      "items": [
+        {
+          "title": "亚马逊数据分析",
+          "url": "/analysis",
+          "icon": "RiBarChartBoxLine"
+        },
+        {
+          "title": "产品数据分析",
+          "url": "/inventory",
+          "icon": "RiArchiveDrawerLine"
+        }
+      ]
+    },
+    "buttons": [],
+    "show_sign": true,
+    "show_theme": true,
+    "show_locale": true
+  },
+  "hero": {
+    "title": "您的 AI 亚马逊运营总监",
+    "highlight_text": "AI 亚马逊运营总监",
+    "description": "7x24小时全天候监控产品运营数据，通过深度数据分析，<br/>为您的运营团队提供清晰、可执行的指令。",
+    "announcement": {
+      "label": "新功能",
+      "title": "🎉 现已支持广告活动分析与优化建议！",
+      "url": "/#feature"
+    },
+    "tip": "💡 立即注册，开启您的智能运营之旅",
+    "buttons": [],
+    "show_happy_users": true,
+    "show_badge": false
+  },
+  "introduce": {
+    "name": "introduce",
+    "title": "什么是 AI 亚马逊运营总监？",
+    "label": "产品介绍",
+    "description": "我们不仅仅是数据分析工具，更是一位永不疲倦的运营专家，致力于提升您的亚马逊业务效率和盈利能力。",
+    "image": {
+      "src": "/imgs/features/1.png"
+    },
+    "items": [
+      {
+        "title": "全天候数据监控",
+        "description": "7x24小时不间断地跟踪销售、库存、排名和广告数据，绝不错过任何关键变化。",
+        "icon": "RiTimerFlashLine"
+      },
+      {
+        "title": "智能分析与洞察",
+        "description": "利用先进的AI算法，将复杂数据转化为深刻的市场洞察和业务机会。",
+        "icon": "RiLightbulbFlashLine"
+      },
+      {
+        "title": "生成可执行指令",
+        "description": "自动生成清晰、具体的运营指令，让您的团队可以立即执行，无需猜测。",
+        "icon": "RiFileList2Line"
+      }
+    ]
+  },
+  "feature": {
+    "name": "feature",
+    "title": "核心功能",
+    "description": "释放您的团队潜力，让 AI 处理复杂的分析与决策。",
+    "items": [
+      {
+        "title": "实时销售与利润追踪",
+        "description": "精确到每个 SKU 的实时销售和利润分析，让您随时掌握业务健康状况。",
+        "icon": "RiBarChart2Line"
+      },
+      {
+        "title": "智能库存管理",
+        "description": "预测补货需求，避免断货或库存积压，最大化资金效率。",
+        "icon": "RiArchiveDrawerLine"
+      },
+      {
+        "title": "广告活动优化 (PPC)",
+        "description": "分析广告表现，提供关键词和出价优化建议，提升广告投资回报率。",
+        "icon": "RiAdvertisementLine"
+      },
+      {
+        "title": "竞争对手监控",
+        "description": "追踪竞品的价格、评价、排名和关键词策略，知己知彼，百战不殆。",
+        "icon": "RiSpyLine"
+      },
+      {
+        "title": "自动化运营指令",
+        "description": "当检测到关键事件时（如差评、跟卖），立即生成处理指令并通知运营人员。",
+        "icon": "RiRobot2Line"
+      },
+      {
+        "title": "自定义报告",
+        "description": "根据您的需求，生成多维度的数据报告，支持导出和分享。",
+        "icon": "RiFileChartLine"
+      }
+    ]
+  },
+  "testimonial": {
+    "name": "testimonial",
+    "label": "用户评价",
+    "title": "亚马逊卖家如何评价 Amazon Analyst",
+    "description": "听听使用 Amazon Analyst 提升运营效率的亚马逊卖家和团队怎么说。",
+    "icon": "GoThumbsup",
+    "items": [
+      {
+        "title": "刘强东",
+        "label": "3C电子产品 大卖家",
+        "description": "使用 Amazon Analyst 后，我们的广告ACOS从35%降到了22%，库存周转率提升了40%。AI生成的运营建议非常精准，团队执行效率大幅提升！",
+        "image": {
+          "src": "/imgs/users/1.png"
+        }
+      },
+      {
+        "title": "Emma Rodriguez",
+        "label": "家居用品类目 运营总监",
+        "description": "最喜欢的是竞争对手监控功能，能实时发现跟卖和价格变动。AI帮我们及时调整策略，月销售额增长了60%，差评率下降到0.8%以下。",
+        "image": {
+          "src": "/imgs/users/2.png"
+        }
+      },
+      {
+        "title": "张小明",
+        "label": "母婴用品 个人卖家",
+        "description": "作为个人卖家，这个工具就像雇了一个专业的运营经理。自动化的补货提醒和关键词优化建议，让我从琐碎的日常工作中解脱出来，专注产品开发。",
+        "image": {
+          "src": "/imgs/users/3.png"
+        }
+      },
+      {
+        "title": "Michael Chen",
+        "label": "运动户外品牌 CEO",
+        "description": "数据可视化做得非常好，一眼就能看出哪个产品需要关注。AI分析帮我们发现了季节性销售规律，提前备货策略让我们避免了断货损失300万美元。",
+        "image": {
+          "src": "/imgs/users/4.png"
+        }
+      },
+      {
+        "title": "王美丽",
+        "label": "美妆个护类目 运营主管",
+        "description": "团队从12个人优化到8个人，但效率反而提升了。每天早上都能收到AI生成的运营日报，清楚知道今天要做什么，优先级如何。运营标准化程度大大提高。",
+        "image": {
+          "src": "/imgs/users/5.png"
+        }
+      },
+      {
+        "title": "David Kim",
+        "label": "宠物用品跨境电商 创始人",
+        "description": "从北美扩展到欧洲5个站点，Amazon Analyst帮我们快速了解每个市场的特点。多站点数据统一管理，让我们的决策更加科学化，ROI提升了85%。",
+        "image": {
+          "src": "/imgs/users/6.png"
+        }
+      }
+    ]
+  },
+  "faq": {
+    "name": "faq",
+    "label": "常见问题",
+    "title": "关于 Amazon Analyst 的常见问题",
+    "description": "还有其他问题？请随时联系我们的客服团队。",
+    "items": [
+      {
+        "title": "我的亚马逊店铺数据安全吗？",
+        "description": "绝对安全。我们采用亚马逊官方的SP-API进行授权连接，所有数据都经过银行级加密传输和存储，我们绝不会将您的数据用于任何其他目的。"
+      },
+      {
+        "title": "AI 生成的运营指令是否可靠？",
+        "description": "我们的AI模型基于数百万个亚马逊运营场景进行训练，并结合您的实时数据进行决策。指令旨在提供最佳实践建议，但最终执行权仍在您的团队手中。"
+      },
+      {
+        "title": "设置过程复杂吗？需要多长时间？",
+        "description": "非常简单。您只需通过亚马逊官方授权流程，将您的店铺与我们的系统连接即可。整个过程通常不超过5分钟。"
+      },
+      {
+        "title": "支持哪些亚马逊站点？",
+        "description": "我们目前支持包括北美（美国、加拿大、墨西哥）、欧洲（英国、德国、法国、意大利、西班牙等）和日本在内的主要亚马逊站点。"
+      },
+      {
+        "title": "这个工具适合个人卖家还是团队使用？",
+        "description": "两者都适合。对于个人卖家，它可以成为您强大的虚拟助手；对于团队，它可以统一运营标准，提高协作效率，让资深运营专注于更高阶的策略。"
+      },
+      {
+        "title": "是否提供试用？",
+        "description": "是的，我们提供14天的免费试用期，您可以体验所有核心功能，无需绑定信用卡。"
+      }
+    ]
+  },
+  "cta": {
+    "name": "cta",
+    "title": "释放您店铺的全部潜力",
+    "description": "开启 14 天免费试用，体验 AI 驱动的洞察力如何提升您的销售额并简化运营流程。无需信用卡。",
+    "buttons": [
+      {
+        "title": "开启免费试用",
+        "url": "/#pricing",
+        "target": "_self",
+        "icon": "GoArrowUpRight"
+      },
+      {
+        "title": "观看演示",
+        "url": "/#showcase",
+        "target": "_self",
+        "variant": "outline"
+      }
+    ]
+  },
+  "footer": {
+    "name": "footer",
+    "brand": {
+      "title": "Amazon Analyst",
+      "description": "Amazon Analyst 是一个亚马逊运营分析工具，通过 AI 技术提供智能分析和建议，帮助您优化运营策略，提高效率和收益。",
+      "logo": {
+        "src": "/logo.png",
+        "alt": "Amazon Analyst"
+      },
+      "url": "/"
+    },
+    "copyright": "© 2025 • Amazon Analyst 保留所有权利。",
+    "nav": {
+      "items": [
+        {
+          "title": "关于",
+          "children": [
+            {
+              "title": "功能特点",
+              "url": "/#feature",
+              "target": "_self"
+            },
+            {
+              "title": "案例展示",
+              "url": "/#showcase",
+              "target": "_self"
+            },
+            {
+              "title": "定价",
+              "url": "/#pricing",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "资源",
+          "children": [
+            {
+              "title": "用户指南",
+              "url": "/posts",
+              "target": "_self"
+            },
+            {
+              "title": "API 文档",
+              "url": "/api-keys",
+              "target": "_self"
+            },
+            {
+              "title": "帮助中心",
+              "url": "/#faq",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "友链",
+          "children": [
+            {
+              "title": "ThinkAny",
+              "url": "https://thinkany.ai",
+              "target": "_blank"
+            },
+            {
+              "title": "HeyBeauty",
+              "url": "https://heybeauty.ai",
+              "target": "_blank"
+            },
+            {
+              "title": "Pagen",
+              "url": "https://pagen.so",
+              "target": "_blank"
+            }
+          ]
+        }
+      ]
+    },
+    "social": {
+      "items": [
+        {
+          "title": "X",
+          "icon": "RiTwitterXFill",
+          "url": "https://x.com/amazonanalyst",
+          "target": "_blank"
+        },
+        {
+          "title": "Github",
+          "icon": "RiGithubFill",
+          "url": "https://github.com/amazonanalyst",
+          "target": "_blank"
+        },
+        {
+          "title": "Discord",
+          "icon": "RiDiscordFill",
+          "url": "https://discord.gg/amazonanalyst",
+          "target": "_blank"
+        },
+        {
+          "title": "邮箱",
+          "icon": "RiMailLine",
+          "url": "mailto:support@amazonanalyst.ai",
+          "target": "_self"  
+        }
+      ]
+    },
+    "agreement": {
+      "items": [
+        {
+          "title": "隐私政策",
+          "url": "/privacy-policy"
+        },
+        {
+          "title": "服务条款",
+          "url": "/terms-of-service"
+        }
+      ]
+    }
+  }
+}

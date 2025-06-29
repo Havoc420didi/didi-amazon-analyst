@@ -1,0 +1,336 @@
+{
+  "metadata": {
+    "title": "AI 亚马逊运营总监 | 您的智能数据分析专家",
+    "description": "Amazon Analyst 是一款专业的亚马逊数据分析工具，通过 AI 技术全天候监控产品表现数据，为运营团队提供基于深度数据分析的清晰、可执行指令。",
+    "keywords": "亚马逊分析, AI 亚马逊运营总监, 亚马逊销售数据, 电商数据分析, 亚马逊运营优化, AI 数据分析"
+  },
+  "user": {
+    "sign_in": "登录",
+    "sign_out": "退出登录",
+    "credits": "额度",
+    "api_keys": "API 密钥",
+    "my_orders": "我的订单",
+    "user_center": "用户中心",
+    "admin_system": "管理后台"
+  },
+  "sign_modal": {
+    "sign_in_title": "登录",
+    "sign_in_description": "登录您的账户",
+    "sign_up_title": "注册",
+    "sign_up_description": "创建新账户",
+    "email_title": "邮箱",
+    "email_placeholder": "请输入您的邮箱",
+    "password_title": "密码",
+    "password_placeholder": "请输入您的密码",
+    "forgot_password": "忘记密码？",
+    "or": "或",
+    "continue": "继续",
+    "no_account": "还没有账户？",
+    "email_sign_in": "使用邮箱登录",
+    "google_sign_in": "使用 Google 登录",
+    "github_sign_in": "使用 GitHub 登录",
+    "close_title": "关闭",
+    "cancel_title": "取消"
+  },
+  "my_orders": {
+    "title": "我的订单",
+    "description": "在 ShipAny 上购买的订单。",
+    "no_orders": "未找到订单",
+    "tip": "",
+    "activate_order": "激活订单",
+    "actived": "已激活",
+    "join_discord": "加入 Discord",
+    "read_docs": "阅读文档",
+    "table": {
+      "order_no": "订单号",
+      "email": "邮箱",
+      "product_name": "产品名称",
+      "amount": "金额",
+      "paid_at": "支付时间",
+      "github_username": "GitHub 用户名",
+      "status": "状态"
+    }
+  },
+  "my_credits": {
+    "title": "我的积分",
+    "left_tip": "剩余积分: {left_credits}",
+    "no_credits": "没有积分记录",
+    "recharge": "充值",
+    "table": {
+      "trans_no": "交易号",
+      "trans_type": "交易类型",
+      "credits": "积分",
+      "updated_at": "更新时间",
+      "status": "状态"
+    }
+  },
+  "api_keys": {
+    "title": "API 密钥",
+    "tip": "请妥善保管您的 API 密钥，避免泄露",
+    "no_api_keys": "没有 API 密钥",
+    "create_api_key": "创建 API 密钥",
+    "table": {
+      "name": "名称",
+      "key": "密钥",
+      "created_at": "创建时间"
+    },
+    "form": {
+      "name": "名称",
+      "name_placeholder": "API 密钥名称",
+      "submit": "提交"
+    }
+  },
+  "analysis": {
+    "title": "数据分析",
+    "description": "上传Excel文件进行AI智能分析",
+    "page_title": "亚马逊数据分析",
+    "tabs": {
+      "upload": "上传数据",
+      "preview": "数据预览", 
+      "analysis": "AI分析",
+      "results": "分析结果"
+    },
+    "upload": {
+      "title": "上传Excel文件",
+      "description": "支持 .xlsx、.xls 格式的亚马逊运营数据文件"
+    },
+    "preview": {
+      "title": "数据预览",
+      "description": "文件: {filename} | 共 {count} 行数据",
+      "start_analysis": "开始分析"
+    },
+    "ai_analysis": {
+      "title": "AI智能分析",
+      "description": "使用AI大模型分析您的亚马逊运营数据",
+      "content_description": "AI将分析您的数据并提供以下内容：",
+      "features": {
+        "sales_trend": "销售数据趋势分析",
+        "product_performance": "产品表现评估", 
+        "inventory_optimization": "库存优化建议",
+        "marketing_strategy": "营销策略推荐",
+        "competitive_analysis": "竞争分析洞察"
+      },
+      "start_button": "开始AI分析",
+      "analyzing_button": "AI分析中..."
+    },
+    "upload_component": {
+      "drag_drop_text": "拖拽文件到此处，或点击选择文件",
+      "select_file": "选择文件",
+      "processing": "处理中...",
+      "file_format_error": "文件格式错误",
+      "file_format_description": "请上传Excel文件（.xlsx或.xls格式）",
+      "file_too_large": "文件过大",
+      "file_size_description": "文件大小不能超过10MB",
+      "processing_file": "正在处理文件...",
+      "processing_description": "正在解析Excel文件，请稍候",
+      "processing_success": "文件处理成功",
+      "processing_success_description": "已成功加载 {rows} 行数据，{columns} 列",
+      "processing_failed": "文件处理失败",
+      "upload_title": "上传Excel文件",
+      "supported_formats": "支持 .xlsx 和 .xls 格式，最大 10MB",
+      "supported_data_types": "支持的数据类型：",
+      "data_types": {
+        "sales": "销售数据 (销量、收入、时间等)",
+        "product": "产品数据 (ASIN、标题、价格、库存等)",
+        "advertising": "广告数据 (点击量、展示量、转化率等)",
+        "review": "评价数据 (评分、评价数量等)",
+        "inventory": "库存数据 (进货、出货、库存水位等)"
+      }
+    },
+    "data_visualization": {
+      "total_rows": "总行数",
+      "total_columns": "总列数", 
+      "total_pages": "总页数",
+      "data_completeness": "数据完整度",
+      "column_info": "列信息",
+      "column_info_description": "数据表的列结构和类型",
+      "data_preview": "数据预览",
+      "data_preview_description": "显示第 {start}-{end} 行，共 {total} 行",
+      "show_partial_columns": "显示部分列",
+      "show_all_columns": "显示所有列",
+      "more_columns": "+{count} 列",
+      "page_info": "第 {current} 页，共 {total} 页",
+      "previous_page": "上一页",
+      "next_page": "下一页"
+    },
+    "analysis_results": {
+      "analysis_summary": "分析总结",
+      "export_report": "导出报告",
+      "key_insights": "关键洞察",
+      "key_insights_description": "基于数据分析得出的重要发现",
+      "optimization_suggestions": "优化建议",
+      "optimization_suggestions_description": "基于分析结果的行动建议",
+      "priority": {
+        "high": "高",
+        "medium": "中", 
+        "low": "低"
+      },
+      "priority_suffix": "优先级",
+      "category": "类别",
+      "expected_impact": "预期影响",
+      "export": {
+        "title": "亚马逊数据分析报告",
+        "summary_title": "分析总结",
+        "insights_title": "关键洞察",
+        "recommendations_title": "优化建议",
+        "value_label": "数值",
+        "category_label": "类别",
+        "description_label": "描述",
+        "impact_label": "预期影响",
+        "generated_time": "生成时间"
+      }
+    },
+    "messages": {
+      "no_data_error": "错误",
+      "no_data_description": "没有可分析的数据，请先上传Excel文件",
+      "analysis_start": "开始分析",
+      "analysis_start_description": "AI正在分析您的数据，这可能需要几分钟时间...",
+      "analysis_success": "分析完成",
+      "analysis_success_description": "AI分析已完成，您可以查看分析结果",
+      "analysis_failed": "分析失败",
+      "analysis_retry": "分析失败，请重试",
+      "invalid_result": "分析结果格式错误"
+    }
+  },
+  "blog": {
+    "title": "博客",
+    "description": "关于 ShipAny 的新闻、资源和更新",
+    "read_more_text": "阅读更多"
+  },
+  "my_invites": {
+    "title": "我的邀请",
+    "description": "查看您的邀请记录",
+    "no_invites": "未找到邀请记录",
+    "my_invite_link": "我的邀请链接",
+    "edit_invite_link": "编辑邀请链接",
+    "copy_invite_link": "复制邀请链接",
+    "invite_code": "邀请码",
+    "invite_tip": "每邀请 1 位朋友购买 ShipAny，奖励 $50。",
+    "invite_balance": "邀请奖励余额",
+    "total_invite_count": "总邀请人数",
+    "total_paid_count": "已充值人数",
+    "total_award_amount": "总奖励金额",
+    "update_invite_code": "设置邀请码",
+    "update_invite_code_tip": "输入你的自定义邀请码",
+    "update_invite_button": "保存",
+    "no_orders": "你需要先购买过 ShipAny 才能邀请朋友",
+    "no_affiliates": "你暂无邀请朋友的权限，请联系我们申请开通。",
+    "table": {
+      "invite_time": "邀请时间",
+      "invite_user": "邀请用户",
+      "status": "状态",
+      "reward_percent": "奖励比例",
+      "reward_amount": "奖励金额",
+      "pending": "已注册，未支付",
+      "completed": "已支付"
+    }
+  },
+  "feedback": {
+    "title": "反馈",
+    "description": "我们很乐意听取您对产品的看法或如何改进产品体验。",
+    "submit": "提交",
+    "loading": "提交中...",
+    "contact_tip": "其他联系方式",
+    "rating_tip": "您对 ShipAny 的看法如何？",
+    "placeholder": "在这里留下您的反馈..."
+  },
+  "inventory": {
+    "title": "产品数据分析",
+    "description": "管理和分析亚马逊产品数据，支持多维度筛选和历史追踪",
+    "page_title": "产品数据分析",
+    "upload": {
+      "title": "数据上传",
+      "description": "上传Excel文件导入产品数据，支持批量更新和历史数据管理",
+      "select_file": "选择文件",
+      "drag_drop": "拖拽文件到此处或点击选择",
+      "supported_formats": "支持 .xlsx、.xls、.csv 格式，最大 10MB",
+      "select_date": "数据日期",
+      "date_description": "选择此次上传数据对应的日期",
+      "start_upload": "开始上传",
+      "uploading": "上传中...",
+      "download_template": "下载模板",
+      "file_selected": "文件已选择",
+      "reselect": "重新选择"
+    },
+    "stats": {
+      "total_inventory": "总库存",
+      "daily_revenue": "日均销售额",
+      "ad_spend": "广告花费",
+      "inventory_alerts": "库存告警",
+      "total_products": "个产品",
+      "all_warehouses": "所有库存点合计",
+      "daily_ad_spend": "日均广告投入",
+      "low_stock_products": "库存不足产品数"
+    },
+    "filters": {
+      "title": "筛选条件",
+      "sales_person": "业务员",
+      "asin": "ASIN",
+      "warehouse_location": "库存点",
+      "inventory_status": "库存状态",
+      "date_from": "开始日期",
+      "date_to": "结束日期",
+      "apply": "应用筛选",
+      "reset": "重置",
+      "search_asin": "搜索ASIN",
+      "select_sales_person": "选择业务员",
+      "select_warehouse": "选择库存点",
+      "select_status": "选择状态",
+      "all": "全部"
+    },
+    "table": {
+      "asin": "ASIN",
+      "product_name": "品名",
+      "sales_person": "业务员",
+      "warehouse_location": "库存点",
+      "total_inventory": "总库存",
+      "avg_sales": "平均销量",
+      "daily_revenue": "日均销售额",
+      "turnover_days": "周转天数",
+      "inventory_status": "库存状态",
+      "ad_spend": "广告花费",
+      "acos": "ACOS",
+      "date": "日期",
+      "actions": "操作",
+      "view_details": "查看详情"
+    },
+    "status": {
+      "low_stock": "库存不足",
+      "normal": "周转合格",
+      "overstock": "周转超标"
+    },
+    "pagination": {
+      "showing": "显示第",
+      "to": "-",
+      "of": "条，共",
+      "records": "条记录",
+      "page": "第",
+      "pages": "页，共",
+      "total_pages": "页",
+      "first": "首页",
+      "previous": "上一页",
+      "next": "下一页",
+      "last": "末页"
+    },
+    "actions": {
+      "refresh": "刷新",
+      "export": "导出",
+      "upload_data": "上传数据",
+      "back_to_list": "返回列表",
+      "view_results": "查看上传结果"
+    },
+    "messages": {
+      "no_data": "暂无数据",
+      "adjust_filters": "请调整筛选条件或上传新的数据",
+      "records_total": "条记录",
+      "filters_active": "个筛选条件",
+      "upload_success": "上传成功",
+      "upload_failed": "上传失败",
+      "processing": "处理中...",
+      "total_rows": "总行数",
+      "success_count": "成功",
+      "error_count": "失败",
+      "error_details": "错误详情"
+    }
+  }
+}
