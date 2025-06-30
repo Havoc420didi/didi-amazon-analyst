@@ -201,7 +201,7 @@ export class AIAnalysisModel {
       .set({
         rating: rating.rating,
         rating_feedback: rating.feedback || null,
-        updated_at: new Date().toISOString()
+        updated_at: new Date()
       })
       .where(eq(aiAnalysisTasks.id, id))
       .returning();
@@ -291,7 +291,7 @@ export class AIAnalysisModel {
 
     const result = await db()
       .delete(aiAnalysisTasks)
-      .where(sql`${aiAnalysisTasks.created_at} < ${thirtyDaysAgo.toISOString()}`);
+      .where(sql`${aiAnalysisTasks.created_at} < ${thirtyDaysAgo}`);
 
     return result.count;
   }
