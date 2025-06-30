@@ -23,6 +23,7 @@ import { Input } from '@/components/ui/input';
 import { BarChart3, Search, Filter, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { InventoryRecord } from '@/lib/inventory-schema';
+import { useTranslations } from 'next-intl';
 
 interface ApiResponse {
   success: boolean;
@@ -37,6 +38,7 @@ interface ApiResponse {
 
 export default function InventoryDataTable() {
   const router = useRouter();
+  const t = useTranslations('ai_analysis.data_table');
   const [data, setData] = useState<InventoryRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
@@ -170,14 +172,14 @@ export default function InventoryDataTable() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>库存点数据列表</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         
         {/* 筛选条件 */}
         <div className="flex flex-wrap gap-4 mt-4">
           <div className="flex-1 min-w-[200px] relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="搜索ASIN"
+              placeholder={t('search_asin')}
               value={asinInput}
               onChange={(e) => setAsinInput(e.target.value)}
               className="w-full pl-10 pr-10"

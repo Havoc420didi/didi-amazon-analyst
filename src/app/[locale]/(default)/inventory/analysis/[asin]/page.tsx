@@ -6,6 +6,8 @@ import { ArrowLeft, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import Link from 'next/link';
 import { AnalysisPanel, AnalysisHistory } from '@/components/ai-analysis';
 import { ProductAnalysisData } from '@/types/ai-analysis';
+import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 interface Props {
   params: Promise<{
@@ -136,6 +138,7 @@ function TrendIndicator({ value }: { value: number }) {
 export default async function AnalysisPage({ params, searchParams }: Props) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
+  const t = await getTranslations('ai_analysis');
   const data = await getAnalysisData(resolvedParams.asin, resolvedSearchParams.warehouse);
 
   // 转换数据格式为AI分析所需的格式
@@ -168,13 +171,13 @@ export default async function AnalysisPage({ params, searchParams }: Props) {
           <Link href="/inventory">
             <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              返回列表
+              {t('back_to_list')}
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">产品数据分析</h1>
+            <h1 className="text-2xl font-bold">{t('page_title')}</h1>
             <p className="text-sm text-muted-foreground">
-              ASIN: {data.product.asin} | 库存点: {data.product.warehouse_location}
+              {t('product_info.fields.asin')}: {data.product.asin} | {t('product_info.fields.warehouse_location')}: {data.product.warehouse_location}
             </p>
           </div>
         </div>
@@ -183,21 +186,21 @@ export default async function AnalysisPage({ params, searchParams }: Props) {
       {/* 第一部分：产品信息和库存信息 */}
       <Card>
         <CardHeader>
-          <CardTitle>📦 产品信息和库存信息</CardTitle>
+          <CardTitle>📦 {t('product_info.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           {/* 产品基本信息 */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
             <div>
-              <label className="text-sm font-medium text-muted-foreground">ASIN</label>
+              <label className="text-sm font-medium text-muted-foreground">{t('product_info.fields.asin')}</label>
               <p className="font-mono text-lg font-bold">{data.product.asin}</p>
             </div>
             <div>
-              <label className="text-sm font-medium text-muted-foreground">产品名称</label>
+              <label className="text-sm font-medium text-muted-foreground">{t('product_info.fields.product_name')}</label>
               <p className="text-lg">{data.product.name}</p>
             </div>
             <div>
-              <label className="text-sm font-medium text-muted-foreground">库存点</label>
+              <label className="text-sm font-medium text-muted-foreground">{t('product_info.fields.warehouse_location')}</label>
               <p className="text-lg">{data.product.warehouse_location}</p>
             </div>
           </div>
@@ -222,13 +225,13 @@ export default async function AnalysisPage({ params, searchParams }: Props) {
 
           {/* 库存详情 */}
           <div className="mb-6">
-            <h4 className="text-lg font-semibold mb-3">库存分布</h4>
+            <h4 className="text-lg font-semibold mb-3">{t('product_info.inventory_data')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="text-center p-4 bg-blue-50 rounded-lg border">
                 <div className="text-2xl font-bold text-blue-600 mb-2">
                   {data.current.total_inventory.toLocaleString()}
                 </div>
-                <p className="text-sm text-muted-foreground">总库存</p>
+                <p className="text-sm text-muted-foreground">{t('product_info.fields.total_inventory')}</p>
                 <TrendIndicator value={data.trends.inventory_change} />
               </div>
               <div className="text-center p-4 bg-indigo-50 rounded-lg border">

@@ -332,5 +332,175 @@
       "error_count": "失败",
       "error_details": "错误详情"
     }
+  },
+  "ai_analysis": {
+    "page_title": "产品数据详情",
+    "back_to_list": "返回列表",
+    "product_info": {
+      "title": "产品信息",
+      "basic_info": "基本信息",
+      "inventory_data": "库存数据",
+      "sales_data": "销售数据",
+      "advertising_data": "广告数据",
+      "status_badges": {
+        "low_stock": "库存不足",
+        "normal_turnover": "周转合格", 
+        "excess_turnover": "周转超标"
+      },
+      "fields": {
+        "asin": "ASIN",
+        "product_name": "品名",
+        "sales_person": "业务员",
+        "warehouse_location": "库存点",
+        "date": "日期",
+        "fba_available": "FBA可用",
+        "fba_in_transit": "FBA在途",
+        "local_warehouse": "本地仓",
+        "total_inventory": "总库存",
+        "avg_sales": "平均销量",
+        "daily_revenue": "日均销售额",
+        "inventory_turnover_days": "库存周转天数",
+        "inventory_status": "库存状态",
+        "ad_impressions": "广告曝光量",
+        "ad_clicks": "广告点击量",
+        "ad_spend": "广告花费",
+        "ad_orders": "广告订单量",
+        "ad_ctr": "广告点击率",
+        "ad_conversion_rate": "广告转化率",
+        "acos": "ACOS"
+      },
+      "trends": {
+        "title": "数据趋势",
+        "inventory_change": "库存变化",
+        "revenue_change": "收入变化", 
+        "sales_change": "销量变化",
+        "vs_previous": "较前日"
+      }
+    },
+    "operations_analysis": {
+      "title": "AI运营决策分析",
+      "description": "基于AI的智能分析，提供数据洞察和运营建议",
+      "start_analysis": "开始分析",
+      "analyzing": "分析中...",
+      "analysis_complete": "分析完成",
+      "real_time_analysis": "实时分析",
+      "streaming": {
+        "thinking_process": "思考过程",
+        "deep_analysis": "深度分析", 
+        "action_recommendations": "行动建议",
+        "ai_thinking": "AI正在思考中...",
+        "connecting": "正在连接AI模型，准备开始分析...",
+        "processing": "处理中...",
+        "completed": "分析完成",
+        "failed": "分析失败",
+        "retry": "重试",
+        "cancel": "取消分析",
+        "expand": "展开",
+        "collapse": "收起",
+        "copy_content": "复制内容",
+        "content_copied": "内容已复制"
+      },
+      "status": {
+        "ready": "准备就绪",
+        "connecting": "连接中",
+        "analyzing": "分析中", 
+        "completed": "已完成",
+        "failed": "分析失败",
+        "cancelled": "已取消"
+      },
+      "progress": {
+        "initializing": "初始化",
+        "data_processing": "数据处理",
+        "ai_analysis": "AI分析",
+        "generating_insights": "生成洞察",
+        "finalizing": "完成中"
+      }
+    },
+    "analysis_history": {
+      "title": "历史分析",
+      "description": "查看过往的AI分析记录和结果",
+      "no_history": "暂无历史分析记录",
+      "no_history_description": "还没有进行过AI分析，点击上方按钮开始第一次分析",
+      "view_details": "查看详情",
+      "delete_record": "删除记录",
+      "confirm_delete": "确认删除",
+      "delete_message": "确定要删除这条分析记录吗？此操作不可撤销。",
+      "delete_success": "删除成功",
+      "analysis_count": "分析次数",
+      "latest_analysis": "最新分析",
+      "analysis_time": "分析时间",
+      "analysis_content": "分析内容",
+      "rating": "评价",
+      "feedback": "反馈",
+      "modal": {
+        "title": "分析详情",
+        "close": "关闭",
+        "copy": "复制",
+        "delete": "删除"
+      }
+    },
+    "rating": {
+      "title": "这个分析对您有帮助吗？",
+      "rating_question": "请为本次分析评分",
+      "submit_rating": "提交评价",
+      "submitting": "提交中...",
+      "submitted": "已评价",
+      "feedback_label": "详细反馈 (可选)",
+      "feedback_placeholder": "请分享您的具体想法和建议...",
+      "add_feedback": "添加反馈",
+      "rating_scale": {
+        "1": "很差",
+        "2": "较差", 
+        "3": "一般",
+        "4": "良好",
+        "5": "优秀"
+      },
+      "thank_you": "感谢您的评价！您的反馈将帮助我们改进AI分析的质量。",
+      "select_rating": "请先选择评分"
+    },
+    "error_messages": {
+      "analysis_failed": "分析失败，请重试",
+      "network_error": "网络连接失败",
+      "data_not_found": "未找到产品数据",
+      "invalid_request": "请求参数无效",
+      "server_error": "服务器错误",
+      "timeout": "请求超时",
+      "cancelled": "分析已取消",
+      "unknown_error": "未知错误"
+    },
+    "data_table": {
+      "title": "库存点数据列表",
+      "search_asin": "搜索ASIN",
+      "select_sales_person": "选择业务员",
+      "all_sales_person": "全部业务员",
+      "select_warehouse": "选择库存点", 
+      "all_warehouses": "全部库存点",
+      "select_status": "库存状态",
+      "all_status": "全部状态",
+      "columns": {
+        "asin": "ASIN",
+        "product_name": "品名",
+        "sales_person": "业务员",
+        "warehouse_location": "库存点",
+        "fba_available": "FBA可用",
+        "total_inventory": "总库存",
+        "daily_revenue": "日均销售额",
+        "inventory_status": "库存状态",
+        "analysis_count": "分析次数",
+        "date": "日期",
+        "actions": "操作"
+      },
+      "actions": {
+        "data_analysis": "数据分析"
+      },
+      "pagination": {
+        "records_total": "条记录",
+        "page_info": "第 {page} / {total} 页",
+        "previous": "上一页",
+        "next": "下一页"
+      },
+      "loading": "加载中...",
+      "no_data": "暂无数据"
+    }
   }
 }

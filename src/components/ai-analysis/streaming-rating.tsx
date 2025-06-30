@@ -9,6 +9,7 @@ import { Star, MessageSquare, Send, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { triggerAnalysisHistoryRefresh } from '@/hooks/use-analysis-history';
+import { useTranslations } from 'next-intl';
 
 interface StreamingRatingProps {
   analysisContent: string;
@@ -23,6 +24,7 @@ export function StreamingRating({
   warehouseLocation,
   onRatingSubmit 
 }: StreamingRatingProps) {
+  const t = useTranslations('ai_analysis.rating');
   const [rating, setRating] = useState<number | null>(null);
   const [feedback, setFeedback] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);

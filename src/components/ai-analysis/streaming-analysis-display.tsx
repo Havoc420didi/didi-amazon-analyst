@@ -27,6 +27,7 @@ import { toast } from 'sonner';
 import { ProductAnalysisData } from '@/types/ai-analysis';
 import { StreamingRating } from './streaming-rating';
 import { triggerAnalysisHistoryRefresh } from '@/hooks/use-analysis-history';
+import { useTranslations } from 'next-intl';
 
 // 流式事件接口
 interface StreamingEvent {
@@ -49,6 +50,7 @@ export function StreamingAnalysisDisplay({
   executor = 'streaming-analysis',
   onComplete 
 }: StreamingAnalysisDisplayProps) {
+  const t = useTranslations('ai_analysis.operations_analysis');
   const [isStreaming, setIsStreaming] = useState(false);
   const [events, setEvents] = useState<StreamingEvent[]>([]);
   const [currentProgress, setCurrentProgress] = useState(0);
@@ -357,7 +359,7 @@ export function StreamingAnalysisDisplay({
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-purple-600" />
-            🤖 AI运营决策分析
+            🤖 {t('title')}
           </CardTitle>
           <div className="flex items-center gap-2">
             {!isStreaming && events.length === 0 && (
@@ -367,7 +369,7 @@ export function StreamingAnalysisDisplay({
                 className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50"
               >
                 <Sparkles className="h-4 w-4 mr-2" />
-                开始分析
+                {t('start_analysis')}
               </Button>
             )}
             
@@ -378,7 +380,7 @@ export function StreamingAnalysisDisplay({
                 size="sm"
               >
                 <XCircle className="h-4 w-4 mr-2" />
-                停止分析
+                {t('streaming.cancel')}
               </Button>
             )}
 
