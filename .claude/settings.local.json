@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(pnpm add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(pnpm db:generate:*)",
+      "Bash(mkdir:*)",
+      "Bash(pnpm db:migrate:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm lint:*)"
     ],
     "deny": []
   }

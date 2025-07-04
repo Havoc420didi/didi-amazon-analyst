@@ -9,6 +9,7 @@ import { getIsoTimestr } from "@/lib/time";
 import { getUuid } from "@/lib/hash";
 import { saveUser } from "@/services/user";
 import { handleSignInUser } from "./handler";
+import { getUserByEmailOrUsername, verifyPassword } from "@/services/user";
 
 let providers: Provider[] = [];
 
@@ -100,6 +101,62 @@ if (
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
+    })
+  );
+}
+
+// Credentials Auth (Email/Username + Password)
+if (process.env.NEXT_PUBLIC_AUTH_CREDENTIALS_ENABLED !== "false") {
+  providers.push(
+    CredentialsProvider({
+      id: "credentials",
+      name: "credentials",
+      credentials: {
+        identifier: { 
+          label: "Email or Username", 
+          type: "text",
+          placeholder: "email@example.com or username"
+        },
+        password: { 
+          label: "Password", 
+          type: "password" 
+        }
+      },
+      async authorize(credentials) {
+        if (!credentials?.identifier || !credentials?.password) {
+          return null;
+        }
+
+        try {
+          // 查找用户（支持邮箱或用户名）
+          const user = await getUserByEmailOrUsername(credentials.identifier);
+          
+          if (!user || !user.password_hash) {
+            return null;
+          }
+
+          // 验证密码
+          const isValidPassword = await verifyPassword(
+            credentials.password,
+            user.password_hash
+          );
+
+          if (!isValidPassword) {
+            return null;
+          }
+
+          // 返回用户信息
+          return {
+            id: user.uuid || '',
+            email: user.email,
+            name: user.nickname || user.username || user.email.split('@')[0],
+            image: user.avatar_url || ''
+          };
+        } catch (error) {
+          console.error('Credentials authorize error:', error);
+          return null;
+        }
+      }
     })
   );
 }

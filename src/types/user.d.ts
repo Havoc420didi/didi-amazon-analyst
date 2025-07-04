@@ -2,6 +2,9 @@ export interface User {
   id?: number;
   uuid?: string;
   email: string;
+  username?: string;
+  password_hash?: string;
+  email_verified?: boolean;
   created_at?: string | Date;
   nickname: string;
   avatar_url: string;

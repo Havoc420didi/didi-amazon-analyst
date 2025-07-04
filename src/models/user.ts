@@ -1,6 +1,6 @@
 import { users } from "@/db/schema";
 import { db } from "@/db";
-import { desc, eq, gte, inArray } from "drizzle-orm";
+import { desc, eq, gte, inArray, or } from "drizzle-orm";
 
 export async function insertUser(
   data: typeof users.$inferInsert
@@ -133,4 +133,33 @@ export async function getUserCountByDate(
   });
 
   return dateCountMap;
+}
+
+export async function findUserByEmailOrUsername(
+  identifier: string
+): Promise<typeof users.$inferSelect | undefined> {
+  const [user] = await db()
+    .select()
+    .from(users)
+    .where(
+      or(
+        eq(users.email, identifier),
+        eq(users.username, identifier)
+      )
+    )
+    .limit(1);
+
+  return user;
+}
+
+export async function findUserByUsername(
+  username: string
+): Promise<typeof users.$inferSelect | undefined> {
+  const [user] = await db()
+    .select()
+    .from(users)
+    .where(eq(users.username, username))
+    .limit(1);
+
+  return user;
 }

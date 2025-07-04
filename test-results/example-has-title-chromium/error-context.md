@@ -1,0 +1,256 @@
+# Page snapshot
+
+```yaml
+- navigation:
+  - link "Amazon Analyst Amazon Analyst":
+    - /url: /
+    - img "Amazon Analyst"
+    - text: Amazon Analyst
+  - navigation "Main":
+    - list:
+      - listitem:
+        - link "Amazon Data Analysis":
+          - /url: /analysis
+          - img
+          - text: Amazon Data Analysis
+      - listitem:
+        - link "Product Data Analysis":
+          - /url: /inventory
+          - img
+          - text: Product Data Analysis
+  - combobox:
+    - img
+    - text: English
+  - img
+  - button "Sign In"
+- main:
+  - img
+  - link "New Feature 🎉 Now supporting ad campaign analysis and optimization suggestions!":
+    - /url: /#feature
+  - heading "Your AI Amazon Operations Director" [level=1]
+  - paragraph: Monitor product performance data 24/7 and provide your operations team with clear, actionable instructions through deep data analysis.
+  - paragraph: 💡 Register now to start your intelligent operations journey
+  - img "placeholder"
+  - img "placeholder"
+  - img "placeholder"
+  - img "placeholder"
+  - img "placeholder"
+  - img
+  - img
+  - img
+  - img
+  - img
+  - paragraph: from 99+ happy users
+  - heading "Amazon Analyst is powered by modern technology" [level=2]
+  - img "Next.js"
+  - img "React"
+  - img "TailwindCSS"
+  - img "Shadcn/UI"
+  - img "Supabase"
+  - img "placeholder hero"
+  - heading "What is an AI Amazon Operations Director?" [level=2]
+  - paragraph: We are more than just a data analysis tool; we are a tireless operations expert dedicated to improving the efficiency and profitability of your Amazon business.
+  - list:
+    - listitem:
+      - img
+      - text: 24/7 Data Monitoring Track sales, inventory, rankings, and advertising data around the clock, never missing any critical changes.
+    - listitem:
+      - img
+      - text: Intelligent Analysis & Insights Leverage advanced AI algorithms to turn complex data into profound market insights and business opportunities.
+    - listitem:
+      - img
+      - text: Generate Actionable Instructions Automatically generate clear, specific operational instructions that your team can execute immediately, without guesswork.
+  - heading "Core Features" [level=2]
+  - paragraph: Unleash your team's potential and let AI handle complex analysis and decision-making.
+  - img
+  - heading "Real-time Sales & Profit Tracking" [level=3]
+  - paragraph: Real-time sales and profit analysis for each SKU, so you can always grasp the health of your business.
+  - img
+  - heading "Smart Inventory Management" [level=3]
+  - paragraph: Forecast replenishment needs, avoid stockouts or overstocking, and maximize capital efficiency.
+  - img
+  - heading "PPC Campaign Optimization" [level=3]
+  - paragraph: Analyze ad performance, provide keyword and bid optimization suggestions to improve ROI.
+  - img
+  - heading "Competitor Monitoring" [level=3]
+  - paragraph: Track competitors' prices, reviews, rankings, and keyword strategies to stay ahead.
+  - img
+  - heading "Automated Operational Instructions" [level=3]
+  - paragraph: Generate processing instructions and notify operators immediately when key events are detected (e.g., negative reviews, hijacking).
+  - img
+  - heading "Custom Reports" [level=3]
+  - paragraph: Generate multi-dimensional data reports according to your needs, supporting export and sharing.
+  - text: Stats
+  - heading "Amazon Sellers Trust Amazon Analyst" [level=2]
+  - paragraph: for powerful insights and efficient operations.
+  - paragraph: Active Sellers
+  - paragraph: 500+
+  - paragraph: Worldwide
+  - paragraph: Data Points
+  - paragraph: 1M+
+  - paragraph: Analyzed Daily
+  - paragraph: Average ROI
+  - paragraph: 45%
+  - paragraph: Improvement
+  - text: Testimonial
+  - heading "What Amazon Sellers Say About Amazon Analyst" [level=2]
+  - paragraph: Hear from Amazon sellers and teams who improved their operations efficiency with Amazon Analyst.
+  - region:
+    - group:
+      - img "John Smith"
+      - paragraph: John Smith
+      - paragraph: Electronics Category Big Seller
+      - img
+      - img
+      - img
+      - img
+      - img
+      - text: After using Amazon Analyst, our advertising ACOS dropped from 35% to 22%, and inventory turnover improved by 40%. The AI-generated operational recommendations are incredibly accurate, and team efficiency has improved significantly!
+    - group:
+      - img "Emma Rodriguez"
+      - paragraph: Emma Rodriguez
+      - paragraph: Home & Garden Operations Director
+      - img
+      - img
+      - img
+      - img
+      - img
+      - text: Love the competitor monitoring feature - it detects hijackers and price changes in real-time. AI helped us adjust strategies promptly, monthly sales increased by 60%, and negative review rate dropped below 0.8%.
+    - group:
+      - img "Mike Johnson"
+      - paragraph: Mike Johnson
+      - paragraph: Baby Products Individual Seller
+      - img
+      - img
+      - img
+      - img
+      - img
+      - text: As an individual seller, this tool is like hiring a professional operations manager. Automated restock alerts and keyword optimization suggestions freed me from tedious daily tasks to focus on product development.
+    - group:
+      - img "Michael Chen"
+      - paragraph: Michael Chen
+      - paragraph: Sports & Outdoors Brand CEO
+      - img
+      - img
+      - img
+      - img
+      - img
+      - text: The data visualization is excellent - you can immediately see which products need attention. AI analysis helped us discover seasonal sales patterns, and our proactive inventory strategy saved us from $3M in stockout losses.
+    - group:
+      - img "Sarah Williams"
+      - paragraph: Sarah Williams
+      - paragraph: Beauty & Personal Care Operations Manager
+      - img
+      - img
+      - img
+      - img
+      - img
+      - text: We optimized our team from 12 to 8 people, but efficiency actually improved. Every morning we receive AI-generated operational reports, clearly knowing what to do today and the priorities. Operations standardization has greatly improved.
+    - group:
+      - img "David Kim"
+      - paragraph: David Kim
+      - paragraph: Pet Supplies Cross-border E-commerce Founder
+      - img
+      - img
+      - img
+      - img
+      - img
+      - text: Expanding from North America to 5 European sites, Amazon Analyst helped us quickly understand each market's characteristics. Unified multi-site data management made our decisions more scientific, ROI improved by 85%.
+  - text: FAQ
+  - heading "Frequently Asked Questions about Amazon Analyst" [level=2]
+  - paragraph: Have other questions? Feel free to contact our customer service team.
+  - text: "1"
+  - heading "Is my Amazon store data secure?" [level=3]
+  - paragraph: Absolutely. We use Amazon's official SP-API for authorized connections, and all data is transmitted and stored with bank-level encryption. We will never use your data for any other purpose.
+  - text: "2"
+  - heading "Are the AI-generated operational instructions reliable?" [level=3]
+  - paragraph: Our AI model is trained on millions of Amazon operational scenarios and makes decisions based on your real-time data. The instructions are designed to provide best practice recommendations, but the final execution authority remains with your team.
+  - text: "3"
+  - heading "Is the setup process complicated? How long does it take?" [level=3]
+  - paragraph: It's very simple. You just need to connect your store to our system through the official Amazon authorization process. The whole process usually takes no more than 5 minutes.
+  - text: "4"
+  - heading "Which Amazon marketplaces are supported?" [level=3]
+  - paragraph: We currently support major Amazon marketplaces including North America (USA, Canada, Mexico), Europe (UK, Germany, France, Italy, Spain, etc.), and Japan.
+  - text: "5"
+  - heading "Is this tool suitable for individual sellers or teams?" [level=3]
+  - paragraph: It's suitable for both. For individual sellers, it can be your powerful virtual assistant; for teams, it can standardize operational procedures, improve collaboration efficiency, and allow senior operators to focus on higher-level strategies.
+  - text: "6"
+  - heading "Do you offer a trial?" [level=3]
+  - paragraph: Yes, we offer a 14-day free trial where you can experience all the core features, no credit card required.
+  - heading "Unlock Your Store's Full Potential" [level=2]
+  - paragraph: Start your 14-day free trial and see how AI-driven insights can boost your sales and streamline your operations. No credit card required.
+  - button "Start Your Free Trial":
+    - link "Start Your Free Trial":
+      - /url: /#pricing
+  - button "Watch a Demo":
+    - link "Watch a Demo":
+      - /url: /#showcase
+- img "Amazon Analyst"
+- paragraph: Amazon Analyst
+- paragraph: Amazon Analyst is an AI-powered Amazon operations analysis tool that provides intelligent insights and recommendations to optimize your operations strategy and improve efficiency and profitability.
+- list:
+  - listitem:
+    - link:
+      - /url: https://x.com/amazonanalyst
+      - img
+  - listitem:
+    - link:
+      - /url: https://github.com/amazonanalyst
+      - img
+  - listitem:
+    - link:
+      - /url: https://discord.gg/amazonanalyst
+      - img
+  - listitem:
+    - link:
+      - /url: mailto:support@amazonanalyst.ai
+      - img
+- paragraph: About
+- list:
+  - listitem:
+    - link "Features":
+      - /url: /#feature
+  - listitem:
+    - link "Showcases":
+      - /url: /#showcase
+  - listitem:
+    - link "Pricing":
+      - /url: /#pricing
+- paragraph: Resources
+- list:
+  - listitem:
+    - link "User Guide":
+      - /url: /posts
+  - listitem:
+    - link "API Documentation":
+      - /url: /api-keys
+  - listitem:
+    - link "Help Center":
+      - /url: /#faq
+- paragraph: Friends
+- list:
+  - listitem:
+    - link "ThinkAny":
+      - /url: https://thinkany.ai
+  - listitem:
+    - link "HeyBeauty":
+      - /url: https://heybeauty.ai
+  - listitem:
+    - link "Pagen":
+      - /url: https://pagen.so
+- paragraph:
+  - text: © 2025 • Amazon Analyst All rights reserved.
+  - link "build with ShipAny":
+    - /url: https://shipany.ai
+- list:
+  - listitem:
+    - link "Privacy Policy":
+      - /url: /privacy-policy
+  - listitem:
+    - link "Terms of Service":
+      - /url: /terms-of-service
+- region "Notifications alt+T"
+- button "Open Next.js Dev Tools":
+  - img
+- alert
+```

@@ -1,5 +1,5 @@
 import { CreditsAmount, CreditsTransType } from "./credit";
-import { findUserByEmail, findUserByUuid, insertUser } from "@/models/user";
+import { findUserByEmail, findUserByUuid, insertUser, findUserByEmailOrUsername, findUserByUsername } from "@/models/user";
 
 import { User } from "@/types/user";
 import { auth } from "@/auth";
@@ -9,6 +9,7 @@ import { headers } from "next/headers";
 import { increaseCredits } from "./credit";
 import { users } from "@/db/schema";
 import { getUuid } from "@/lib/hash";
+import bcrypt from "bcryptjs";
 
 // save user to database, if user not exist, create a new user
 export async function saveUser(user: User) {
@@ -117,4 +118,69 @@ export async function getUserInfo() {
   const user = await findUserByUuid(user_uuid);
 
   return user;
+}
+
+// 创建密码用户
+export async function createPasswordUser(data: {
+  email: string;
+  username?: string;
+  password: string;
+  nickname?: string;
+  locale?: string;
+}): Promise<User> {
+  // 检查邮箱是否已存在（credentials provider）
+  const existingEmailUser = await findUserByEmail(data.email);
+  if (existingEmailUser && existingEmailUser.signin_provider === 'credentials') {
+    throw new Error('Email already registered with password');
+  }
+
+  // 检查用户名是否已存在
+  if (data.username) {
+    const existingUsernameUser = await findUserByUsername(data.username);
+    if (existingUsernameUser) {
+      throw new Error('Username already taken');
+    }
+  }
+
+  // 哈希密码
+  const passwordHash = await bcrypt.hash(data.password, 12);
+
+  const user: User = {
+    uuid: getUuid(),
+    email: data.email,
+    username: data.username,
+    password_hash: passwordHash,
+    nickname: data.nickname || data.username || data.email.split('@')[0],
+    avatar_url: '',
+    signin_provider: 'credentials',
+    signin_type: 'password',
+    email_verified: false,
+    locale: data.locale || 'en',
+    created_at: new Date(),
+  };
+
+  return await saveUser(user);
+}
+
+// 通过邮箱或用户名查找用户
+export async function getUserByEmailOrUsername(identifier: string) {
+  return await findUserByEmailOrUsername(identifier);
+}
+
+// 验证密码
+export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  return await bcrypt.compare(password, hash);
+}
+
+// 检查用户名是否可用
+export async function isUsernameAvailable(username: string): Promise<boolean> {
+  const user = await findUserByUsername(username);
+  return !user;
+}
+
+// 检查邮箱是否已用于密码登录
+export async function isEmailAvailableForPassword(email: string): Promise<boolean> {
+  const user = await findUserByEmail(email);
+  // 如果邮箱不存在，或者存在但不是credentials provider，则可用
+  return !user || user.signin_provider !== 'credentials';
 }
