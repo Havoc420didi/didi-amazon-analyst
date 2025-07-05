@@ -230,3 +230,56 @@ export const aiAnalysisTasks = pgTable(
     uniqueIndex("unique_task_number").on(table.task_number),
   ]
 );
+
+// RPA Analysis Results table
+export const rpaAnalysisResults = pgTable(
+  "rpa_analysis_results",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    timestamp: varchar({ length: 255 }).notNull(),
+    totalProducts: integer().notNull().default(0),
+    highPotentialProducts: integer().notNull().default(0),
+    aLevelProducts: text().notNull().default('[]'), // JSON格式
+    marketTrends: text().notNull().default('{}'), // JSON格式
+    processingTime: decimal({ precision: 10, scale: 2 }).notNull().default('0'),
+    dataQualityScore: decimal({ precision: 3, scale: 2 }).notNull().default('0'),
+    syncTimestamp: varchar({ length: 255 }),
+    createdAt: timestamp({ withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    index("idx_rpa_analysis_timestamp").on(table.timestamp),
+    index("idx_rpa_analysis_created_at").on(table.createdAt),
+  ]
+);
+
+// RPA System Status table
+export const rpaSystemStatus = pgTable(
+  "rpa_system_status",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    status: varchar({ length: 50 }).notNull(), // running, completed, error, idle
+    message: text().notNull().default(''),
+    timestamp: varchar({ length: 255 }).notNull(),
+    createdAt: timestamp({ withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    index("idx_rpa_status_created_at").on(table.createdAt),
+    index("idx_rpa_status_status").on(table.status),
+  ]
+);
+
+// RPA Configurations table
+export const rpaConfigurations = pgTable(
+  "rpa_configurations",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    version: varchar({ length: 50 }).notNull().default('1.0.0'),
+    configuration: text().notNull(), // JSON格式配置
+    isActive: boolean().notNull().default(true),
+    createdAt: timestamp({ withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    index("idx_rpa_config_active").on(table.isActive),
+    index("idx_rpa_config_version").on(table.version),
+  ]
+);
