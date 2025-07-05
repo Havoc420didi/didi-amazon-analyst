@@ -41,8 +41,7 @@ python-dotenv==1.0.0
 # 版本管理
 packaging==23.1
 
-# 数据库
-sqlite3  # Python标准库
+# 数据库 (sqlite3 is included in Python standard library)
 
 # 日志和调试
 colorlog==6.7.0

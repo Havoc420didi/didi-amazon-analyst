@@ -12,8 +12,9 @@ import sys
 import signal
 import os
 from datetime import datetime, timedelta
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import json
+import pandas as pd
 
 # 导入自定义模块
 from data_collector import PipiadsCollector
@@ -280,13 +281,16 @@ class PipiadsRPASystem:
     def _check_for_human_review_items(self, processor: DataProcessor):
         """检查是否有需要人工审核的项目"""
         try:
-            if not processor.processed_data is None and len(processor.processed_data) > 0:
+            if processor.processed_data is not None and len(processor.processed_data) > 0:
                 collaboration = self.components['collaboration']
                 
                 # 检查A级产品
-                a_level_products = processor.processed_data[
-                    processor.processed_data.get('recommendation_level', '') == 'A'
-                ]
+                if 'recommendation_level' in processor.processed_data.columns:
+                    a_level_products = processor.processed_data[
+                        processor.processed_data['recommendation_level'] == 'A'
+                    ]
+                else:
+                    a_level_products = pd.DataFrame()
                 
                 for _, product in a_level_products.iterrows():
                     collaboration.add_review_item(

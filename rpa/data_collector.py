@@ -3,6 +3,8 @@ Pipiads数据采集RPA模块
 自动化执行SOP中的数据扫描和收集工作
 """
 
+import os
+import re
 import time
 import random
 import pandas as pd
@@ -12,7 +14,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from webdriver_manager.chrome import ChromeDriverManager
 import logging
 from typing import List, Dict, Any, Optional
 import json
@@ -97,7 +101,9 @@ class PipiadsCollector:
             }
             chrome_options.add_experimental_option("prefs", prefs)
             
-            driver = webdriver.Chrome(options=chrome_options)
+            # Use webdriver-manager to automatically manage ChromeDriver
+            service = Service(ChromeDriverManager().install())
+            driver = webdriver.Chrome(service=service, options=chrome_options)
             driver.set_page_load_timeout(BROWSER_CONFIG['page_load_timeout'])
             driver.implicitly_wait(BROWSER_CONFIG['implicit_wait'])
             
@@ -418,11 +424,14 @@ class PipiadsCollector:
             # 这里需要根据Pipiads的实际日期格式进行解析
             # 示例处理逻辑
             if 'day' in text:
-                days_ago = int(text.split()[0])
-                date = datetime.now() - timedelta(days=days_ago)
-                return date.isoformat()
+                days_match = re.search(r'(\d+)\s*day', text)
+                if days_match:
+                    days_ago = int(days_match.group(1))
+                    date = datetime.now() - timedelta(days=days_ago)
+                    return date.isoformat()
             return text
-        except:
+        except Exception as e:
+            self.logger.warning(f"日期解析失败: {e}")
             return ''
     
     def _passes_basic_filters(self, data: Dict[str, Any]) -> bool:
@@ -550,10 +559,9 @@ class PipiadsCollector:
             
             if os.path.exists(excel_file):
                 # 读取现有数据
-                with pd.ExcelWriter(excel_file, mode='a', if_sheet_exists='overlay') as writer:
+                with pd.ExcelWriter(excel_file, mode='a', if_sheet_exists='replace', engine='openpyxl') as writer:
                     df.to_excel(writer, sheet_name=EXCEL_SHEETS['daily_scan'], 
-                               startrow=writer.sheets[EXCEL_SHEETS['daily_scan']].max_row, 
-                               index=False, header=False)
+                               index=False)
             else:
                 # 创建新文件
                 with pd.ExcelWriter(excel_file) as writer:

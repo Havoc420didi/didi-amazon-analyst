@@ -234,9 +234,10 @@ class DataProcessor:
             self.logger.info("计算关键指标...")
             
             # 重新计算参与率（确保准确性）
+            shares_col = df['shares'] if 'shares' in df.columns else 0
             df['engagement_rate'] = np.where(
                 df['impressions'] > 0,
-                ((df['likes'] + df['comments'] + df.get('shares', 0)) / df['impressions']) * 100,
+                ((df['likes'] + df['comments'] + shares_col) / df['impressions']) * 100,
                 0
             )
             

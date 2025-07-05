@@ -271,14 +271,21 @@ REVIEW_QUEUE_CONFIG = {
 
 def load_env_config():
     """从环境变量加载敏感配置"""
-    return {
+    config = {
         'pipiads_username': os.getenv('PIPIADS_USERNAME', ''),
         'pipiads_password': os.getenv('PIPIADS_PASSWORD', ''),
         'notification_email': os.getenv('NOTIFICATION_EMAIL', ''),
         'slack_webhook': os.getenv('SLACK_WEBHOOK', ''),
         'proxy_url': os.getenv('PROXY_URL', ''),
-        'user_agent': os.getenv('USER_AGENT', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
+        'user_agent': os.getenv('USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36')
     }
+    
+    # 验证必要的配置
+    if not config['pipiads_username'] or not config['pipiads_password']:
+        print("⚠️ 警告: PIPIADS_USERNAME 或 PIPIADS_PASSWORD 环境变量未设置")
+        print("请设置环境变量或在 .env 文件中配置")
+    
+    return config
 
 # ================================
 # 辅助函数
@@ -301,6 +308,11 @@ def validate_config():
     
     if missing_vars:
         raise ValueError(f"Missing required environment variables: {missing_vars}")
+    
+    # 更新PIPIADS_CONFIG with environment variables
+    env_config = load_env_config()
+    PIPIADS_CONFIG['username'] = env_config['pipiads_username']
+    PIPIADS_CONFIG['password'] = env_config['pipiads_password']
     
     # 创建必要的目录
     for path in [PATHS['output_dir'], PATHS['logs_dir'], BROWSER_CONFIG['download_dir']]:

@@ -15,8 +15,12 @@ import seaborn as sns
 from matplotlib import rcParams
 import json
 
-# 设置中文字体
-rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'DejaVu Sans']
+# 设置中文字体 - macOS compatible
+import platform
+if platform.system() == 'Darwin':  # macOS
+    rcParams['font.sans-serif'] = ['Arial Unicode MS', 'Hiragino Sans GB', 'PingFang SC', 'SimHei', 'DejaVu Sans']
+else:  # Windows/Linux
+    rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'DejaVu Sans']
 rcParams['axes.unicode_minus'] = False
 
 from config import *
@@ -113,9 +117,9 @@ class ReportGenerator:
         
         # 基础统计
         total_products = len(self.data) if self.data is not None else 0
-        high_potential = len(self.data[self.data.get('high_potential', False) == True]) if self.data is not None else 0
-        a_level_products = len(self.data[self.data.get('recommendation_level', '') == 'A']) if self.data is not None else 0
-        b_level_products = len(self.data[self.data.get('recommendation_level', '') == 'B']) if self.data is not None else 0
+        high_potential = len(self.data[self.data['high_potential'] == True]) if self.data is not None and 'high_potential' in self.data.columns else 0
+        a_level_products = len(self.data[self.data['recommendation_level'] == 'A']) if self.data is not None and 'recommendation_level' in self.data.columns else 0
+        b_level_products = len(self.data[self.data['recommendation_level'] == 'B']) if self.data is not None and 'recommendation_level' in self.data.columns else 0
         
         # 获取今日关键词
         today_keywords = ', '.join(get_today_keywords())
@@ -336,7 +340,7 @@ class ReportGenerator:
             return "- 暂无需要持续关注的产品"
         
         # 获取B级产品作为关注清单
-        b_level = self.data[self.data.get('recommendation_level', '') == 'B']
+        b_level = self.data[self.data['recommendation_level'] == 'B'] if 'recommendation_level' in self.data.columns else pd.DataFrame()
         
         if len(b_level) == 0:
             return "- 暂无需要持续关注的产品"
@@ -483,7 +487,7 @@ class ReportGenerator:
         tasks = []
         
         # 基于A级产品生成任务
-        a_level = self.data[self.data.get('recommendation_level', '') == 'A']
+        a_level = self.data[self.data['recommendation_level'] == 'A'] if 'recommendation_level' in self.data.columns else pd.DataFrame()
         for _, row in a_level.head(3).iterrows():
             tasks.append(f"**跟进验证：** {row.get('product_name', 'Unknown')} - 进行深度市场验证")
         
@@ -526,7 +530,7 @@ class ReportGenerator:
         
         # 基于A级产品生成协调需求
         if self.data is not None:
-            a_level_count = len(self.data[self.data.get('recommendation_level', '') == 'A'])
+            a_level_count = len(self.data[self.data['recommendation_level'] == 'A']) if 'recommendation_level' in self.data.columns else 0
             if a_level_count > 0:
                 items.append("□ **需要产品开发确认：** A级产品开发可行性评估")
         
@@ -655,7 +659,7 @@ class ReportGenerator:
                 colors = {'A': 'red', 'B': 'orange', 'C': 'yellow', 'D': 'gray'}
                 
                 for level in ['A', 'B', 'C', 'D']:
-                    level_data = self.data[self.data.get('recommendation_level', '') == level]
+                    level_data = self.data[self.data['recommendation_level'] == level] if 'recommendation_level' in self.data.columns else pd.DataFrame()
                     if len(level_data) > 0:
                         plt.scatter(level_data['impressions'], level_data['like_rate'], 
                                   c=colors.get(level, 'gray'), label=f'{level}级产品', alpha=0.7)
@@ -792,11 +796,11 @@ class ReportGenerator:
             summary = {
                 'date': [datetime.now().strftime('%Y-%m-%d')],
                 'total_products': [len(self.data)],
-                'a_level_products': [len(self.data[self.data.get('recommendation_level', '') == 'A'])],
-                'b_level_products': [len(self.data[self.data.get('recommendation_level', '') == 'B'])],
-                'high_potential_products': [len(self.data[self.data.get('high_potential', False) == True])],
-                'average_like_rate': [self.data.get('like_rate', pd.Series([0])).mean()],
-                'average_price': [self.data.get('price', pd.Series([0])).mean()],
+                'a_level_products': [len(self.data[self.data['recommendation_level'] == 'A']) if 'recommendation_level' in self.data.columns else 0],
+                'b_level_products': [len(self.data[self.data['recommendation_level'] == 'B']) if 'recommendation_level' in self.data.columns else 0],
+                'high_potential_products': [len(self.data[self.data['high_potential'] == True]) if 'high_potential' in self.data.columns else 0],
+                'average_like_rate': [self.data['like_rate'].mean() if 'like_rate' in self.data.columns else 0],
+                'average_price': [self.data['price'].mean() if 'price' in self.data.columns else 0],
                 'alerts_count': [len(self.alerts)]
             }
             
@@ -847,7 +851,7 @@ class ReportGenerator:
         
         # A级产品需要立即关注
         if self.data is not None:
-            a_level_products = self.data[self.data.get('recommendation_level', '') == 'A']
+            a_level_products = self.data[self.data['recommendation_level'] == 'A'] if 'recommendation_level' in self.data.columns else pd.DataFrame()
             for _, row in a_level_products.iterrows():
                 urgent_items.append({
                     'type': 'high_priority_product',

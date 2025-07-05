@@ -3,6 +3,7 @@ Pipiads人机协作RPA模块
 管理RPA与人工之间的协作流程，确保重要决策由专业人员处理
 """
 
+import os
 import pandas as pd
 import json
 from datetime import datetime, timedelta
@@ -35,7 +36,9 @@ class HumanCollaborationManager:
     
     def __init__(self):
         self.logger = self._setup_logger()
-        self.db_path = os.path.join(PATHS['output_dir'], 'human_review.db')
+        # Ensure output directory exists
+        os.makedirs(PATHS['output_dir'], exist_ok=True)
+        self.db_path = os.path.abspath(os.path.join(PATHS['output_dir'], 'human_review.db'))
         self.review_queue = []
         self.completed_reviews = []
         self.escalated_items = []

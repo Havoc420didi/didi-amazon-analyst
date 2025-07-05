@@ -101,7 +101,10 @@ class WebSystemIntegration:
 class SharedDataManager:
     """共享数据管理器"""
     
-    def __init__(self, shared_db_path: str = "../shared/rpa_web_data.db"):
+    def __init__(self, shared_db_path: str = None):
+        if shared_db_path is None:
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            shared_db_path = os.path.join(base_dir, 'shared', 'rpa_web_data.db')
         self.db_path = shared_db_path
         self.init_shared_database()
     
