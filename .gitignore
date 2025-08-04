@@ -43,3 +43,4 @@ Makefile
 wrangler.toml
 supabase
 .*next
+/SuperClaude
