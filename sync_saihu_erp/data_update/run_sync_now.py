@@ -8,6 +8,7 @@ import sys
 import os
 from datetime import datetime, date, timedelta
 import json
+import time
 
 # 添加项目根目录到Python路径
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -26,10 +27,11 @@ def main():
     
     # 初始化同步作业
     sync_jobs = SyncJobs()
+    start_time = datetime.now()
     
     # 执行结果汇总
     results = {
-        'start_time': datetime.now().isoformat(),
+        'start_time': start_time.isoformat(),
         'tasks': []
     }
     
@@ -40,8 +42,14 @@ def main():
     print(f"  Client ID: {api_config.get('client_id', 'N/A')}")
     
     try:
+        # Web状态集成 - 报告开始
+        from src.utils.web_integration import report_status, report_progress, report_error, report_completed
+        
+        report_status('started', '赛狐ERP数据同步已启动')
+        
         # 1. 同步昨天的产品分析数据
         print("\n📊 1. 同步产品分析数据（昨天）...")
+        report_progress('正在同步产品分析数据', 20)
         yesterday = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
         analytics_result = sync_jobs.sync_product_analytics_by_date(yesterday)
         results['tasks'].append({
@@ -56,9 +64,11 @@ def main():
             print(f"   库存合并: {analytics_result.get('merged_count', 0)} 条")
         else:
             print(f"❌ 产品分析数据同步失败: {analytics_result.get('error', '未知错误')}")
+            report_error(f"产品分析数据同步失败: {analytics_result.get('error', '未知错误')}")
         
         # 2. 同步FBA库存数据
         print("\n📦 2. 同步FBA库存数据...")
+        report_progress('正在同步FBA库存数据', 50)
         fba_result = sync_jobs.sync_fba_inventory()
         results['tasks'].append({
             'task': 'fba_inventory',
@@ -69,9 +79,11 @@ def main():
             print(f"✅ FBA库存数据同步成功: {fba_result.get('data_count', 0)} 条数据")
         else:
             print(f"❌ FBA库存数据同步失败: {fba_result.get('error', '未知错误')}")
+            report_error(f"FBA库存数据同步失败: {fba_result.get('error', '未知错误')}")
         
         # 3. 同步库存明细数据
         print("\n🔍 3. 同步库存明细数据...")
+        report_progress('正在同步库存明细数据', 80)
         inventory_result = sync_jobs.sync_inventory_details()
         results['tasks'].append({
             'task': 'inventory_details',
@@ -82,6 +94,7 @@ def main():
             print(f"✅ 库存明细数据同步成功: {inventory_result.get('data_count', 0)} 条数据")
         else:
             print(f"❌ 库存明细数据同步失败: {inventory_result.get('error', '未知错误')}")
+            report_error(f"库存明细数据同步失败: {inventory_result.get('error', '未知错误')}")
         
         # 4. 获取同步状态
         print("\n📋 4. 获取同步状态...")
@@ -134,19 +147,30 @@ def main():
                 for item in fba_sample:
                     print(f"     SKU: {item.sku}, 可用库存: {item.available_quantity}, 总库存: {item.total_quantity}")
         
+        # Web状态集成 - 报告完成
+        end_time = datetime.now()
+        duration = end_time - start_time
+        duration_seconds = duration.total_seconds()
+        
+        total_records = sum(task['result'].get('processed_count', task['result'].get('data_count', 0)) 
+                          for task in results['tasks'] if task['result'].get('status') == 'success')
+        
+        report_completed(total_records, duration_seconds)
+        
     except Exception as e:
         print(f"🚨 数据同步执行失败: {e}")
         import traceback
         print("错误详情:")
         print(traceback.format_exc())
         results['error'] = str(e)
+        report_error(str(e))
         return False
     
     finally:
         # 保存执行结果
         results['end_time'] = datetime.now().isoformat()
-        duration = datetime.now() - datetime.fromisoformat(results['start_time'])
-        results['duration'] = str(duration)
+        final_duration = datetime.now() - start_time
+        results['duration'] = str(final_duration)
         
         # 保存结果到文件
         with open('sync_execution_result.json', 'w', encoding='utf-8') as f:
