@@ -3,11 +3,11 @@
  * 实现不同时间维度的数据聚合逻辑
  */
 
-import { SaiHuAdapter } from '@/lib/adapters/saihu-adapter';
+import PostgreSQLAdapter from '@/lib/adapters/postgresql-adapter';
 import { ProductAnalysisData, AnalysisPeriod } from '@/types/ai-analysis';
 
 export class DataAggregationService {
-  private static saiHuAdapter = new SaiHuAdapter();
+  private static pgAdapter = PostgreSQLAdapter;
 
   /**
    * 聚合多日数据生成分析数据
@@ -20,8 +20,8 @@ export class DataAggregationService {
     const endDate = analysisPeriod.end_date || new Date().toISOString().split('T')[0];
     const startDate = this.calculateStartDate(endDate, analysisPeriod.days);
 
-    // 从MySQL数据源获取指定时间范围内的所有数据
-    const result = await this.saiHuAdapter.getInventoryPoints({
+    // 从PostgreSQL数据源获取指定时间范围内的所有数据
+    const result = await this.pgAdapter.getInventoryPoints({
       asin,
       marketplace: warehouseLocation,
       startDate,
