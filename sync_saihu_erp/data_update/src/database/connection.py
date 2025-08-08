@@ -1,19 +1,20 @@
 """
-数据库连接管理模块
-提供数据库连接池管理和事务处理
+数据库连接管理模块 - PostgreSQL版本
+提供PostgreSQL连接池管理和事务处理
 """
-import pymysql
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from psycopg2.extensions import connection as PgConnection
 import logging
-from typing import Optional, Dict, Any, ContextManager
+from typing import Optional, Dict, Any, ContextManager, List, Tuple
 from contextlib import contextmanager
 from threading import Lock
-from pymysql.cursors import DictCursor
-from ..config import DatabaseConfig
+from ..config import Settings
 
 logger = logging.getLogger(__name__)
 
 class DatabaseManager:
-    """数据库连接管理器"""
+    """PostgreSQL数据库连接管理器"""
     
     _instance = None
     _lock = Lock()
@@ -27,54 +28,59 @@ class DatabaseManager:
         return cls._instance
     
     def __init__(self):
-        """初始化数据库管理器"""
+        """初始化PostgreSQL管理器"""
         if hasattr(self, '_initialized'):
             return
         
         self._initialized = True
-        self.connection_params = DatabaseConfig.get_connection_params()
-        self.pool_params = DatabaseConfig.get_pool_params()
+        self.settings = Settings()
+        self.connection_params = self._get_connection_params()
         self._connection_pool = []
         self._pool_lock = Lock()
-        self._max_connections = self.pool_params.get('pool_size', 10)
+        self._max_connections = 10
         self._current_connections = 0
         
-        logger.info("数据库管理器初始化完成")
+        logger.info("PostgreSQL数据库管理器初始化完成")
     
-    def _create_connection(self) -> pymysql.Connection:
-        """创建新的数据库连接"""
+    def _get_connection_params(self) -> Dict[str, Any]:
+        """获取PostgreSQL连接参数"""
+        db_config = self.settings.get('database', {})
+        return {
+            'host': db_config.get('host', 'localhost'),
+            'port': db_config.get('port', 5432),
+            'user': db_config.get('user', 'postgres'),
+            'password': db_config.get('password', ''),
+            'dbname': db_config.get('database', 'saihu_erp_sync'),
+            'sslmode': db_config.get('sslmode', 'prefer')
+        }
+    
+    def _create_connection(self) -> psycopg2.extensions.connection:
+        """创建新的PostgreSQL连接"""
         try:
-            connection = pymysql.connect(
-                host=self.connection_params['host'],
-                port=self.connection_params['port'],
-                user=self.connection_params['user'],
-                password=self.connection_params['password'],
-                database=self.connection_params['database'],
-                charset=self.connection_params['charset'],
-                cursorclass=DictCursor,
-                autocommit=self.connection_params.get('autocommit', False)
-            )
+            connection = psycopg2.connect(**self.connection_params)
+            connection.autocommit = False
             
             # 测试连接
             with connection.cursor() as cursor:
                 cursor.execute("SELECT 1")
+                cursor.fetchone()
             
-            logger.debug("数据库连接创建成功")
+            logger.debug("PostgreSQL连接创建成功")
             return connection
             
         except Exception as e:
-            logger.error(f"创建数据库连接失败: {e}")
+            logger.error(f"创建PostgreSQL连接失败: {e}")
             raise
     
-    def get_connection(self) -> pymysql.Connection:
-        """获取数据库连接"""
+    def get_connection(self) -> psycopg2.extensions.connection:
+        """获取PostgreSQL连接"""
         with self._pool_lock:
             # 尝试从连接池获取连接
             if self._connection_pool:
                 connection = self._connection_pool.pop()
                 # 检查连接是否有效
                 try:
-                    connection.ping(reconnect=True)
+                    connection.status  # 检查PostgreSQL连接状态
                     return connection
                 except:
                     logger.warning("连接池中的连接已失效，创建新连接")
@@ -89,9 +95,9 @@ class DatabaseManager:
             else:
                 raise Exception("连接池已满，无法创建新连接")
     
-    def return_connection(self, connection: pymysql.Connection) -> None:
-        """归还数据库连接到连接池"""
-        if connection and connection.open:
+    def return_connection(self, connection: psycopg2.extensions.connection) -> None:
+        """归还PostgreSQL连接到连接池"""
+        if connection and connection.closed == 0:  # 连接正常且未关闭
             with self._pool_lock:
                 if len(self._connection_pool) < self._max_connections:
                     self._connection_pool.append(connection)
@@ -103,98 +109,98 @@ class DatabaseManager:
                 self._current_connections -= 1
     
     @contextmanager
-    def get_db_connection(self) -> ContextManager[pymysql.Connection]:
-        """获取数据库连接的上下文管理器"""
+    def get_db_connection(self) -> ContextManager[psycopg2.extensions.connection]:
+        """获取PostgreSQL连接的上下文管理器"""
         connection = None
         try:
             connection = self.get_connection()
             yield connection
         except Exception as e:
-            if connection:
+            if connection and connection.closed == 0:
                 try:
                     connection.rollback()
                 except:
                     pass
-            logger.error(f"数据库操作异常: {e}")
+            logger.error(f"PostgreSQL操作异常: {e}")
             raise
         finally:
-            if connection:
+            if connection and connection.closed == 0:
                 self.return_connection(connection)
     
     @contextmanager
-    def get_db_transaction(self) -> ContextManager[pymysql.Connection]:
-        """获取事务连接的上下文管理器"""
+    def get_db_transaction(self) -> ContextManager[psycopg2.extensions.connection]:
+        """获取PostgreSQL事务连接的上下文管理器"""
         connection = None
         try:
             connection = self.get_connection()
-            connection.begin()
+            connection.autocommit = False
             yield connection
             connection.commit()
         except Exception as e:
-            if connection:
+            if connection and connection.closed == 0:
                 try:
                     connection.rollback()
                 except:
                     pass
-            logger.error(f"事务执行失败: {e}")
+            logger.error(f"PostgreSQL事务执行失败: {e}")
             raise
         finally:
-            if connection:
+            if connection and connection.closed == 0:
                 self.return_connection(connection)
     
-    def execute_query(self, sql: str, params: Optional[tuple] = None) -> list:
-        """执行查询SQL"""
+    def execute_query(self, sql: str, params: Optional[Tuple] = None) -> List[Dict[str, Any]]:
+        """执行查询SQL并返回Dict格式结果"""
         with self.get_db_connection() as conn:
-            with conn.cursor() as cursor:
+            with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                 cursor.execute(sql, params)
                 return cursor.fetchall()
     
-    def execute_single(self, sql: str, params: Optional[tuple] = None) -> Optional[dict]:
+    def execute_single(self, sql: str, params: Optional[Tuple] = None) -> Optional[Dict[str, Any]]:
         """执行查询单条记录"""
         with self.get_db_connection() as conn:
-            with conn.cursor() as cursor:
+            with conn.cursor(cursor_factory=RealDictCursor) as cursor:
                 cursor.execute(sql, params)
                 return cursor.fetchone()
     
-    def execute_update(self, sql: str, params: Optional[tuple] = None) -> int:
+    def execute_update(self, sql: str, params: Optional[Tuple] = None) -> int:
         """执行更新SQL"""
         with self.get_db_connection() as conn:
             with conn.cursor() as cursor:
-                affected_rows = cursor.execute(sql, params)
+                cursor.execute(sql, params)
                 conn.commit()
-                return affected_rows
+                return cursor.rowcount
     
-    def execute_batch(self, sql: str, params_list: list) -> int:
+    def execute_batch(self, sql: str, params_list: List[Tuple]) -> int:
         """批量执行SQL"""
         if not params_list:
             return 0
         
         with self.get_db_transaction() as conn:
             with conn.cursor() as cursor:
-                affected_rows = cursor.executemany(sql, params_list)
-                return affected_rows
+                cursor.executemany(sql, params_list)
+                return cursor.rowcount
     
     def execute_script(self, script: str) -> None:
-        """执行SQL脚本"""
+        """执行PostgreSQL SQL脚本"""
         with self.get_db_transaction() as conn:
             with conn.cursor() as cursor:
-                # 分割SQL语句
+                # 分割SQL语句（PostgreSQL兼容方式）
                 statements = [stmt.strip() for stmt in script.split(';') if stmt.strip()]
                 
                 for statement in statements:
-                    if statement:
+                    if statement and not statement.upper().startswith('REM'):
                         cursor.execute(statement)
     
     def test_connection(self) -> bool:
-        """测试数据库连接"""
+        """测试PostgreSQL连接"""
         try:
             with self.get_db_connection() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute("SELECT 1 as test")
                     result = cursor.fetchone()
-                    return result['test'] == 1
+                    return result and result[0] == 1
         except Exception as e:
-            logger.error(f"数据库连接测试失败: {e}")
+            logger.error(f"PostgreSQL连接测试失败: {e}")
             return False
     
     def get_connection_info(self) -> Dict[str, Any]:
@@ -221,26 +227,26 @@ class DatabaseManager:
         logger.info("所有数据库连接已关闭")
     
     def batch_save_fba_inventory(self, fba_inventory_list) -> int:
-        """批量保存FBA库存数据"""
+        """批量保存FBA库存数据 - PostgreSQL版本"""
         if not fba_inventory_list:
             return 0
         
-        # 根据实际表结构修正SQL语句
+        # PostgreSQL的UPSERT语法
         sql = """
         INSERT INTO fba_inventory 
         (sku, fn_sku, asin, marketplace_id, shop_id, available, reserved_customerorders, 
          inbound_working, inbound_shipped, inbound_receiving, unfulfillable, 
          total_inventory, snapshot_date, commodity_id, commodity_name, commodity_sku)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE
-        available = VALUES(available),
-        reserved_customerorders = VALUES(reserved_customerorders),
-        inbound_working = VALUES(inbound_working),
-        inbound_shipped = VALUES(inbound_shipped),
-        inbound_receiving = VALUES(inbound_receiving),
-        unfulfillable = VALUES(unfulfillable),
-        total_inventory = VALUES(total_inventory),
-        updated_at = CURRENT_TIMESTAMP
+        ON CONFLICT (sku, marketplace_id, shop_id) DO UPDATE
+        SET available = EXCLUDED.available,
+            reserved_customerorders = EXCLUDED.reserved_customerorders,
+            inbound_working = EXCLUDED.inbound_working,
+            inbound_shipped = EXCLUDED.inbound_shipped,
+            inbound_receiving = EXCLUDED.inbound_receiving,
+            unfulfillable = EXCLUDED.unfulfillable,
+            total_inventory = EXCLUDED.total_inventory,
+            updated_at = CURRENT_TIMESTAMP
         """
         
         params_list = []
@@ -274,7 +280,7 @@ class DatabaseManager:
             return 0
     
     def batch_save_inventory_details(self, inventory_details_list) -> int:
-        """批量保存库存明细数据"""
+        """批量保存库存明细数据 - PostgreSQL版本"""
         if not inventory_details_list:
             return 0
         
@@ -283,13 +289,14 @@ class DatabaseManager:
         (warehouse_id, commodity_id, commodity_sku, commodity_name, fn_sku,
          stock_available, stock_defective, stock_occupy, stock_wait, stock_plan,
          stock_all_num, per_purchase, total_purchase, created_at, updated_at)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
-        ON DUPLICATE KEY UPDATE
-        stock_available = VALUES(stock_available),
-        stock_all_num = VALUES(stock_all_num),
-        per_purchase = VALUES(per_purchase),
-        total_purchase = VALUES(total_purchase),
-        updated_at = NOW()
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        ON CONFLICT (warehouse_id, commodity_id) DO UPDATE
+        SET stock_available = EXCLUDED.stock_available,
+            stock_defective = EXCLUDED.stock_defective,
+            stock_all_num = EXCLUDED.stock_all_num,
+            per_purchase = EXCLUDED.per_purchase,
+            total_purchase = EXCLUDED.total_purchase,
+            updated_at = CURRENT_TIMESTAMP
         """
         
         params_list = []
@@ -320,7 +327,7 @@ class DatabaseManager:
             return 0
     
     def batch_save_product_analytics(self, analytics_list) -> int:
-        """批量保存产品分析数据 - 更新为包含所有新增字段"""
+        """批量保存产品分析数据 - PostgreSQL版本包含所有新增字段"""
         if not analytics_list:
             return 0
         
@@ -337,47 +344,47 @@ class DatabaseManager:
          spu_name, brand, product_id, created_at, updated_at)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
-        ON DUPLICATE KEY UPDATE
-        sales_amount = VALUES(sales_amount),
-        sales_quantity = VALUES(sales_quantity),
-        impressions = VALUES(impressions),
-        clicks = VALUES(clicks),
-        conversion_rate = VALUES(conversion_rate),
-        acos = VALUES(acos),
-        currency = VALUES(currency),
-        shop_id = VALUES(shop_id),
-        dev_id = VALUES(dev_id),
-        operator_id = VALUES(operator_id),
-        ad_cost = VALUES(ad_cost),
-        ad_sales = VALUES(ad_sales),
-        cpc = VALUES(cpc),
-        cpa = VALUES(cpa),
-        ad_orders = VALUES(ad_orders),
-        ad_conversion_rate = VALUES(ad_conversion_rate),
-        order_count = VALUES(order_count),
-        refund_count = VALUES(refund_count),
-        refund_rate = VALUES(refund_rate),
-        return_count = VALUES(return_count),
-        return_rate = VALUES(return_rate),
-        rating = VALUES(rating),
-        rating_count = VALUES(rating_count),
-        title = VALUES(title),
-        brand_name = VALUES(brand_name),
-        category_name = VALUES(category_name),
-        profit_amount = VALUES(profit_amount),
-        profit_rate = VALUES(profit_rate),
-        avg_profit = VALUES(avg_profit),
-        available_days = VALUES(available_days),
-        fba_inventory = VALUES(fba_inventory),
-        total_inventory = VALUES(total_inventory),
-        sessions = VALUES(sessions),
-        page_views = VALUES(page_views),
-        buy_box_price = VALUES(buy_box_price),
-        spu_name = VALUES(spu_name),
-        brand = VALUES(brand),
-        product_id = VALUES(product_id),
-        updated_at = NOW()
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        ON CONFLICT (asin, sku, data_date) DO UPDATE
+        SET sales_amount = EXCLUDED.sales_amount,
+            sales_quantity = EXCLUDED.sales_quantity,
+            impressions = EXCLUDED.impressions,
+            clicks = EXCLUDED.clicks,
+            conversion_rate = EXCLUDED.conversion_rate,
+            acos = EXCLUDED.acos,
+            currency = EXCLUDED.currency,
+            shop_id = EXCLUDED.shop_id,
+            dev_id = EXCLUDED.dev_id,
+            operator_id = EXCLUDED.operator_id,
+            ad_cost = EXCLUDED.ad_cost,
+            ad_sales = EXCLUDED.ad_sales,
+            cpc = EXCLUDED.cpc,
+            cpa = EXCLUDED.cpa,
+            ad_orders = EXCLUDED.ad_orders,
+            ad_conversion_rate = EXCLUDED.ad_conversion_rate,
+            order_count = EXCLUDED.order_count,
+            refund_count = EXCLUDED.refund_count,
+            refund_rate = EXCLUDED.refund_rate,
+            return_count = EXCLUDED.return_count,
+            return_rate = EXCLUDED.return_rate,
+            rating = EXCLUDED.rating,
+            rating_count = EXCLUDED.rating_count,
+            title = EXCLUDED.title,
+            brand_name = EXCLUDED.brand_name,
+            category_name = EXCLUDED.category_name,
+            profit_amount = EXCLUDED.profit_amount,
+            profit_rate = EXCLUDED.profit_rate,
+            avg_profit = EXCLUDED.avg_profit,
+            available_days = EXCLUDED.available_days,
+            fba_inventory = EXCLUDED.fba_inventory,
+            total_inventory = EXCLUDED.total_inventory,
+            sessions = EXCLUDED.sessions,
+            page_views = EXCLUDED.page_views,
+            buy_box_price = EXCLUDED.buy_box_price,
+            spu_name = EXCLUDED.spu_name,
+            brand = EXCLUDED.brand,
+            product_id = EXCLUDED.product_id,
+            updated_at = CURRENT_TIMESTAMP
         """
         
         params_list = []
@@ -455,13 +462,19 @@ class DatabaseManager:
         return self.batch_save_product_analytics(analytics_list)
     
     def table_exists(self, table_name: str) -> bool:
-        """检查表是否存在"""
+        """检查PostgreSQL表是否存在"""
         try:
-            sql = "SHOW TABLES LIKE %s"
+            sql = """
+                SELECT EXISTS (
+                    SELECT FROM information_schema.tables 
+                    WHERE table_schema = 'public' 
+                    AND table_name = %s
+                )
+            """
             result = self.execute_single(sql, (table_name,))
-            return result is not None
+            return result and result[0] or False
         except Exception as e:
-            logger.error(f"检查表存在性失败: {e}")
+            logger.error(f"检查PostgreSQL表存在性失败: {e}")
             return False
 
 

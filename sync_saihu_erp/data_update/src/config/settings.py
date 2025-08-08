@@ -49,12 +49,14 @@ class Settings:
         return {
             'database': {
                 'host': os.getenv('DB_HOST', 'localhost'),
-                'port': int(os.getenv('DB_PORT', '3306')),
-                'user': os.getenv('DB_USER', 'root'),
+                'port': int(os.getenv('DB_PORT', '5432')),
+                'user': os.getenv('DB_USER', 'postgres'),
                 'password': os.getenv('DB_PASSWORD', ''),
                 'database': os.getenv('DB_NAME', 'saihu_erp_sync'),
-                'charset': 'utf8mb4',
+                'sslmode': 'prefer',
                 'pool_size': 10,
+                'max_overflow': 20,
+                'pool_timeout': 30,
                 'pool_pre_ping': True,
                 'pool_recycle': 3600
             },

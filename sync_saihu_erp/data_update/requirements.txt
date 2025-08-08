@@ -1,7 +1,7 @@
 # 赛狐ERP数据同步系统依赖包
 
 # 核心依赖
-PyMySQL>=1.0.2
+psycopg2-binary>=2.9.0
 requests>=2.28.0
 PyYAML>=6.0
 python-dateutil>=2.8.2
