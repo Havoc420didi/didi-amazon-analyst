@@ -1,0 +1,367 @@
+# 赛狐ERP数据同步系统配置文件
+
+# 数据库配置
+database:
+  host: 47.79.123.234
+  port: 3306
+  user: saihu_erp_sync
+  password: "123456"
+  database: saihu_erp_sync
+  charset: utf8mb4
+  pool_size: 10
+  max_overflow: 20
+  pool_pre_ping: true
+  pool_recycle: 3600
+  pool_timeout: 30
+
+# API配置
+api:
+  # 基础URL，从环境变量或此处配置
+  base_url: "https://openapi.sellfox.com"
+  timeout: 60
+  retry_count: 3
+  retry_delay: 1
+  verify_ssl: true
+  user_agent: "SaihuERP-DataSync/1.0"
+  
+  # 认证配置
+  auth:
+    type: "oauth2"  # oauth2, bearer, api_key, basic
+    client_id: "368000"
+    client_secret: "3cc6efdf-6861-42e0-b9a5-874a0296640b"
+    token: ""       # Bearer token，建议从环境变量设置
+    username: ""    # Basic认证用户名
+    password: ""    # Basic认证密码
+    api_key: ""     # API Key
+    secret_key: ""  # Secret Key
+    # OAuth2签名认证相关配置
+    sign_key: "3cc6efdf-6861-42e0-b9a5-874a0296640b"    # 使用client_secret作为签名密钥
+    timestamp_key: "timestamp"  # 时间戳参数名
+    sign_key_param: "sign"     # 签名参数名
+  
+  # 限流配置
+  rate_limit:
+    requests_per_minute: 100
+    requests_per_hour: 5000
+    burst_size: 10
+    backoff_factor: 0.5
+  
+  # 接口端点配置
+  endpoints:
+    product_analytics:
+      endpoint: "/api/productAnalyze/new/pageList.json"
+      method: "POST"
+      timeout: 90
+      retry_count: 3
+    fba_inventory:
+      endpoint: "/api/v1/inventory/fba"
+      method: "GET"
+      timeout: 60
+      retry_count: 3
+    inventory_details:
+      endpoint: "/api/v1/inventory/details"
+      method: "GET"
+      timeout: 120
+      retry_count: 3
+
+# 同步配置
+sync:
+  # 批处理大小
+  batch_size: 500
+  
+  # 历史数据保留天数
+  max_history_days: 30
+  
+  # 是否启用数据验证
+  enable_validation: true
+  
+  # 并行工作线程数
+  parallel_workers: 4
+  
+  # 产品分析数据特殊配置
+  product_analytics:
+    # 更新前N天的历史数据
+    update_history_days: 7
+    
+    # 每日数据抓取时间 (HH:MM)
+    daily_sync_time: "01:00"
+    
+    # 历史数据更新时间 (HH:MM)
+    history_update_time: "02:00"
+  
+  # FBA库存配置
+  fba_inventory:
+    # 每日数据抓取时间 (HH:MM)
+    daily_sync_time: "06:00"
+    
+    # 低库存阈值
+    low_stock_threshold: 10
+  
+  # 库存明细配置
+  inventory_details:
+    # 每日数据抓取时间 (HH:MM)
+    daily_sync_time: "06:30"
+    
+    # 低库存阈值
+    low_stock_threshold: 10
+    
+    # 过期提醒天数
+    expiry_warning_days: 30
+  
+  # 库存点合并配置
+  inventory_merge:
+    # 是否启用库存点合并
+    enabled: true
+    
+    # 合并模式: auto(自动), manual(手动), scheduled(定时)
+    mode: "auto"
+    
+    # 定时合并时间 (HH:MM) - 在产品分析数据同步后执行
+    scheduled_time: "01:30"
+    
+    # 欧盟国家代码列表
+    eu_countries:
+      - "FR"  # 法国
+      - "DE"  # 德国
+      - "IT"  # 意大利
+      - "ES"  # 西班牙
+      - "PT"  # 葡萄牙
+      - "NL"  # 荷兰
+      - "BE"  # 比利时
+      - "LU"  # 卢森堡
+      - "AT"  # 奥地利
+      - "DK"  # 丹麦
+      - "SE"  # 瑞典
+      - "FI"  # 芬兰
+      - "EE"  # 爱沙尼亚
+      - "HR"  # 克罗地亚
+      - "SI"  # 斯洛文尼亚
+      - "CZ"  # 捷克
+      - "RO"  # 罗马尼亚
+      - "BG"  # 保加利亚
+      - "GR"  # 希腊
+      - "CY"  # 塞浦路斯
+      - "MT"  # 马耳他
+      - "IS"  # 冰岛
+      - "LI"  # 列支敦士登
+      - "MC"  # 摩纳哥
+      - "SM"  # 圣马力诺
+      - "VA"  # 梵蒂冈
+    
+    # 业务分析配置
+    analysis:
+      # 库存周转天数阈值
+      turnover_thresholds:
+        # 周转超标天数
+        max_days: 100
+        # 低库存天数
+        min_days: 45
+        # 断货预警天数
+        out_of_stock_days: 3
+      
+      # 有效库存点判断标准
+      effective_point:
+        # 日均销售额阈值
+        min_daily_sales: 16.7
+      
+      # 广告数据分析
+      ad_analysis:
+        # 广告点击率异常阈值
+        max_ctr: 0.2  # 20%
+        # 广告点击成本异常阈值  
+        max_cpc: 100.0  # $100
+        # ACOAS计算天数
+        acoas_days: 7
+    
+    # 数据验证配置
+    validation:
+      # 是否启用数据验证
+      enabled: true
+      
+      # ASIN格式验证
+      asin_validation:
+        min_length: 8
+        max_length: 15
+        pattern: "^[A-Z0-9]+$"
+      
+      # 数值范围验证
+      numeric_validation:
+        max_inventory: 999999
+        max_sales: 999999
+        max_price: 9999.99
+      
+      # 必需字段验证
+      required_fields:
+        - "asin"
+        - "product_name"
+        - "store" 
+        - "marketplace"
+    
+    # 性能优化配置
+    performance:
+      # 批处理大小
+      batch_size: 1000
+      
+      # 内存使用优化
+      memory_optimization:
+        # 启用内存优化
+        enabled: true
+        # 大数据集阈值
+        large_dataset_threshold: 10000
+        # 分块处理大小
+        chunk_size: 2000
+      
+      # 并行处理配置
+      parallel_processing:
+        # 是否启用并行处理
+        enabled: true
+        # 并行工作线程数
+        max_workers: 4
+    
+    # 历史数据管理
+    history:
+      # 是否保存历史快照
+      save_snapshots: true
+      
+      # 快照保留天数
+      snapshot_retention_days: 90
+      
+      # 是否启用增量更新
+      incremental_update: true
+
+# 调度器配置
+scheduler:
+  # 时区设置
+  timezone: "Asia/Shanghai"
+  
+  # 最大实例数
+  max_instances: 1
+  
+  # 合并作业
+  coalesce: true
+  
+  # 容错时间(秒)
+  misfire_grace_time: 300
+  
+  # 作业默认配置
+  job_defaults:
+    max_instances: 1
+    coalesce: true
+
+# 日志配置
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s"
+  
+  # 日志文件配置
+  file:
+    enabled: true
+    path: "logs/sync.log"
+    max_size: "10MB"
+    backup_count: 5
+    encoding: "utf-8"
+  
+  # 控制台日志
+  console:
+    enabled: true
+    level: "INFO"
+  
+  # 按模块设置日志级别
+  loggers:
+    "src.scrapers": "DEBUG"
+    "src.processors": "INFO"
+    "src.scheduler": "INFO"
+    "apscheduler": "WARNING"
+    "requests": "WARNING"
+
+# 监控配置
+monitoring:
+  # 健康检查
+  health_check:
+    enabled: true
+    interval_minutes: 5
+    timeout_seconds: 30
+  
+  # 性能监控
+  metrics:
+    enabled: true
+    collection_interval: 60
+  
+  # 告警配置
+  alerts:
+    enabled: true
+    
+    # 邮件告警
+    email:
+      enabled: false
+      smtp_host: "smtp.example.com"
+      smtp_port: 587
+      username: ""
+      password: ""
+      from_email: "sync@company.com"
+      to_emails: ["admin@company.com"]
+    
+    # 钉钉告警
+    dingtalk:
+      enabled: false
+      webhook_url: ""
+      secret: ""
+    
+    # 告警规则
+    rules:
+      # 同步失败告警
+      sync_failure:
+        enabled: true
+        threshold: 1  # 连续失败次数
+      
+      # 同步延迟告警
+      sync_delay:
+        enabled: true
+        threshold_minutes: 60
+      
+      # 数据质量告警
+      data_quality:
+        enabled: true
+        min_success_rate: 0.95
+
+# 安全配置
+security:
+  # API密钥加密
+  encrypt_keys: true
+  
+  # 敏感信息脱敏
+  mask_sensitive_data: true
+  
+  # 访问日志
+  access_log: true
+
+# 性能配置
+performance:
+  # 连接池配置
+  connection_pool:
+    min_connections: 5
+    max_connections: 20
+    
+  # 内存使用限制
+  memory_limit_mb: 1024
+  
+  # 缓存配置
+  cache:
+    enabled: true
+    ttl_seconds: 3600
+    max_entries: 10000
+
+# 开发/测试配置
+development:
+  # 是否启用调试模式
+  debug: false
+  
+  # 测试数据配置
+  test_data:
+    enabled: false
+    sample_size: 100
+  
+  # 模拟接口
+  mock_api:
+    enabled: false
+    response_delay_ms: 100

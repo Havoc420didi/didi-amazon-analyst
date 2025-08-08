@@ -27,6 +27,16 @@ export interface CreateAnalysisTask {
   warehouse_location: string;
   executor: string;
   product_data: ProductAnalysisData;
+  batch_id?: string; // 批量分析批次ID
+  analysis_period?: AnalysisPeriod; // 分析周期配置
+}
+
+// 分析周期配置
+export interface AnalysisPeriod {
+  type: 'single_day' | 'multi_day';
+  days: number; // 分析天数: 1, 3, 7, 14, 30
+  end_date?: string; // 结束日期，默认为今天
+  aggregation_method: 'average' | 'sum' | 'latest' | 'trend'; // 聚合方法
 }
 
 // 产品分析数据接口
@@ -72,6 +82,18 @@ export interface ProductAnalysisData {
     revenue: number;
     sales: number;
   }>;
+  
+  // 聚合分析元数据
+  aggregation_metadata?: {
+    analysis_period: AnalysisPeriod;
+    data_points_count: number; // 实际聚合的数据点数量
+    date_range: {
+      start_date: string;
+      end_date: string;
+    };
+    aggregation_quality: 'excellent' | 'good' | 'fair' | 'poor'; // 数据质量评估
+    missing_days?: string[]; // 缺失的日期
+  };
 }
 
 // AI分析结果接口
@@ -141,4 +163,27 @@ export interface AnalysisStats {
 export interface TaskRating {
   rating: number; // 1-5
   feedback?: string;
+}
+
+// 诊断场景枚举
+export type DiagnosisScenario = 
+  | 'inventory_shortage'     // 库存不足
+  | 'conversion_insufficient' // 转化率不足
+  | 'ad_insufficient'        // 广告投放不足
+  | 'inventory_excess'       // 库存积压
+  | 'ad_cost_high'          // 广告成本过高
+  | 'healthy_operation';     // 运营健康
+
+// 增强的产品分析数据接口
+export interface EnhancedProductAnalysisData extends ProductAnalysisData {
+  enhanced_metrics?: {
+    avg_price: number;
+    standard_cvr: number;
+    actual_cvr: number;
+    ctr: number;
+    cvr_health: 'good' | 'poor';
+    ctr_health: 'good' | 'poor';
+    acoas_health: 'good' | 'low' | 'high';
+    inventory_health: 'good' | 'low' | 'high';
+  };
 }

@@ -1,16 +1,17 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/db';
-import { inventoryRecords } from '@/db/schema';
-import { sql } from 'drizzle-orm';
+import { mysqlClient } from '@/lib/database/mysql-client';
 
 export async function GET() {
   try {
-    const result = await db()
-      .selectDistinct({ warehouse_location: inventoryRecords.warehouse_location })
-      .from(inventoryRecords)
-      .orderBy(inventoryRecords.warehouse_location);
+    // 从MySQL的inventory_points表获取库存点列表
+    const result = await mysqlClient.query(`
+      SELECT DISTINCT marketplace 
+      FROM inventory_points 
+      WHERE marketplace IS NOT NULL AND marketplace != ''
+      ORDER BY marketplace ASC
+    `);
     
-    const warehouseLocations = result.map(r => r.warehouse_location);
+    const warehouseLocations = result.data?.map((row: any) => row.marketplace) || [];
     
     return NextResponse.json({
       success: true,

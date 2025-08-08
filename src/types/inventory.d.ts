@@ -159,3 +159,55 @@ export interface ProductHistory {
     ad_performance: { date: string; spend: number; revenue: number; acos: number }[];
   };
 }
+
+// Excel原始数据格式（用于数据集成服务）
+export interface ProductData {
+  asin: string;
+  sku?: string;
+  productName: string;
+  salesPerson: string;
+  marketplace: string;
+  fbaAvailable: number;
+  fbaInbound: number;
+  localAvailable?: number;
+  averageSales: number;
+  sales7Days?: number;
+  adImpressions?: number;
+  adClicks?: number;
+  adSpend?: number;
+  adOrderCount?: number;
+  productTag?: string;
+  fbaSellable?: number;
+  averagePrice?: string;
+  dailySalesAmount?: number;
+}
+
+// 库存点数据（处理后的数据格式）
+export interface InventoryPoint {
+  asin: string;
+  productName: string;
+  salesPerson: string;
+  marketplace: string;
+  totalInventory: number;
+  fbaAvailable: number;
+  fbaInbound: number;
+  localAvailable: number;
+  averageSales: number;
+  dailySalesAmount: number;
+  turnoverDays: number;
+  adImpressions: number;
+  adClicks: number;
+  adSpend: number;
+  adOrderCount: number;
+  
+  // 计算得出的状态
+  isOutOfStock: boolean;
+  isLowInventory: boolean;
+  isTurnoverExceeded: boolean;
+  isEffectiveInventoryPoint: boolean;
+  
+  // 其他属性
+  productTag?: string;
+  fbaSellable?: number;
+  averagePrice?: string;
+}

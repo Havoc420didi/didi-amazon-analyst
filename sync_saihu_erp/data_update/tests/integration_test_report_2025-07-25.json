@@ -1,0 +1,26 @@
+{
+  "test_date": "2025-07-25",
+  "test_time": "2025-07-25T03:26:41.023630",
+  "status": "SUCCESS",
+  "merge_result": {
+    "status": "success",
+    "data_date": "2025-07-25",
+    "processed_count": 6,
+    "cleaned_count": 6,
+    "merged_count": 3,
+    "saved_count": 3,
+    "merge_statistics": {
+      "original_count": 6,
+      "merged_count": 3,
+      "eu_points": 1,
+      "non_eu_points": 2,
+      "compression_ratio": 0.5,
+      "merge_time": "2025-07-25T03:26:41.018819"
+    },
+    "processing_time": "2025-07-25T03:26:41.018831"
+  },
+  "database_config": {
+    "host": "47.79.123.234",
+    "database": "saihu_erp_sync"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "verification_time": "2025-08-06 03:35:23.519917",
+  "total_found": 0,
+  "has_business_data": false,
+  "results": {
+    "产品分析 - 无日期限制": {
+      "records": [],
+      "count": 0,
+      "total": 0
+    },
+    "产品分析 - 2025年全范围": {
+      "records": [],
+      "count": 0,
+      "total": 0
+    },
+    "产品分析 - 最近30天": {
+      "records": [],
+      "count": 0,
+      "total": 0
+    },
+    "FBA库存 - 完整数据": {
+      "records": [],
+      "count": 0,
+      "total": 0
+    }
+  },
+  "recommendations": [
+    "联系赛狐技术支持确认账户实际数据",
+    "检查是否需要指定店铺ID参数",
+    "确认API权限范围",
+    "验证业务数据是否存在"
+  ]
+}

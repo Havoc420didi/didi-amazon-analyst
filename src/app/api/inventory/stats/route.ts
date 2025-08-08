@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getInventoryStats } from '@/models/inventory';
+import { SaiHuAdapter } from '@/lib/adapters/saihu-adapter';
+
+const saiHuAdapter = new SaiHuAdapter();
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,7 +24,28 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const stats = await getInventoryStats(date_from, date_to);
+    // 使用MySQL数据源获取统计信息
+    const dashboardData = await saiHuAdapter.getAdDashboard({
+      start_date: date_from,
+      end_date: date_to
+    });
+
+    // 转换数据格式以匹配前端期望的格式
+    const stats = {
+      total_products: dashboardData.summary.totalProducts || 0,
+      total_inventory: dashboardData.summary.totalInventory || 0,
+      total_daily_revenue: dashboardData.summary.totalDailySales || 0,
+      total_ad_spend: dashboardData.summary.totalAdSpend || 0,
+      inventory_status_distribution: {
+        '库存不足': dashboardData.inventoryPoints?.filter(p => p.status.isOutOfStock).length || 0,
+        '周转合格': dashboardData.inventoryPoints?.filter(p => p.status.isEffective && !p.status.isTurnoverExceeded).length || 0,
+        '周转超标': dashboardData.inventoryPoints?.filter(p => p.status.isTurnoverExceeded).length || 0,
+      },
+      warehouse_distribution: dashboardData.distribution?.reduce((acc, item) => {
+        acc[item.marketplace] = item.pointCount || 0;
+        return acc;
+      }, {} as Record<string, number>) || {}
+    };
 
     return NextResponse.json({
       success: true,

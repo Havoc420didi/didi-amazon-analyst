@@ -1,53 +1,132 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { InventoryFilterParamsSchema } from '@/lib/inventory-schema';
-import { getInventoryRecords, getLatestInventoryRecords } from '@/models/inventory';
+import { SaiHuAdapter } from '@/lib/adapters/saihu-adapter';
+
+const saiHuAdapter = new SaiHuAdapter();
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     
     // 解析查询参数
-    const rawParams = {
-      sales_person: searchParams.get('sales_person') || undefined,
-      asin: searchParams.get('asin') || undefined,
-      warehouse_location: searchParams.get('warehouse_location') || undefined,
-      inventory_status: searchParams.get('inventory_status') || undefined,
-      date_from: searchParams.get('date_from') || undefined,
-      date_to: searchParams.get('date_to') || undefined,
-      page: searchParams.get('page') ? parseInt(searchParams.get('page')!) : undefined,
-      limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined,
-      sort_by: searchParams.get('sort_by') || undefined,
-      sort_order: searchParams.get('sort_order') as 'asc' | 'desc' || undefined,
-      latest_only: searchParams.get('latest_only') === 'true', // 是否只获取最新记录
-    };
+    const asin = searchParams.get('asin') || undefined;
+    const marketplace = searchParams.get('warehouse_location') || undefined;
+    const salesPerson = searchParams.get('sales_person') || undefined;
+    const dateFrom = searchParams.get('date_from') || undefined;
+    const dateTo = searchParams.get('date_to') || undefined;
+    const page = searchParams.get('page') ? parseInt(searchParams.get('page')!) : 1;
+    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 20;
+    const latestOnly = searchParams.get('latest_only') === 'true';
+    const sortBy = searchParams.get('sort_by') || 'date';
+    const sortOrder = searchParams.get('sort_order') || 'desc';
 
-    // 验证参数
-    const validatedParams = InventoryFilterParamsSchema.parse(rawParams);
+    // 如果请求最新数据，调整查询参数
+    if (latestOnly) {
+      // 获取最新数据时，限制为1条记录
+      const result = await saiHuAdapter.getInventoryPoints({
+        asin,
+        marketplace,
+        salesPerson,
+        startDate: dateFrom,
+        endDate: dateTo,
+        page: 1,
+        limit: 1
+      });
 
-    // 根据是否需要最新记录选择不同的查询方法
-    const result = rawParams.latest_only 
-      ? await getLatestInventoryRecords(validatedParams)
-      : await getInventoryRecords(validatedParams);
+      // 转换数据格式以匹配前端期望的格式
+      const transformedData = result.data.map(point => ({
+        id: point.id,
+        asin: point.asin,
+        product_name: point.productName,
+        sales_person: point.salesPerson || '未分配',
+        warehouse_location: point.marketplace,
+        date: point.dataDate,
+        fba_available: point.inventory.fbaAvailable,
+        fba_in_transit: point.inventory.fbaInbound,
+        local_warehouse: point.inventory.localAvailable,
+        total_inventory: point.inventory.total,
+        avg_sales: point.sales.averageSales,
+        daily_revenue: point.sales.dailySalesAmount,
+        inventory_turnover_days: point.sales.turnoverDays,
+        inventory_status: point.status.isOutOfStock ? '库存不足' : 
+                          point.status.isTurnoverExceeded ? '周转超标' : '周转合格',
+        ad_impressions: point.advertising.impressions,
+        ad_clicks: point.advertising.clicks,
+        ad_spend: point.advertising.spend,
+        ad_orders: 0, // AdMetrics接口中没有orders字段，使用默认值
+        ad_ctr: point.advertising.ctr,
+        ad_conversion_rate: point.advertising.cvr,
+        acos: point.advertising.acoas,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        analysis_count: 0
+      }));
+
+      return NextResponse.json({
+        success: true,
+        data: transformedData,
+        pagination: {
+          page: 1,
+          limit: 1,
+          total: result.total,
+          total_pages: 1
+        }
+      });
+    }
+
+    // 使用MySQL数据源获取库存点数据
+    const result = await saiHuAdapter.getInventoryPoints({
+      asin,
+      marketplace,
+      salesPerson,
+      startDate: dateFrom,
+      endDate: dateTo,
+      page,
+      limit
+    });
+
+    // 转换数据格式以匹配前端期望的格式
+    const transformedData = result.data.map(point => ({
+      id: point.id,
+      asin: point.asin,
+      product_name: point.productName,
+      sales_person: point.salesPerson || '未分配',
+      warehouse_location: point.marketplace,
+      date: point.dataDate,
+      fba_available: point.inventory.fbaAvailable,
+      fba_in_transit: point.inventory.fbaInbound,
+      local_warehouse: point.inventory.localAvailable,
+      total_inventory: point.inventory.total,
+      avg_sales: point.sales.averageSales,
+      daily_revenue: point.sales.dailySalesAmount,
+      inventory_turnover_days: point.sales.turnoverDays,
+      inventory_status: point.status.isOutOfStock ? '库存不足' : 
+                        point.status.isTurnoverExceeded ? '周转超标' : '周转合格',
+      ad_impressions: point.advertising.impressions,
+      ad_clicks: point.advertising.clicks,
+      ad_spend: point.advertising.spend,
+      ad_orders: 0, // AdMetrics接口中没有orders字段，使用默认值
+      ad_ctr: point.advertising.ctr,
+      ad_conversion_rate: point.advertising.cvr,
+      acos: point.advertising.acoas,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      analysis_count: 0
+    }));
 
     return NextResponse.json({
       success: true,
-      data: result.data,
-      pagination: result.pagination
+      data: transformedData,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        total_pages: result.totalPages
+      }
     });
 
   } catch (error) {
     console.error('Inventory query error:', error);
     
-    if (error instanceof Error && error.message.includes('Invalid')) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          message: '查询参数无效: ' + error.message 
-        },
-        { status: 400 }
-      );
-    }
-
     return NextResponse.json(
       { 
         success: false, 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db/config';
+import { db } from '@/db';
 import { rpaAnalysisResults } from '@/db/schema';
 
 /**
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     const analysisData = data.analysis_data;
     
     // 存储到数据库
-    const result = await db.insert(rpaAnalysisResults).values({
+    const result = await db().insert(rpaAnalysisResults).values({
       timestamp: analysisData.timestamp,
       totalProducts: analysisData.total_products,
       highPotentialProducts: analysisData.high_potential_products,

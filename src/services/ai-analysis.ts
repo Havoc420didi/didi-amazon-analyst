@@ -1,18 +1,25 @@
 import { deepseek } from '@ai-sdk/deepseek';
+import { openai } from '@ai-sdk/openai';
 import { generateText } from 'ai';
 import { ProductAnalysisData, AIAnalysisResult } from '@/types/ai-analysis';
 
-// Deepseek AI分析服务类
-export class DeepseekAnalysisService {
-  private apiKey: string;
-  private model: string;
+// AI分析服务类 - 支持多种AI提供商
+export class AIAnalysisService {
+  private deepseekApiKey: string;
+  private openaiApiKey: string;
+  private preferredProvider: 'deepseek' | 'openai';
 
   constructor() {
-    this.apiKey = process.env.DEEPSEEK_API_KEY || '';
-    this.model = 'deepseek-chat';
+    this.deepseekApiKey = process.env.DEEPSEEK_API_KEY || '';
+    this.openaiApiKey = process.env.OPENAI_API_KEY || '';
     
-    if (!this.apiKey) {
-      throw new Error('DEEPSEEK_API_KEY environment variable is required');
+    // 优先使用DeepSeek，如果没有则使用OpenAI
+    if (this.deepseekApiKey) {
+      this.preferredProvider = 'deepseek';
+    } else if (this.openaiApiKey) {
+      this.preferredProvider = 'openai';
+    } else {
+      throw new Error('需要设置 DEEPSEEK_API_KEY 或 OPENAI_API_KEY 环境变量');
     }
   }
 
@@ -220,12 +227,26 @@ ${history.map((h, i) => `${i + 1}. ${h.date}: 库存${h.inventory}件, 销售额
     try {
       const prompt = this.buildAnalysisPrompt(productData);
       
-      const result = await generateText({
-        model: deepseek(this.model),
-        prompt,
-        maxTokens: 2000,
-        temperature: 0.7,
-      });
+      let result;
+      
+      // 根据可用的API密钥选择AI提供商
+      if (this.preferredProvider === 'deepseek' && this.deepseekApiKey) {
+        result = await generateText({
+          model: deepseek('deepseek-chat'),
+          prompt,
+          maxTokens: 2000,
+          temperature: 0.7,
+        });
+      } else if (this.openaiApiKey) {
+        result = await generateText({
+          model: openai('gpt-4o-mini'),
+          prompt,
+          maxTokens: 2000,
+          temperature: 0.7,
+        });
+      } else {
+        throw new Error('没有可用的AI API密钥');
+      }
 
       const processingTime = Date.now() - startTime;
       const parsedResult = this.parseAnalysisResult(result.text);
@@ -237,7 +258,7 @@ ${history.map((h, i) => `${i + 1}. ${h.date}: 库存${h.inventory}件, 销售额
         recommendations: parsedResult.recommendations
       };
     } catch (error) {
-      console.error('Deepseek analysis failed:', error);
+      console.error('AI analysis failed:', error);
       throw new Error(`AI分析生成失败: ${error instanceof Error ? error.message : '未知错误'}`);
     }
   }
@@ -268,11 +289,11 @@ ${history.map((h, i) => `${i + 1}. ${h.date}: 库存${h.inventory}件, 销售额
 }
 
 // 单例模式导出
-let analysisService: DeepseekAnalysisService | null = null;
+let analysisService: AIAnalysisService | null = null;
 
-export function getAnalysisService(): DeepseekAnalysisService {
+export function getAnalysisService(): AIAnalysisService {
   if (!analysisService) {
-    analysisService = new DeepseekAnalysisService();
+    analysisService = new AIAnalysisService();
   }
   return analysisService;
 }

@@ -53,7 +53,9 @@ export default function InventoryDataTable() {
     sales_person: '',
     asin: '',
     warehouse_location: '',
-    inventory_status: ''
+    inventory_status: '',
+    date_from: '',
+    date_to: ''
   });
 
   // ASIN搜索输入状态（用于防抖）
@@ -68,14 +70,24 @@ export default function InventoryDataTable() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({
+      // 构建查询参数
+      const queryParams: Record<string, string> = {
         page: pagination.page.toString(),
-        limit: pagination.limit.toString(),
-        latest_only: 'true', // 只获取最新记录
-        ...Object.fromEntries(
-          Object.entries(filters).filter(([_, value]) => value !== '')
-        )
+        limit: pagination.limit.toString()
+      };
+
+      // 添加日期筛选条件
+      if (filters.date_from) queryParams.date_from = filters.date_from;
+      if (filters.date_to) queryParams.date_to = filters.date_to;
+
+      // 添加其他筛选条件
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== '' && key !== 'date_from' && key !== 'date_to') {
+          queryParams[key] = value;
+        }
       });
+
+      const params = new URLSearchParams(queryParams);
 
       console.log('搜索参数:', Object.fromEntries(params));
       const response = await fetch(`/api/inventory?${params}`);
@@ -242,6 +254,22 @@ export default function InventoryDataTable() {
               <SelectItem value="周转超标">周转超标</SelectItem>
             </SelectContent>
           </Select>
+
+          <Input
+            type="date"
+            placeholder="开始日期"
+            value={filters.date_from}
+            onChange={(e) => handleFilterChange('date_from', e.target.value)}
+            className="w-[160px]"
+          />
+
+          <Input
+            type="date"
+            placeholder="结束日期"
+            value={filters.date_to}
+            onChange={(e) => handleFilterChange('date_to', e.target.value)}
+            className="w-[160px]"
+          />
         </div>
       </CardHeader>
 
@@ -264,11 +292,20 @@ export default function InventoryDataTable() {
                   <TableHead>业务员</TableHead>
                   <TableHead>库存点</TableHead>
                   <TableHead className="text-right">FBA可用</TableHead>
-                  <TableHead className="text-right">总库存</TableHead>
+                  <TableHead className="text-right">FBA在途</TableHead>
+                  <TableHead className="text-right">本地仓</TableHead>
+                  <TableHead className="text-right">平均销量</TableHead>
                   <TableHead className="text-right">日均销售额</TableHead>
+                  <TableHead className="text-right">总库存</TableHead>
+                  <TableHead className="text-right">广告曝光量</TableHead>
+                  <TableHead className="text-right">广告点击量</TableHead>
+                  <TableHead className="text-right">广告花费</TableHead>
+                  <TableHead className="text-right">广告订单量</TableHead>
+                  <TableHead className="text-right">库存周转天数</TableHead>
                   <TableHead>库存状态</TableHead>
-                  <TableHead className="text-center">分析次数</TableHead>
-                  <TableHead>日期</TableHead>
+                  <TableHead className="text-right">广告点击率</TableHead>
+                  <TableHead className="text-right">广告转化率</TableHead>
+                  <TableHead className="text-right">ACOAS</TableHead>
                   <TableHead className="text-right">操作</TableHead>
                 </TableRow>
               </TableHeader>
@@ -287,21 +324,46 @@ export default function InventoryDataTable() {
                       {record.fba_available.toLocaleString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      {record.total_inventory.toLocaleString()}
+                      {record.fba_in_transit.toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {record.local_warehouse.toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {record.avg_sales.toLocaleString()}
                     </TableCell>
                     <TableCell className="text-right">
                       ${record.daily_revenue.toLocaleString()}
                     </TableCell>
+                    <TableCell className="text-right">
+                      {record.total_inventory.toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {record.ad_impressions.toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {record.ad_clicks.toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      ${record.ad_spend.toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {record.ad_orders.toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {record.inventory_turnover_days ? record.inventory_turnover_days.toFixed(1) : '-'}
+                    </TableCell>
                     <TableCell>
                       {getInventoryStatusBadge(record.inventory_status)}
                     </TableCell>
-                    <TableCell className="text-center">
-                      <Badge variant="outline" className="text-xs">
-                        {record.analysis_count || 0}
-                      </Badge>
+                    <TableCell className="text-right">
+                      {record.ad_ctr ? (record.ad_ctr * 100).toFixed(2) + '%' : '-'}
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {record.date}
+                    <TableCell className="text-right">
+                      {record.ad_conversion_rate ? (record.ad_conversion_rate * 100).toFixed(2) + '%' : '-'}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {record.acos ? (record.acos * 100).toFixed(2) + '%' : '-'}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button

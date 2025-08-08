@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helios Agent 执行流程可视化</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 95%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .mermaid {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .critical { background-color: #e74c3c; }
+        .medium { background-color: #f39c12; }
+        .info { background-color: #27ae60; }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #7f8c8d;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            margin-bottom: -2px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .metric-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        /* 超宽屏下的网格优化 */
+        @media (min-width: 2560px) {
+            .metric-cards {
+                grid-template-columns: repeat(8, 1fr);
+                gap: 20px;
+            }
+        }
+        
+        @media (min-width: 1920px) and (max-width: 2559px) {
+            .metric-cards {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .metric-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .metric-card h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+        
+        .metric-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .metric-card .desc {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted #999;
+            cursor: help;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .node-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .action-item {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .rule-item {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        
+        /* 新的决策流程样式 - 优化超宽屏 */
+        .decision-flow {
+            padding: 30px;
+            background: linear-gradient(to bottom, #f8f9fa, #fff);
+            border-radius: 12px;
+            overflow-x: auto;
+            min-height: 600px;
+        }
+        
+        .flow-start {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .flow-node {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            position: relative;
+            font-size: 14px;
+        }
+        
+        .flow-node h4 {
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .flow-node::after {
+            content: '';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 25px;
+            background: #95a5a6;
+        }
+        
+        .flow-level {
+            margin-bottom: 30px;
+        }
+        
+        .flow-question {
+            background: #2c3e50;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0 auto 25px;
+            display: inline-block;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            font-size: 14px;
+        }
+        
+        .flow-branches {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+        
+        .flow-path {
+            flex: 0 1 280px;
+            position: relative;
+        }
+        
+        .path-label {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        
+        .flow-path.yes .path-label {
+            color: #27ae60;
+            border: 2px solid #27ae60;
+        }
+        
+        .flow-path.no .path-label {
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+        
+        .flow-result {
+            margin-top: 20px;
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-size: 13px;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+        }
+        
+        .flow-result.critical .result-card {
+            border-left: 5px solid #e74c3c;
+            background: linear-gradient(to right, #fff5f5, white);
+        }
+        
+        .flow-result.medium .result-card {
+            border-left: 5px solid #f39c12;
+            background: linear-gradient(to right, #fffbf0, white);
+        }
+        
+        .flow-result.healthy .result-card {
+            border-left: 5px solid #27ae60;
+            background: linear-gradient(to right, #f0fff4, white);
+        }
+        
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .result-icon {
+            font-size: 24px;
+        }
+        
+        .result-header h5 {
+            margin: 0;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        
+        .result-desc {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .result-actions {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .result-actions h6 {
+            margin: 0 0 15px 0;
+            color: #34495e;
+            font-size: 16px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+        }
+        
+        .action-item {
+            background: white;
+            padding: 8px 12px;
+            margin: 6px 0;
+            border-radius: 5px;
+            font-size: 12px;
+            border: 1px solid #ecf0f1;
+            transition: all 0.2s;
+        }
+        
+        .action-item:hover {
+            border-color: #3498db;
+            box-shadow: 0 2px 6px rgba(52, 152, 219, 0.1);
+        }
+        
+        .flow-sublevel {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 2px dashed #ecf0f1;
+        }
+        
+        /* 连接线样式 */
+        .flow-branches::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 2px;
+            background: #95a5a6;
+        }
+        
+        .flow-path::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 30px;
+            background: #95a5a6;
+        }
+        
+        /* 超宽屏优化 */
+        @media (min-width: 2560px) {
+            .decision-flow {
+                padding: 20px 40px;
+                font-size: 16px;
+            }
+            
+            .flow-branches {
+                gap: 50px;
+                justify-content: space-evenly;
+            }
+            
+            .flow-path {
+                flex: 0 1 400px;
+            }
+            
+            .result-card {
+                padding: 20px;
+                font-size: 14px;
+            }
+            
+            .flow-question {
+                font-size: 16px;
+                padding: 14px 35px;
+            }
+            
+            .action-item {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+            
+            /* 紧凑视图超宽屏优化 */
+            .compact-container {
+                min-width: 90%;
+            }
+            
+            .compact-row {
+                gap: 25px;
+                padding: 0 40px;
+            }
+            
+            .compact-decision {
+                max-width: none;
+                flex: 1;
+            }
+            
+            .decision-box {
+                font-size: 14px;
+                padding: 12px 20px;
+            }
+            
+            .decision-result h5 {
+                font-size: 16px;
+            }
+            
+            .decision-result p {
+                font-size: 13px;
+            }
+        }
+        
+        /* 紧凑横向视图样式 */
+        .compact-flow {
+            background: linear-gradient(to bottom, #f8f9fa, #fff);
+            border-radius: 12px;
+            padding: 30px;
+            overflow-x: auto;
+        }
+        
+        .compact-container {
+            min-width: 1200px;
+        }
+        
+        .compact-start {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .compact-node.start {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .compact-node.start h4 {
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .compact-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .compact-decision {
+            flex: 1;
+            text-align: center;
+            max-width: 200px;
+        }
+        
+        .decision-box {
+            background: #2c3e50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .decision-result {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .decision-result:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .decision-result.critical {
+            border-top: 4px solid #e74c3c;
+            background: linear-gradient(to bottom, #fff5f5, white);
+        }
+        
+        .decision-result.medium {
+            border-top: 4px solid #f39c12;
+            background: linear-gradient(to bottom, #fffbf0, white);
+        }
+        
+        .decision-result.healthy {
+            border-top: 4px solid #27ae60;
+            background: linear-gradient(to bottom, #f0fff4, white);
+        }
+        
+        .decision-result h5 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .decision-result p {
+            margin: 0;
+            font-size: 12px;
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+        
+        /* 响应式优化 */
+        @media (max-width: 768px) {
+            .flow-branches {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .flow-path {
+                max-width: 100%;
+            }
+            
+            .flow-branches::before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Helios Agent 执行流程可视化</h1>
+        <p>Helios 是一个基于 LangGraph 构建的亚马逊运营 AI 助手，专注于单品 (ASIN) 数据分析和行动建议生成。</p>
+    </div>
+
+    <div class="container">
+        <h2>📊 系统架构概览</h2>
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('main-flow')">主执行流程</button>
+            <button class="tab" onclick="showTab('diagnosis')">诊断决策树</button>
+            <button class="tab" onclick="showTab('details')">节点详情</button>
+            <button class="tab" onclick="showTab('examples')">执行示例</button>
+        </div>
+
+        <div id="main-flow" class="tab-content active">
+            <h3>主执行流程图</h3>
+            <div class="mermaid">
+graph TD
+    Start[开始分析] --> Input["输入产品数据<br/>ASIN/销量/库存/广告等"]
+    Input --> Validate{数据验证}
+    
+    Validate -->|验证失败| Error[返回错误信息]
+    Validate -->|验证通过| Parallel{并行分析}
+    
+    Parallel --> Inventory["库存分析节点<br/>计算周转天数<br/>评估健康度"]
+    Parallel --> AdPerf["广告性能分析<br/>CTR/CVR/ACOAS<br/>效率评估"]
+    
+    Inventory --> Diagnosis["综合诊断节点<br/>识别主要矛盾"]
+    AdPerf --> Diagnosis
+    
+    Diagnosis --> ActionGen["行动生成节点<br/>生成具体建议"]
+    ActionGen --> RuleCheck{规则检查}
+    
+    RuleCheck -->|违反规则| Regenerate["重新生成<br/>符合规则的行动"]
+    Regenerate --> ActionGen
+    RuleCheck -->|通过检查| Format["输出格式化<br/>生成报告"]
+    
+    Format --> Output["输出分析报告<br/>分析+行动"]
+    Output --> End[结束]
+    
+    style Start fill:#27ae60,stroke:#229954,stroke-width:2px,color:#fff
+    style End fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff
+    style Diagnosis fill:#f39c12,stroke:#d68910,stroke-width:3px,color:#fff
+    style Error fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff
+            </div>
+            
+            <div class="node-details">
+                <h4>🔍 关键节点说明</h4>
+                <ul>
+                    <li><strong>数据验证</strong>：检查必需字段（ASIN、销量、收入等）和数值合理性</li>
+                    <li><strong>并行分析</strong>：同时进行库存和广告性能分析，提高执行效率</li>
+                    <li><strong>综合诊断</strong>：按优先级识别6种业务场景的主要矛盾</li>
+                    <li><strong>规则检查</strong>：确保生成的行动符合业务规则（如ACOAS限制、Coupon比例等）</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="diagnosis" class="tab-content">
+            <h3>综合诊断决策树</h3>
+            
+            <!-- 横向紧凑布局按钮 -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button onclick="toggleCompactView()" style="padding: 8px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    切换到紧凑视图
+                </button>
+            </div>
+            
+            <!-- 重新设计的决策树 -->
+            <div class="decision-flow">
+                <!-- 起始点 -->
+                <div class="flow-start">
+                    <div class="flow-node start">
+                        <h4>产品数据输入</h4>
+                    </div>
+                </div>
+                
+                <!-- 第一层决策 -->
+                <div class="flow-level">
+                    <div class="flow-question">库存天数 < 40?</div>
+                    <div class="flow-branches">
+                        <div class="flow-path yes">
+                            <div class="path-label">是</div>
+                            <div class="flow-result critical">
+                                <div class="result-card">
+                                    <div class="result-header">
+                                        <span class="result-icon">🔴</span>
+                                        <h5>库存不足</h5>
+                                    </div>
+                                    <p class="result-desc">断货风险</p>
+                                    <div class="result-actions">
+                                        <h6>紧急补货计划</h6>
+                                        <div class="action-item">✈️ 空运补货</div>
+                                        <div class="action-item">🚢 海运备货</div>
+                                        <div class="action-item">📅 BD延后3周</div>
+                                        <div class="action-item">💰 适度提价控速</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flow-path no">
+                            <div class="path-label">否</div>
+                            
+                            <!-- 第二层决策 -->
+                            <div class="flow-sublevel">
+                                <div class="flow-question">转化率 < 标准90%?</div>
+                                <div class="flow-branches">
+                                    <div class="flow-path yes">
+                                        <div class="path-label">是</div>
+                                        <div class="flow-result critical">
+                                            <div class="result-card">
+                                                <div class="result-header">
+                                                    <span class="result-icon">🔴</span>
+                                                    <h5>转化率不足</h5>
+                                                </div>
+                                                <p class="result-desc">广告效率低</p>
+                                                <div class="result-actions">
+                                                    <h6>提升转化率</h6>
+                                                    <div class="action-item">🏷️ 15-20% Coupon</div>
+                                                    <div class="action-item">💸 限制广告5$/天</div>
+                                                    <div class="action-item">📝 优化Listing</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flow-path no">
+                                        <div class="path-label">否</div>
+                                        
+                                        <!-- 第三层决策 -->
+                                        <div class="flow-sublevel">
+                                            <div class="flow-question">ACOAS < 7%?</div>
+                                            <div class="flow-branches">
+                                                <div class="flow-path yes">
+                                                    <div class="path-label">是</div>
+                                                    <div class="flow-result medium">
+                                                        <div class="result-card">
+                                                            <div class="result-header">
+                                                                <span class="result-icon">🟡</span>
+                                                                <h5>广告投放不足</h5>
+                                                            </div>
+                                                            <p class="result-desc">限制增长</p>
+                                                            <div class="result-actions">
+                                                                <h6>扩大广告投放</h6>
+                                                                <div class="action-item">📈 预算提升50%</div>
+                                                                <div class="action-item">🎯 BID提升10-15%</div>
+                                                                <div class="action-item">🔍 测试长尾词</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="flow-path no">
+                                                    <div class="path-label">否</div>
+                                                    
+                                                    <!-- 第四层决策 -->
+                                                    <div class="flow-sublevel">
+                                                        <div class="flow-question">库存天数 > 90?</div>
+                                                        <div class="flow-branches">
+                                                            <div class="flow-path yes">
+                                                                <div class="path-label">是</div>
+                                                                <div class="flow-result medium">
+                                                                    <div class="result-card">
+                                                                        <div class="result-header">
+                                                                            <span class="result-icon">🟡</span>
+                                                                            <h5>库存积压</h5>
+                                                                        </div>
+                                                                        <p class="result-desc">资金占用</p>
+                                                                        <div class="result-actions">
+                                                                            <h6>清理库存</h6>
+                                                                            <div class="action-item">🛑 停止补货</div>
+                                                                            <div class="action-item">🏷️ 15-30%折扣</div>
+                                                                            <div class="action-item">📢 适度增加广告</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flow-path no">
+                                                                <div class="path-label">否</div>
+                                                                
+                                                                <!-- 第五层决策 -->
+                                                                <div class="flow-sublevel">
+                                                                    <div class="flow-question">ACOAS > 15%?</div>
+                                                                    <div class="flow-branches">
+                                                                        <div class="flow-path yes">
+                                                                            <div class="path-label">是</div>
+                                                                            <div class="flow-result medium">
+                                                                                <div class="result-card">
+                                                                                    <div class="result-header">
+                                                                                        <span class="result-icon">🟡</span>
+                                                                                        <h5>广告成本过高</h5>
+                                                                                    </div>
+                                                                                    <p class="result-desc">侵蚀利润</p>
+                                                                                    <div class="result-actions">
+                                                                                        <h6>优化广告效率</h6>
+                                                                                        <div class="action-item">📉 BID降低10%</div>
+                                                                                        <div class="action-item">🚫 暂停高ACOS词</div>
+                                                                                        <div class="action-item">🎯 优化否定词</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="flow-path no">
+                                                                            <div class="path-label">否</div>
+                                                                            <div class="flow-result healthy">
+                                                                                <div class="result-card">
+                                                                                    <div class="result-header">
+                                                                                        <span class="result-icon">🟢</span>
+                                                                                        <h5>运营健康</h5>
+                                                                                    </div>
+                                                                                    <p class="result-desc">表现良好</p>
+                                                                                    <div class="result-actions">
+                                                                                        <h6>保持并探索</h6>
+                                                                                        <div class="action-item">✅ 维持现状</div>
+                                                                                        <div class="action-item">🚀 探索增长</div>
+                                                                                        <div class="action-item">🎯 考虑BD</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 紧凑横向视图 -->
+            <div class="compact-flow" style="display: none;">
+                <div class="compact-container">
+                    <div class="compact-start">
+                        <div class="compact-node start">
+                            <h4>产品数据输入</h4>
+                        </div>
+                    </div>
+                    
+                    <div class="compact-decisions">
+                        <!-- 第一行：所有决策问题 -->
+                        <div class="compact-row decisions-row">
+                            <div class="compact-decision">
+                                <div class="decision-box">库存天数 < 40?</div>
+                                <div class="decision-result critical">
+                                    <h5>🔴 库存不足</h5>
+                                    <p>✈️ 空运补货<br/>📅 BD延后3周</p>
+                                </div>
+                            </div>
+                            
+                            <div class="compact-decision">
+                                <div class="decision-box">转化率 < 标准90%?</div>
+                                <div class="decision-result critical">
+                                    <h5>🔴 转化率不足</h5>
+                                    <p>🏷️ 15-20% Coupon<br/>💸 限制广告5$/天</p>
+                                </div>
+                            </div>
+                            
+                            <div class="compact-decision">
+                                <div class="decision-box">ACOAS < 7%?</div>
+                                <div class="decision-result medium">
+                                    <h5>🟡 广告投放不足</h5>
+                                    <p>📈 预算提升50%<br/>🎯 BID提升10-15%</p>
+                                </div>
+                            </div>
+                            
+                            <div class="compact-decision">
+                                <div class="decision-box">库存天数 > 90?</div>
+                                <div class="decision-result medium">
+                                    <h5>🟡 库存积压</h5>
+                                    <p>🛑 停止补货<br/>🏷️ 15-30%折扣</p>
+                                </div>
+                            </div>
+                            
+                            <div class="compact-decision">
+                                <div class="decision-box">ACOAS > 15%?</div>
+                                <div class="decision-result medium">
+                                    <h5>🟡 广告成本过高</h5>
+                                    <p>📉 BID降低10%<br/>🚫 暂停高ACOS词</p>
+                                </div>
+                            </div>
+                            
+                            <div class="compact-decision">
+                                <div class="decision-box">所有指标正常</div>
+                                <div class="decision-result healthy">
+                                    <h5>🟢 运营健康</h5>
+                                    <p>✅ 维持现状<br/>🚀 探索增长</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color critical"></div>
+                    <span>🔴 紧急问题（Critical）</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color medium"></div>
+                    <span>🟡 中等问题（Medium）</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color info"></div>
+                    <span>🟢 健康状态（Healthy）</span>
+                </div>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>诊断场景</th>
+                        <th>判断条件</th>
+                        <th>主要行动</th>
+                        <th>优先级</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>库存不足</td>
+                        <td>库存天数 < 40天</td>
+                        <td>紧急空运补货 + 海运备货</td>
+                        <td><span style="color: #e74c3c;">最高</span></td>
+                    </tr>
+                    <tr>
+                        <td>转化率不足</td>
+                        <td>CVR < 标准的90%</td>
+                        <td>Coupon促销 + 限制广告花费</td>
+                        <td><span style="color: #e74c3c;">高</span></td>
+                    </tr>
+                    <tr>
+                        <td>广告投放不足</td>
+                        <td>ACOAS < 7%</td>
+                        <td>扩大广告预算和出价</td>
+                        <td><span style="color: #f39c12;">中</span></td>
+                    </tr>
+                    <tr>
+                        <td>库存积压</td>
+                        <td>库存天数 > 90天</td>
+                        <td>停止补货 + 促销清货</td>
+                        <td><span style="color: #f39c12;">中</span></td>
+                    </tr>
+                    <tr>
+                        <td>广告成本过高</td>
+                        <td>ACOAS > 15%</td>
+                        <td>降低出价 + 优化关键词</td>
+                        <td><span style="color: #f39c12;">中</span></td>
+                    </tr>
+                    <tr>
+                        <td>运营健康</td>
+                        <td>所有指标正常</td>
+                        <td>保持现状 + 探索增长</td>
+                        <td><span style="color: #27ae60;">低</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="details" class="tab-content">
+            <h3>📋 节点执行详情</h3>
+            
+            <h4>1. 数据验证节点</h4>
+            <div class="node-details">
+                <p><strong>功能</strong>：验证输入数据的完整性和合理性</p>
+                <p><strong>必需字段</strong>：</p>
+                <ul>
+                    <li><code>asin</code> - 产品ASIN</li>
+                    <li><code>marketplace</code> - 市场/库存点</li>
+                    <li><code>daily_avg_sales</code> - 日均销量</li>
+                    <li><code>daily_revenue</code> - 日均销售额</li>
+                </ul>
+                <p><strong>验证规则</strong>：</p>
+                <ul>
+                    <li>日均销量必须大于0</li>
+                    <li>CTR和CVR必须在0-1之间</li>
+                    <li>所有金额字段必须为非负数</li>
+                </ul>
+            </div>
+            
+            <h4>2. 库存分析节点</h4>
+            <div class="node-details">
+                <p><strong>计算指标</strong>：</p>
+                <ul>
+                    <li><strong>总库存</strong> = FBA可用 + FBA在途 + 本地仓库存</li>
+                    <li><strong>库存周转天数</strong> = 总库存 ÷ 日均销量</li>
+                    <li><strong>库存状态评估</strong>：
+                        <ul>
+                            <li>< 40天：库存不足（断货风险）</li>
+                            <li>40-90天：库存健康</li>
+                            <li>> 90天：库存积压</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <h4>3. 广告性能分析节点</h4>
+            <div class="node-details">
+                <p><strong>核心指标</strong>：</p>
+                <ul>
+                    <li><strong>CTR（点击率）</strong>：健康标准 ≥ 0.5%</li>
+                    <li><strong>CVR（转化率）</strong>：根据客单价动态计算标准</li>
+                    <li><strong>ACOAS（广告成本销售比）</strong>：健康区间 7%-15%</li>
+                </ul>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>客单价区间</th>
+                            <th>标准转化率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>$7-10</td><td>18%</td></tr>
+                        <tr><td>$10-15</td><td>15%</td></tr>
+                        <tr><td>$15-20</td><td>13%</td></tr>
+                        <tr><td>$20-25</td><td>10%</td></tr>
+                        <tr><td>$25-30</td><td>8%</td></tr>
+                        <tr><td>$30-35</td><td>6%</td></tr>
+                        <tr><td>$35+</td><td>4-5%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h4>4. 规则检查节点</h4>
+            <div class="rule-item">
+                <h5>⚠️ 强制业务规则</h5>
+                <ul>
+                    <li><strong>ACOAS > 25%</strong>：必须大幅降低广告出价</li>
+                    <li><strong>CVR < 标准80%</strong>：强制降BID至0.1</li>
+                    <li><strong>Coupon限制</strong>：正常不超过20%（特殊需审批）</li>
+                    <li><strong>广告管理</strong>：转化率达标的广告不能关闭</li>
+                    <li><strong>节日产品</strong>：易过季产品不能补货</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="examples" class="tab-content">
+            <h3>🎯 执行示例</h3>
+            
+            <h4>示例数据输入</h4>
+            <div class="metric-cards">
+                <div class="metric-card">
+                    <h4>基础信息</h4>
+                    <div class="value">B08XYZ123</div>
+                    <div class="desc">ASIN (UK市场)</div>
+                </div>
+                <div class="metric-card">
+                    <h4>库存状况</h4>
+                    <div class="value">2,495</div>
+                    <div class="desc">总库存 (件)</div>
+                </div>
+                <div class="metric-card">
+                    <h4>日均销量</h4>
+                    <div class="value">11.8</div>
+                    <div class="desc">件/天</div>
+                </div>
+                <div class="metric-card">
+                    <h4>库存周转</h4>
+                    <div class="value" style="color: #e74c3c;">211.4</div>
+                    <div class="desc">天 (严重过剩)</div>
+                </div>
+            </div>
+            
+            <div class="metric-cards">
+                <div class="metric-card">
+                    <h4>广告CTR</h4>
+                    <div class="value">0.54%</div>
+                    <div class="desc">点击率 (健康)</div>
+                </div>
+                <div class="metric-card">
+                    <h4>广告CVR</h4>
+                    <div class="value" style="color: #f39c12;">15%</div>
+                    <div class="desc">转化率 (低于标准)</div>
+                </div>
+                <div class="metric-card">
+                    <h4>ACOAS</h4>
+                    <div class="value" style="color: #f39c12;">15.12%</div>
+                    <div class="desc">广告成本占比 (偏高)</div>
+                </div>
+                <div class="metric-card">
+                    <h4>客单价</h4>
+                    <div class="value">$8.96</div>
+                    <div class="desc">标准CVR: 18%</div>
+                </div>
+            </div>
+            
+            <h4>诊断结果</h4>
+            <div class="action-item">
+                <h5>🎯 主要矛盾：转化率不足</h5>
+                <p>当前转化率仅为标准的83.3%，是限制销售的主要瓶颈。这个问题直接导致了广告投入产出比不佳，并且使得庞大的库存无法被有效消化。</p>
+            </div>
+            
+            <h4>生成的行动建议</h4>
+            <div class="action-item">
+                <h5>1. 提升转化率与销量</h5>
+                <ul>
+                    <li>立即创建一个15%的Coupon，以最快速度提升转化率和日均销量</li>
+                    <li>优化Listing的Bullet Points，突出产品核心卖点</li>
+                    <li>更新A+页面，增加对比图表和使用场景</li>
+                </ul>
+            </div>
+            
+            <div class="action-item">
+                <h5>2. 控制广告成本</h5>
+                <ul>
+                    <li>将广告日预算限制在5美金以内，避免浪费流量</li>
+                    <li>将所有广告活动BID降低15%（因ACOAS偏高）</li>
+                </ul>
+            </div>
+            
+            <div class="action-item">
+                <h5>3. 库存管控</h5>
+                <ul>
+                    <li>立即暂停所有补货，包括本地仓调拨</li>
+                    <li>直到库存周转天数下降至90天以内</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>💡 使用说明</h2>
+        <p>1. 系统会自动识别产品的主要问题，并按优先级生成行动建议</p>
+        <p>2. 所有建议都基于亚马逊运营最佳实践和业务规则</p>
+        <p>3. 建议执行后，需持续监控3天内的数据变化</p>
+        <p>4. 特殊情况（如20%以上Coupon）需要主管审批</p>
+    </div>
+
+    <script>
+        // 初始化 Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'base',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+
+        // Tab 切换功能
+        function showTab(tabName) {
+            // 隐藏所有内容
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 移除所有标签的active类
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 显示选中的内容
+            document.getElementById(tabName).classList.add('active');
+            
+            // 设置选中的标签为active
+            event.target.classList.add('active');
+            
+            // 重新渲染 Mermaid 图表
+            mermaid.init();
+        }
+        
+        // 切换视图功能
+        function toggleCompactView() {
+            const normalFlow = document.querySelector('.decision-flow');
+            const compactFlow = document.querySelector('.compact-flow');
+            const button = event.target;
+            
+            if (normalFlow.style.display === 'none') {
+                normalFlow.style.display = 'block';
+                compactFlow.style.display = 'none';
+                button.textContent = '切换到紧凑视图';
+            } else {
+                normalFlow.style.display = 'none';
+                compactFlow.style.display = 'block';
+                button.textContent = '切换到树形视图';
+            }
+        }
+        
+        
+        // 添加交互提示
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为所有具有tooltip类的元素添加提示
+            const tooltips = document.querySelectorAll('.tooltip');
+            tooltips.forEach(tooltip => {
+                tooltip.addEventListener('mouseenter', function() {
+                    this.querySelector('.tooltiptext').style.visibility = 'visible';
+                    this.querySelector('.tooltiptext').style.opacity = '1';
+                });
+                
+                tooltip.addEventListener('mouseleave', function() {
+                    this.querySelector('.tooltiptext').style.visibility = 'hidden';
+                    this.querySelector('.tooltiptext').style.opacity = '0';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

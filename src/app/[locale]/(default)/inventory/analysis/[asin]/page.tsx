@@ -2,12 +2,15 @@ import { Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, Brain, BarChart3, Target, Calendar, Clock, TrendingUp as TrendingUpIcon } from 'lucide-react';
 import Link from 'next/link';
 import { AnalysisPanel, AnalysisHistory } from '@/components/ai-analysis';
 import { ProductAnalysisData } from '@/types/ai-analysis';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
+import { AnalysisPeriodSelector } from '@/components/ai-analysis/analysis-period-selector';
+import { AnalysisTrigger } from '@/components/ai-analysis/analysis-trigger';
+import { QuickAnalysisButtons } from '@/components/ai-analysis/quick-analysis-buttons';
 
 interface Props {
   params: Promise<{
@@ -22,20 +25,56 @@ interface Props {
 // 从API获取产品分析数据
 async function getAnalysisData(asin: string, warehouse?: string) {
   try {
+    console.log(`[getAnalysisData] 开始获取ASIN: ${asin}, 库存点: ${warehouse || '未指定'}`);
+    
     // 获取最新的产品记录
-    const latestResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/inventory?asin=${asin}&warehouse_location=${warehouse || ''}&latest_only=true&limit=1`);
+    const latestUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/inventory?asin=${asin}&warehouse_location=${warehouse || ''}&latest_only=true&limit=1`;
+    console.log(`[getAnalysisData] 请求最新数据: ${latestUrl}`);
+    
+    const latestResponse = await fetch(latestUrl);
     const latestResult = await latestResponse.json();
     
+    console.log(`[getAnalysisData] 最新数据响应:`, {
+      success: latestResult.success,
+      dataLength: latestResult.data?.length || 0,
+      error: latestResult.error || latestResult.message
+    });
+    
     // 获取历史数据（最近30天）
-    const historyResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/inventory?asin=${asin}&warehouse_location=${warehouse || ''}&limit=30&sort_by=date&sort_order=desc`);
+    const historyUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/inventory?asin=${asin}&warehouse_location=${warehouse || ''}&limit=30&sort_by=date&sort_order=desc`;
+    console.log(`[getAnalysisData] 请求历史数据: ${historyUrl}`);
+    
+    const historyResponse = await fetch(historyUrl);
     const historyResult = await historyResponse.json();
     
+    console.log(`[getAnalysisData] 历史数据响应:`, {
+      success: historyResult.success,
+      dataLength: historyResult.data?.length || 0,
+      error: historyResult.error || historyResult.message
+    });
+    
     if (!latestResult.success || !latestResult.data || latestResult.data.length === 0) {
-      throw new Error('未找到产品数据');
+      console.error(`[getAnalysisData] 未找到产品数据:`, {
+        asin,
+        warehouse,
+        latestResult
+      });
+      throw new Error(`未找到产品数据 - ASIN: ${asin}, 库存点: ${warehouse || '未指定'}`);
     }
     
     const current = latestResult.data[0];
     const history = historyResult.success ? historyResult.data : [];
+    
+    console.log(`[getAnalysisData] 数据获取成功:`, {
+      currentData: {
+        asin: current.asin,
+        product_name: current.product_name,
+        warehouse_location: current.warehouse_location,
+        total_inventory: current.total_inventory,
+        daily_revenue: current.daily_revenue
+      },
+      historyCount: history.length
+    });
     
     // 计算趋势（如果有历史数据）
     let trends = {
@@ -51,6 +90,8 @@ async function getAnalysisData(asin: string, warehouse?: string) {
         revenue_change: previous ? ((current.daily_revenue - previous.daily_revenue) / previous.daily_revenue * 100) : 0,
         sales_change: previous ? ((current.avg_sales - previous.avg_sales) / previous.avg_sales * 100) : 0,
       };
+      
+      console.log(`[getAnalysisData] 趋势计算:`, trends);
     }
     
     return {
@@ -70,7 +111,7 @@ async function getAnalysisData(asin: string, warehouse?: string) {
         inventory_turnover_days: current.inventory_turnover_days,
       },
       trends,
-      history: history.map(record => ({
+      history: history.map((record: any) => ({
         date: record.date,
         inventory: record.total_inventory,
         fba_available: record.fba_available,
@@ -82,7 +123,13 @@ async function getAnalysisData(asin: string, warehouse?: string) {
       }))
     };
   } catch (error) {
-    console.error('Failed to fetch analysis data:', error);
+    console.error('[getAnalysisData] 获取分析数据失败:', {
+      asin,
+      warehouse,
+      error: error instanceof Error ? error.message : error,
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    
     // 返回默认数据作为fallback
     return {
       product: {
@@ -161,6 +208,31 @@ export default async function AnalysisPage({ params, searchParams }: Props) {
     ad_orders: 0,
     trends: data.trends,
     history: data.history
+  };
+
+  // 创建库存点数据用于AI分析
+  const inventoryPoint = {
+    asin: data.product.asin,
+    productName: data.product.name,
+    marketplace: data.product.warehouse_location,
+    salesPerson: '系统数据',
+    totalInventory: data.current.total_inventory,
+    fbaAvailable: data.current.fba_available,
+    fbaInbound: data.current.fba_in_transit,
+    localAvailable: data.current.local_warehouse,
+    averageSales: data.current.avg_sales,
+    dailySalesAmount: data.current.daily_revenue,
+    turnoverDays: data.current.inventory_turnover_days,
+    adImpressions: 0,
+    adClicks: 0,
+    adSpend: 0,
+    adOrderCount: 0,
+    isOutOfStock: data.current.inventory_status === '库存不足',
+    isLowInventory: data.current.inventory_status === '库存不足',
+    isTurnoverExceeded: data.current.inventory_status === '周转超标',
+    isZeroSales: data.current.avg_sales === 0,
+    isEffectivePoint: data.current.daily_revenue > 0,
+    isEffectiveInventoryPoint: data.current.daily_revenue >= 16.7
   };
 
   return (
@@ -301,6 +373,113 @@ export default async function AnalysisPage({ params, searchParams }: Props) {
         key={`analysis-${data.product.asin}-${data.product.warehouse_location}`}
       />
 
+      {/* 新增：多日AI分析区域 */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Brain className="h-5 w-5 text-purple-600" />
+            多日AI智能分析
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            基于历史数据的深度AI分析，支持多种时间维度和聚合方式
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* 左侧：分析周期配置 */}
+            <div>
+              <h4 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-blue-600" />
+                分析配置
+              </h4>
+              <div className="space-y-4">
+                {/* 快速选择按钮 */}
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-3 block">快速选择</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex flex-col items-center gap-1 h-auto py-3"
+                    >
+                      <Target className="h-4 w-4" />
+                      <span className="text-xs">单日</span>
+                      <Badge variant="secondary" className="text-xs px-1">实时</Badge>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex flex-col items-center gap-1 h-auto py-3"
+                    >
+                      <TrendingUpIcon className="h-4 w-4" />
+                      <span className="text-xs">3日</span>
+                      <Badge variant="secondary" className="text-xs px-1">趋势</Badge>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex flex-col items-center gap-1 h-auto py-3"
+                    >
+                      <BarChart3 className="h-4 w-4" />
+                      <span className="text-xs">7日</span>
+                      <Badge variant="secondary" className="text-xs px-1">周报</Badge>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex flex-col items-center gap-1 h-auto py-3"
+                    >
+                      <Calendar className="h-4 w-4" />
+                      <span className="text-xs">30日</span>
+                      <Badge variant="secondary" className="text-xs px-1">月报</Badge>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* 聚合方法说明 */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h5 className="font-medium text-blue-900 mb-2">聚合方法说明</h5>
+                  <div className="text-sm text-blue-800 space-y-1">
+                    <p>• <strong>平均值</strong>: 计算期间内指标的平均值，适合日常运营分析</p>
+                    <p>• <strong>最新值</strong>: 使用最近一天的数据，保持数据时效性</p>
+                    <p>• <strong>累积值</strong>: 计算期间内的累积总量，适合评估总体表现</p>
+                    <p>• <strong>趋势加权</strong>: 近期数据权重更高，捕捉最新变化趋势</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 右侧：AI分析触发 */}
+            <div>
+              <h4 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Brain className="h-5 w-5 text-purple-600" />
+                AI分析触发
+              </h4>
+              <div className="space-y-4">
+                {/* 分析触发组件 */}
+                <AnalysisTrigger 
+                  inventoryPoint={inventoryPoint}
+                  size="lg"
+                  variant="default"
+                  className="w-full"
+                />
+                
+                {/* 分析说明 */}
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                  <h5 className="font-medium text-purple-900 mb-2">多日分析优势</h5>
+                  <div className="text-sm text-purple-800 space-y-1">
+                    <p>• <strong>数据稳定性</strong>: 基于多日数据，减少单日波动影响</p>
+                    <p>• <strong>趋势识别</strong>: 更好地识别产品表现趋势</p>
+                    <p>• <strong>深度洞察</strong>: 提供更全面的运营建议</p>
+                    <p>• <strong>智能聚合</strong>: 自动选择最适合的聚合方式</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* 第三部分：分析历史 */}
       <AnalysisHistory 
         asin={data.product.asin}
@@ -329,7 +508,7 @@ export default async function AnalysisPage({ params, searchParams }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {data.history.map((record, index) => (
+                {data.history.map((record: any, index: number) => (
                   <tr key={record.date} className={`border-b ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
                     <td className="p-3 text-sm font-mono">{record.date}</td>
                     <td className="p-3 text-sm text-right">{record.inventory.toLocaleString()}</td>

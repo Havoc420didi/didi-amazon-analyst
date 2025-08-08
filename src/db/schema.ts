@@ -202,6 +202,7 @@ export const aiAnalysisTasks = pgTable(
     warehouse_location: varchar({ length: 50 }).notNull(),
     status: varchar({ length: 20 }).notNull().default('pending'), // pending, processing, completed, failed
     executor: varchar({ length: 100 }).notNull(),
+    batch_id: varchar({ length: 50 }), // 批量分析批次ID
     
     // 数据快照 (JSON存储，快速开发)
     product_data: text('product_data').notNull(),

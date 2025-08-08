@@ -1,0 +1,41 @@
+{
+  "start_time": "2025-08-06T20:51:28.524174",
+  "tasks": [
+    {
+      "task": "product_analytics_yesterday",
+      "date": "2025-08-05",
+      "result": {
+        "status": "error",
+        "task_id": "product_analytics_2025-08-05_1754531488",
+        "data_date": "2025-08-05",
+        "error": "'ProductAnalyticsScraper' object has no attribute 'scrape_by_date'",
+        "execution_time": "2025-08-07T01:51:32.255214"
+      }
+    },
+    {
+      "task": "fba_inventory",
+      "result": {
+        "status": "error",
+        "task_id": "fba_inventory_1754531495",
+        "error": "'FbaInventoryScraper' object has no attribute 'scrape'",
+        "execution_time": "2025-08-07T01:51:38.344658"
+      }
+    },
+    {
+      "task": "inventory_details",
+      "result": {
+        "status": "error",
+        "task_id": "inventory_details_1754531501",
+        "error": "'InventoryDetailsScraper' object has no attribute 'scrape'",
+        "execution_time": "2025-08-07T01:51:44.700815"
+      }
+    }
+  ],
+  "sync_status": {
+    "error": "object of type 'type' has no len()",
+    "status_time": "2025-08-07T01:51:55.117396"
+  },
+  "error": "object of type 'type' has no len()",
+  "end_time": "2025-08-06T20:51:57.512639",
+  "duration": "0:00:28.988477"
+}

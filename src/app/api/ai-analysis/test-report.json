@@ -1,0 +1,146 @@
+{
+  "timestamp": "2025-08-01T07:11:44.087Z",
+  "environment": {
+    "database_host": "47.79.123.234",
+    "database_name": "saihu_erp_sync",
+    "node_version": "v20.19.3"
+  },
+  "test_summary": {
+    "total_tests": 3,
+    "passed": 3,
+    "failed": 0,
+    "partial": 0
+  },
+  "detailed_results": {
+    "database": {
+      "status": "success",
+      "details": {
+        "tablesCount": 10,
+        "inventoryDataAvailable": true,
+        "sampleData": [
+          {
+            "asin": "B0BZWDYF2L",
+            "warehouse_location": "A1F83G8C2ARO7P",
+            "quantity": 0,
+            "total_inventory": 0,
+            "snapshot_date": "2025-07-29T00:00:00.000Z"
+          },
+          {
+            "asin": "B0BZWGG41W",
+            "warehouse_location": "A1F83G8C2ARO7P",
+            "quantity": 0,
+            "total_inventory": 0,
+            "snapshot_date": "2025-07-29T00:00:00.000Z"
+          }
+        ]
+      },
+      "error": null
+    },
+    "aiAnalysis": {
+      "status": "success",
+      "details": {
+        "taskNumber": "TEST1754032303484",
+        "analysis": {
+          "overall_score": 57,
+          "stock_health_score": 70,
+          "profitability_score": 50,
+          "marketing_efficiency_score": 50,
+          "recommendations": [],
+          "risk_factors": [],
+          "opportunities": []
+        },
+        "processing_time": 1002,
+        "tokens_used": 1250,
+        "ai_model": "test-analysis-engine"
+      },
+      "error": null
+    },
+    "apiEndpoints": {
+      "status": "success",
+      "details": [
+        {
+          "name": "AI分析任务查询",
+          "method": "GET",
+          "url": "/api/ai-analysis",
+          "params": {
+            "page": 1,
+            "limit": 5
+          },
+          "status": "success",
+          "response": {
+            "success": true,
+            "data": [
+              {
+                "id": 1,
+                "task_number": "TEST001",
+                "asin": "B08TEST1234",
+                "warehouse_location": "UK",
+                "status": "completed",
+                "created_at": "2025-08-01T07:11:43.685Z"
+              }
+            ],
+            "pagination": {
+              "page": 1,
+              "limit": 5,
+              "total": 1,
+              "total_pages": 1
+            }
+          },
+          "error": null
+        },
+        {
+          "name": "AI分析统计信息",
+          "method": "POST",
+          "url": "/api/ai-analysis",
+          "body": {
+            "action": "stats"
+          },
+          "status": "success",
+          "response": {
+            "success": true,
+            "data": {
+              "total_tasks": 156,
+              "completed_tasks": 142,
+              "pending_tasks": 8,
+              "failed_tasks": 6,
+              "avg_processing_time": 2340,
+              "total_tokens_used": 189750,
+              "rating_distribution": {
+                "1": 2,
+                "2": 5,
+                "3": 18,
+                "4": 67,
+                "5": 50
+              }
+            }
+          },
+          "error": null
+        },
+        {
+          "name": "获取最新分析",
+          "method": "POST",
+          "url": "/api/ai-analysis",
+          "body": {
+            "action": "latest",
+            "asin": "B08TEST1234",
+            "warehouse_location": "UK"
+          },
+          "status": "success",
+          "response": {
+            "success": true,
+            "data": {
+              "id": 1,
+              "task_number": "TEST001",
+              "asin": "B08TEST1234",
+              "warehouse_location": "UK",
+              "status": "completed",
+              "analysis_content": "{\"overall_score\":85,\"recommendations\":[\"优化广告投放\",\"增加库存\"]}"
+            }
+          },
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  }
+}

@@ -1,14 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AIAnalysisModel } from '@/models/ai-analysis';
 import { getAnalysisService, DeepseekAnalysisService } from '@/services/ai-analysis';
-import { CreateAnalysisTask, ProductAnalysisData } from '@/types/ai-analysis';
+import { getHeliosAgent } from '@/app/api/ai-analysis/agents/helios-agent';
+import { getRulesEngine } from '@/app/api/ai-analysis/engines/rules-engine';
+import DataIntegrationService from '@/app/api/ai-analysis/services/data-integration';
+import { CreateAnalysisTask, ProductAnalysisData, AnalysisPeriod } from '@/types/ai-analysis';
+import DataAggregationService from '@/app/api/ai-analysis/services/data-aggregation';
 import { z } from 'zod';
+
+// 分析周期配置验证schema
+const analysisPeriodSchema = z.object({
+  type: z.enum(['single_day', 'multi_day']),
+  days: z.number().min(1).max(30),
+  end_date: z.string().optional(),
+  aggregation_method: z.enum(['average', 'sum', 'latest', 'trend'])
+}).optional();
 
 // 请求参数验证schema
 const generateAnalysisSchema = z.object({
   asin: z.string().min(1, 'ASIN不能为空'),
   warehouse_location: z.string().min(1, '库存点不能为空'),
   executor: z.string().min(1, '执行人不能为空'),
+  analysis_period: analysisPeriodSchema,
   product_data: z.object({
     asin: z.string(),
     product_name: z.string(),
@@ -57,10 +70,31 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const { asin, warehouse_location, executor, product_data } = validationResult.data;
+    const { asin, warehouse_location, executor, analysis_period, product_data } = validationResult.data;
 
-    // 验证产品数据完整性
-    const validation = DeepseekAnalysisService.validateProductData(product_data);
+    let finalProductData: ProductAnalysisData;
+
+    // 如果是多日分析，使用聚合服务获取数据
+    if (analysis_period?.type === 'multi_day') {
+      try {
+        finalProductData = await DataAggregationService.aggregateMultiDayData(
+          asin,
+          warehouse_location,
+          analysis_period
+        );
+      } catch (aggregationError) {
+        return NextResponse.json({
+          success: false,
+          error: '多日数据聚合失败',
+          details: aggregationError instanceof Error ? aggregationError.message : '未知错误'
+        }, { status: 400 });
+      }
+    } else {
+      finalProductData = product_data;
+    }
+
+    // 使用数据集成服务验证产品数据完整性
+    const validation = DataIntegrationService.validateProductData(finalProductData);
     if (!validation.valid) {
       return NextResponse.json({
         success: false,
@@ -90,11 +124,12 @@ export async function POST(request: NextRequest) {
       asin,
       warehouse_location,
       executor,
-      product_data
+      product_data: finalProductData,
+      analysis_period
     });
 
     // 异步处理分析（不阻塞响应）
-    processAnalysisAsync(task.id, product_data).catch(error => {
+    processAnalysisAsync(task.id, finalProductData).catch(error => {
       console.error(`Analysis task ${task.id} failed:`, error);
       // 更新任务状态为失败
       AIAnalysisModel.updateTaskStatus(task.id, 'failed', {
@@ -122,25 +157,72 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// 异步处理分析任务
+// 异步处理分析任务 - 集成LangGraph智能体
 async function processAnalysisAsync(taskId: number, productData: ProductAnalysisData) {
   try {
     // 更新任务状态为处理中
     await AIAnalysisModel.updateTaskStatus(taskId, 'processing');
 
-    // 调用AI服务生成分析
-    const analysisService = getAnalysisService();
-    const result = await analysisService.generateAnalysis(productData);
+    // 使用数据集成服务增强分析数据
+    const enhancedData = DataIntegrationService.enhanceAnalysisData(productData);
 
-    // 保存分析结果
+    // 选择分析引擎：优先使用LangGraph智能体，降级到DeepSeek
+    let result;
+    let analysisMethod = 'helios_agent';
+    
+    try {
+      // 尝试使用Helios智能体分析
+      const heliosAgent = getHeliosAgent();
+      result = await heliosAgent.analyze(enhancedData);
+      console.log(`Task ${taskId}: Helios Agent analysis completed`);
+    } catch (heliosError) {
+      console.warn(`Task ${taskId}: Helios Agent failed, falling back to DeepSeek:`, heliosError);
+      
+      // 降级到DeepSeek分析服务
+      const analysisService = getAnalysisService();
+      result = await analysisService.generateAnalysis(enhancedData);
+      analysisMethod = 'deepseek_fallback';
+    }
+
+    // 使用业务规则引擎验证结果（如果是DeepSeek需要额外验证）
+    if (analysisMethod === 'deepseek_fallback') {
+      const rulesEngine = getRulesEngine();
+      // 从分析内容中提取行动建议（简化实现）
+      const actionLines = result.analysis_content.split('\n')
+        .filter(line => line.match(/^\d+\.\s/))
+        .map(line => line.replace(/^\d+\.\s/, ''));
+      
+      if (actionLines.length > 0) {
+        const violations = rulesEngine.validateActions(enhancedData, actionLines);
+        
+        if (violations.length > 0) {
+          console.log(`Task ${taskId}: Found ${violations.length} rule violations, correcting...`);
+          const correctedActions = rulesEngine.correctViolatingActions(enhancedData, actionLines, violations);
+          
+          // 重新组装分析内容
+          const analysisSection = result.analysis_content.split('\n## 行动')[0];
+          const correctedActionSection = '\n## 行动\n\n' + 
+            correctedActions.map((action, i) => `${i + 1}. ${action}`).join('\n\n');
+          
+          result.analysis_content = analysisSection + correctedActionSection;
+        }
+      }
+    }
+
+    // 保存分析结果，包含分析方法信息
     await AIAnalysisModel.saveAnalysisResult(
       taskId,
       result.analysis_content,
       result.processing_time,
-      result.tokens_used
+      result.tokens_used,
+      {
+        analysis_method: analysisMethod,
+        enhanced_data_used: true,
+        rules_engine_applied: analysisMethod === 'deepseek_fallback'
+      }
     );
 
-    console.log(`Analysis task ${taskId} completed successfully`);
+    console.log(`Analysis task ${taskId} completed successfully using ${analysisMethod}`);
   } catch (error) {
     console.error(`Analysis task ${taskId} processing error:`, error);
     throw error;

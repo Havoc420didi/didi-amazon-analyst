@@ -165,22 +165,31 @@ export function StreamingAnalysisDisplay({
               // 处理事件：更新现有事件或添加新事件
               setEvents(prev => {
                 if (event.isUpdate) {
-                  // 更新模式：找到相同类型和步骤的事件并更新内容
+                  // 更新模式：找到相同类型和步骤的事件并追加内容
                   const existingIndex = prev.findIndex(existingEvent => 
                     existingEvent.type === event.type && existingEvent.step === event.step
                   );
                   
                   if (existingIndex !== -1) {
-                    // 更新现有事件的内容
+                    // 追加内容到现有事件
                     const newEvents = [...prev];
-                    newEvents[existingIndex] = {
-                      ...newEvents[existingIndex],
-                      content: event.content,
-                      timestamp: event.timestamp
-                    };
+                    const existingEvent = newEvents[existingIndex];
+                    
+                    // 检查内容是否已存在，避免重复
+                    const existingContent = existingEvent.content || '';
+                    const newContent = event.content || '';
+                    
+                    // 如果新内容不包含在现有内容中，则追加
+                    if (!existingContent.includes(newContent)) {
+                      newEvents[existingIndex] = {
+                        ...existingEvent,
+                        content: existingContent + newContent,
+                        timestamp: event.timestamp
+                      };
+                    }
                     return newEvents;
                   } else {
-                    // 如果没找到对应事件，创建新事件
+                    // 如果没找到对应事件，创建新事件（但标记为非更新模式）
                     return [...prev, { ...event, isUpdate: false }];
                   }
                 } else {
@@ -189,8 +198,20 @@ export function StreamingAnalysisDisplay({
                 }
               });
               
+              // 计算进度
               if (event.progress !== undefined) {
                 setCurrentProgress(event.progress);
+              } else {
+                // 基于事件类型计算进度
+                const progressMap = {
+                  'thinking': 25,
+                  'analysis': 60,
+                  'recommendation': 85,
+                  'completed': 100,
+                  'error': 100
+                };
+                const calculatedProgress = progressMap[event.type] || 0;
+                setCurrentProgress(calculatedProgress);
               }
 
               // 如果是完成事件，保存完整内容
@@ -312,17 +333,17 @@ export function StreamingAnalysisDisplay({
   const getEventIcon = (type: StreamingEvent['type']) => {
     switch (type) {
       case 'thinking':
-        return <Brain className="h-4 w-4 text-purple-600" />;
+        return <Brain className="h-4 w-4 text-blue-600" />;
       case 'analysis':
-        return <Eye className="h-4 w-4 text-blue-600" />;
-      case 'recommendation':
         return <Target className="h-4 w-4 text-green-600" />;
+      case 'recommendation':
+        return <Lightbulb className="h-4 w-4 text-orange-600" />;
       case 'completed':
         return <CheckCircle className="h-4 w-4 text-green-600" />;
       case 'error':
         return <XCircle className="h-4 w-4 text-red-600" />;
       default:
-        return <Lightbulb className="h-4 w-4 text-gray-600" />;
+        return <Eye className="h-4 w-4 text-gray-600" />;
     }
   };
 
@@ -330,22 +351,29 @@ export function StreamingAnalysisDisplay({
   const getEventStyle = (type: StreamingEvent['type']) => {
     switch (type) {
       case 'thinking':
-        return 'bg-purple-50 border-purple-200 text-purple-800';
+        return 'border-l-blue-500 bg-blue-50';
       case 'analysis':
-        return 'bg-blue-50 border-blue-200 text-blue-800';
+        return 'border-l-green-500 bg-green-50';
       case 'recommendation':
-        return 'bg-green-50 border-green-200 text-green-800';
+        return 'border-l-orange-500 bg-orange-50';
       case 'completed':
-        return 'bg-green-100 border-green-300 text-green-900';
+        return 'border-l-green-600 bg-green-100';
       case 'error':
-        return 'bg-red-50 border-red-200 text-red-800';
+        return 'border-l-red-500 bg-red-50';
       default:
-        return 'bg-gray-50 border-gray-200 text-gray-800';
+        return 'border-l-gray-400 bg-gray-50';
     }
   };
 
   // 格式化时间
   const formatTime = (timestamp: number) => {
+    if (!timestamp || isNaN(timestamp)) {
+      return new Date().toLocaleTimeString('zh-CN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    }
     return new Date(timestamp).toLocaleTimeString('zh-CN', {
       hour: '2-digit',
       minute: '2-digit',
@@ -460,11 +488,13 @@ export function StreamingAnalysisDisplay({
                   </div>
                   
                   <div className="text-sm leading-relaxed whitespace-pre-wrap">
-                    {event.content}
-                    {/* 添加光标效果，表示正在输入 */}
-                    {isStreaming && index === events.length - 1 && (
-                      <span className="inline-block w-2 h-4 bg-purple-600 ml-1 animate-pulse"></span>
-                    )}
+                    <span className="inline-block min-h-[1.5em]">
+                      {event.content}
+                      {/* 添加光标效果，表示正在输入 */}
+                      {isStreaming && index === events.length - 1 && (
+                        <span className="inline-block w-2 h-4 bg-purple-600 ml-1 animate-pulse"></span>
+                      )}
+                    </span>
                   </div>
                 </div>
               ))}

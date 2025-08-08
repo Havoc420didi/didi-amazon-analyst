@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db/config';
+import { db } from '@/db';
 import { rpaConfigurations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
@@ -10,7 +10,7 @@ import { eq } from 'drizzle-orm';
 export async function GET() {
   try {
     // 获取最新的RPA配置
-    const config = await db
+    const config = await db()
       .select()
       .from(rpaConfigurations)
       .where(eq(rpaConfigurations.isActive, true))
@@ -56,13 +56,13 @@ export async function POST(request: NextRequest) {
     const data = await request.json();
     
     // 停用当前配置
-    await db
+    await db()
       .update(rpaConfigurations)
       .set({ isActive: false })
       .where(eq(rpaConfigurations.isActive, true));
     
     // 创建新配置
-    await db.insert(rpaConfigurations).values({
+    await db().insert(rpaConfigurations).values({
       version: data.version || "1.0.0",
       configuration: JSON.stringify(data.config),
       isActive: true,

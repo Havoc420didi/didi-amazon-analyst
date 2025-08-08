@@ -1,258 +1,334 @@
+/**
+ * AI分析结果展示组件
+ * 展示AI智能体生成的分析报告和行动建议
+ */
+
 'use client';
 
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Copy, Clock, Zap, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
+import { 
+  Copy,
+  Download,
+  Star,
+  TrendingUp,
+  TrendingDown,
+  AlertCircle,
+  CheckCircle2,
+  Package,
+  Target,
+  DollarSign,
+  Clock
+} from 'lucide-react';
+import { AIAnalysisResult } from '@/types/ai-analysis';
+import { InventoryPoint } from '@/types/inventory';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 
 interface AnalysisResultProps {
-  content: string;
-  processingTime?: number;
-  tokensUsed?: number;
-  createdAt: string;
+  result: AIAnalysisResult;
+  inventoryPoint: InventoryPoint;
+  onRating?: (rating: number, feedback?: string) => void;
 }
 
-export function AnalysisResult({ 
-  content, 
-  processingTime, 
-  tokensUsed, 
-  createdAt 
-}: AnalysisResultProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [copied, setCopied] = useState(false);
+export function AnalysisResult({ result, inventoryPoint, onRating }: AnalysisResultProps) {
+  const [rating, setRating] = useState<number>(0);
+  const [isRatingSubmitted, setIsRatingSubmitted] = useState(false);
+
+  // 解析分析内容，分离"分析"和"行动"部分
+  const parseAnalysisContent = (content: string) => {
+    const sections = content.split(/## (分析|行动)/);
+    
+    let analysisSection = '';
+    let actionSection = '';
+    
+    for (let i = 1; i < sections.length; i += 2) {
+      const sectionTitle = sections[i];
+      const sectionContent = sections[i + 1] || '';
+      
+      if (sectionTitle === '分析') {
+        analysisSection = sectionContent.trim();
+      } else if (sectionTitle === '行动') {
+        actionSection = sectionContent.trim();
+      }
+    }
+    
+    return { analysisSection, actionSection };
+  };
+
+  const { analysisSection, actionSection } = parseAnalysisContent(result.analysis_content);
+
+  // 提取行动项目
+  const extractActionItems = (actionText: string): string[] => {
+    const lines = actionText.split('\n').filter(line => line.trim());
+    return lines.filter(line => /^\d+\./.test(line.trim()))
+                .map(line => line.replace(/^\d+\.\s*/, '').trim());
+  };
+
+  const actionItems = extractActionItems(actionSection);
+
+  // 获取风险等级显示
+  const getRiskLevelDisplay = (level: 'low' | 'medium' | 'high') => {
+    switch (level) {
+      case 'high':
+        return { color: 'destructive', icon: AlertCircle, text: '高风险', bgColor: 'bg-red-50' };
+      case 'medium':
+        return { color: 'warning', icon: TrendingDown, text: '中等风险', bgColor: 'bg-yellow-50' };
+      case 'low':
+        return { color: 'success', icon: CheckCircle2, text: '低风险', bgColor: 'bg-green-50' };
+    }
+  };
+
+  const riskDisplay = getRiskLevelDisplay(result.recommendations.risk_level);
+  const RiskIcon = riskDisplay.icon;
 
   // 复制内容到剪贴板
-  const copyToClipboard = async () => {
+  const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(content);
-      setCopied(true);
+      await navigator.clipboard.writeText(result.analysis_content);
       toast.success('分析内容已复制到剪贴板');
-      setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       toast.error('复制失败');
     }
   };
 
-  // 解析分析内容的各个部分
-  const parseAnalysisContent = (text: string) => {
-    const sections = [];
+  // 下载分析报告
+  const handleDownload = () => {
+    const content = `# AI分析报告\n\n` +
+                   `**产品**: ${inventoryPoint.productName}\n` +
+                   `**ASIN**: ${inventoryPoint.asin}\n` +
+                   `**库存点**: ${inventoryPoint.marketplace}\n` +
+                   `**业务员**: ${inventoryPoint.salesPerson}\n` +
+                   `**分析时间**: ${new Date().toLocaleString('zh-CN')}\n\n` +
+                   `---\n\n${result.analysis_content}`;
     
-    // 匹配各个部分
-    const currentStatusMatch = text.match(/## 📊 现状分析\s*([\s\S]*?)(?=##|$)/);
-    const riskMatch = text.match(/## ⚠️ 风险识别\s*([\s\S]*?)(?=##|$)/);
-    const recommendationsMatch = text.match(/## 🎯 核心建议\s*([\s\S]*?)(?=##|$)/);
-    const expectedMatch = text.match(/## 📈 预期效果\s*([\s\S]*?)(?=##|$)/);
-    const riskLevelMatch = text.match(/## 🚨 风险等级\s*([\s\S]*?)(?=##|$)/);
-
-    if (currentStatusMatch) {
-      sections.push({
-        title: '📊 现状分析',
-        content: currentStatusMatch[1].trim(),
-        type: 'analysis'
-      });
-    }
-
-    if (riskMatch) {
-      sections.push({
-        title: '⚠️ 风险识别', 
-        content: riskMatch[1].trim(),
-        type: 'warning'
-      });
-    }
-
-    if (recommendationsMatch) {
-      sections.push({
-        title: '🎯 核心建议',
-        content: recommendationsMatch[1].trim(),
-        type: 'recommendations'
-      });
-    }
-
-    if (expectedMatch) {
-      sections.push({
-        title: '📈 预期效果',
-        content: expectedMatch[1].trim(),
-        type: 'success'
-      });
-    }
-
-    if (riskLevelMatch) {
-      const riskContent = riskLevelMatch[1].trim().toLowerCase();
-      let riskLevel = 'medium';
-      let riskColor = 'bg-yellow-100 text-yellow-800';
-      
-      if (riskContent.includes('低风险') || riskContent.includes('low')) {
-        riskLevel = '低风险';
-        riskColor = 'bg-green-100 text-green-800';
-      } else if (riskContent.includes('高风险') || riskContent.includes('high')) {
-        riskLevel = '高风险';
-        riskColor = 'bg-red-100 text-red-800';
-      } else {
-        riskLevel = '中风险';
-      }
-
-      sections.push({
-        title: '🚨 风险等级',
-        content: riskLevel,
-        type: 'risk',
-        riskColor
-      });
-    }
-
-    return sections;
+    const blob = new Blob([content], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `AI分析报告_${inventoryPoint.asin}_${inventoryPoint.marketplace}_${new Date().toISOString().split('T')[0]}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast.success('分析报告已下载');
   };
 
-  // 格式化处理时间
-  const formatProcessingTime = (ms?: number) => {
-    if (!ms) return '未知';
-    if (ms < 1000) return `${ms}ms`;
-    return `${(ms / 1000).toFixed(1)}s`;
+  // 提交评分
+  const handleRatingSubmit = (selectedRating: number) => {
+    setRating(selectedRating);
+    setIsRatingSubmitted(true);
+    onRating?.(selectedRating);
+    toast.success(`感谢您的${selectedRating}星评价！`);
   };
-
-  // 格式化日期
-  const formatDate = (dateString: string) => {
-    try {
-      return new Date(dateString).toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } catch {
-      return dateString;
-    }
-  };
-
-  const sections = parseAnalysisContent(content);
 
   return (
-    <Card className="relative">
-      <CardHeader className="pb-3">
+    <div className="space-y-6">
+      {/* 分析概览 */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              处理时间
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{(result.processing_time / 1000).toFixed(1)}s</div>
+            <p className="text-xs text-muted-foreground">智能体分析耗时</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              风险等级
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <RiskIcon className="h-5 w-5" />
+              <Badge variant={riskDisplay.color as any}>{riskDisplay.text}</Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Package className="h-4 w-4" />
+              行动建议
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{actionItems.length}</div>
+            <p className="text-xs text-muted-foreground">条具体建议</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* 主要内容区域 */}
+      <Tabs defaultValue="analysis" className="w-full">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">AI分析结果</CardTitle>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsExpanded(!isExpanded)}
-            >
-              {isExpanded ? (
-                <>
-                  <ChevronUp className="h-4 w-4 mr-1" />
-                  收起
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="h-4 w-4 mr-1" />
-                  展开
-                </>
-              )}
+          <TabsList className="grid w-full max-w-md grid-cols-3">
+            <TabsTrigger value="analysis">深度分析</TabsTrigger>
+            <TabsTrigger value="actions">行动计划</TabsTrigger>
+            <TabsTrigger value="recommendations">智能建议</TabsTrigger>
+          </TabsList>
+          
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={handleCopy}>
+              <Copy className="h-4 w-4 mr-2" />
+              复制
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={copyToClipboard}
-              disabled={copied}
-            >
-              <Copy className="h-4 w-4 mr-1" />
-              {copied ? '已复制' : '复制'}
+            <Button variant="outline" size="sm" onClick={handleDownload}>
+              <Download className="h-4 w-4 mr-2" />
+              下载
             </Button>
           </div>
         </div>
-        
-        {/* 元信息 */}
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
-            {formatDate(createdAt)}
-          </div>
-          {processingTime && (
-            <div className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              {formatProcessingTime(processingTime)}
-            </div>
-          )}
-          {tokensUsed && (
-            <div className="flex items-center gap-1">
-              <Zap className="h-3 w-3" />
-              {tokensUsed.toLocaleString()} tokens
-            </div>
-          )}
-        </div>
-      </CardHeader>
 
-      {isExpanded && (
-        <CardContent className="pt-0">
-          <div className="space-y-6">
-            {sections.map((section, index) => (
-              <div key={index}>
-                {index > 0 && <Separator className="my-4" />}
-                
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-base flex items-center gap-2">
-                    {section.title}
-                    {section.type === 'risk' && section.riskColor && (
-                      <Badge className={cn('text-xs font-normal', section.riskColor)}>
-                        {section.content}
-                      </Badge>
-                    )}
-                  </h3>
-                  
-                  {section.type !== 'risk' && (
-                    <div className={cn(
-                      'rounded-lg p-4 text-sm leading-relaxed',
-                      section.type === 'analysis' && 'bg-blue-50 border border-blue-200',
-                      section.type === 'warning' && 'bg-yellow-50 border border-yellow-200',
-                      section.type === 'recommendations' && 'bg-green-50 border border-green-200',
-                      section.type === 'success' && 'bg-purple-50 border border-purple-200'
-                    )}>
-                      {/* 处理建议部分的子标题 */}
-                      {section.type === 'recommendations' ? (
-                        <div className="space-y-4">
-                          {section.content.split(/###\s/).filter(Boolean).map((subsection, subIndex) => {
-                            const lines = subsection.trim().split('\n');
-                            const title = lines[0];
-                            const content = lines.slice(1).join('\n').trim();
-                            
-                            return (
-                              <div key={subIndex} className="space-y-2">
-                                <h4 className="font-medium text-green-800">
-                                  {title.replace(/[^\w\s\u4e00-\u9fff]/g, '').trim()}
-                                </h4>
-                                <div className="text-green-700 whitespace-pre-line pl-2 border-l-2 border-green-300">
-                                  {content}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        <div className="whitespace-pre-line">
-                          {section.content}
-                        </div>
-                      )}
+        {/* 深度分析 */}
+        <TabsContent value="analysis" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                运营分析报告
+              </CardTitle>
+              <CardDescription>
+                基于AI智能体的深度分析，识别当前运营状况和主要矛盾
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-64 w-full">
+                <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                  {analysisSection || '暂无分析内容'}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* 行动计划 */}
+        <TabsContent value="actions" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5" />
+                行动执行计划
+              </CardTitle>
+              <CardDescription>
+                基于业务规则验证的具体可执行建议
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {actionItems.length > 0 ? (
+                  actionItems.map((action, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 bg-muted rounded-lg">
+                      <div className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1 text-sm">{action}</div>
                     </div>
-                  )}
-                </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">暂无行动建议</p>
+                )}
               </div>
-            ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-            {/* 如果没有解析到结构化内容，显示原始内容 */}
-            {sections.length === 0 && (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <div className="text-sm leading-relaxed whitespace-pre-line">
-                  {content}
-                </div>
-              </div>
-            )}
+        {/* 智能建议 */}
+        <TabsContent value="recommendations" className="space-y-4">
+          <div className="grid gap-4">
+            {/* 库存操作 */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  库存管理建议
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm">{result.recommendations.inventory_action}</p>
+              </CardContent>
+            </Card>
+
+            {/* 销售策略 */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  销售策略建议
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm">{result.recommendations.sales_strategy}</p>
+              </CardContent>
+            </Card>
+
+            {/* 广告优化 */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  广告优化建议
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm">{result.recommendations.ad_optimization}</p>
+              </CardContent>
+            </Card>
           </div>
+        </TabsContent>
+      </Tabs>
+
+      <Separator />
+
+      {/* 评分区域 */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">分析质量评价</CardTitle>
+          <CardDescription>
+            您对这次AI分析的满意程度如何？您的反馈有助于我们改进智能体性能。
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {!isRatingSubmitted ? (
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">评分：</span>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => handleRatingSubmit(star)}
+                  className="transition-colors hover:text-yellow-500"
+                >
+                  <Star 
+                    className={`h-6 w-6 ${star <= rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-300'}`}
+                  />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <Alert>
+              <CheckCircle2 className="h-4 w-4" />
+              <AlertDescription>
+                感谢您的{rating}星评价！您的反馈已记录，将帮助我们持续优化AI分析质量。
+              </AlertDescription>
+            </Alert>
+          )}
         </CardContent>
-      )}
-    </Card>
+      </Card>
+    </div>
   );
 }

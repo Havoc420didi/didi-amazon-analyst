@@ -1,27 +1,34 @@
 import { deepseek } from '@ai-sdk/deepseek';
+import { openai } from '@ai-sdk/openai';
 import { streamText } from 'ai';
 import { ProductAnalysisData } from '@/types/ai-analysis';
 
-// 流式分析事件类型
 export interface StreamingEvent {
   type: 'thinking' | 'analysis' | 'recommendation' | 'completed' | 'error';
   step: string;
   content: string;
   timestamp: number;
   progress?: number;
+  isUpdate?: boolean;
 }
 
 // 流式AI分析服务类
 export class StreamingAnalysisService {
-  private apiKey: string;
-  private model: string;
+  private deepseekApiKey: string;
+  private openaiApiKey: string;
+  private preferredProvider: 'deepseek' | 'openai';
 
   constructor() {
-    this.apiKey = process.env.DEEPSEEK_API_KEY || '';
-    this.model = 'deepseek-chat';
+    this.deepseekApiKey = process.env.DEEPSEEK_API_KEY || '';
+    this.openaiApiKey = process.env.OPENAI_API_KEY || '';
     
-    if (!this.apiKey) {
-      throw new Error('DEEPSEEK_API_KEY environment variable is required');
+    // 优先使用DeepSeek，如果没有则使用OpenAI
+    if (this.deepseekApiKey) {
+      this.preferredProvider = 'deepseek';
+    } else if (this.openaiApiKey) {
+      this.preferredProvider = 'openai';
+    } else {
+      throw new Error('需要设置 DEEPSEEK_API_KEY 或 OPENAI_API_KEY 环境变量');
     }
   }
 
@@ -50,11 +57,17 @@ export class StreamingAnalysisService {
 
     return `你是一位资深的亚马逊运营专家，请基于以下产品数据进行深度分析并给出专业的运营决策建议。
 
-**重要：请在分析过程中，逐步输出你的思考过程，使用以下格式标记：**
+**重要：请严格按照以下格式输出分析结果：**
 
-[THINKING] 思考过程...
-[ANALYSIS] 具体分析...
-[RECOMMENDATION] 建议内容...
+## 分析
+1. **库存健康度**: 评估库存周转是否合理，是否存在库存积压或不足的问题
+2. **广告绩效**: 分析广告投放效果，包括转化率、点击率、ACOS等关键指标  
+3. **综合诊断**: 综合所有数据，识别当前的主要矛盾和核心问题
+
+## 行动
+1. **具体行动**: 列出3-4个具体的、可立即执行的行动步骤
+2. **优先级**: 明确行动的优先级和紧急程度
+3. **预期效果**: 说明每个行动预期的效果和时间周期
 
 ## 产品基本信息
 - 产品名称：${product_name}
@@ -87,126 +100,127 @@ ${history.length > 0 ? `## 历史趋势数据
 最近${history.length}天的表现：
 ${history.map((h, i) => `${i + 1}. ${h.date}: 库存${h.inventory}件, 销售额$${h.revenue}, 销量${h.sales}件`).join('\n')}` : ''}
 
-## 分析要求
-
-请按照以下步骤进行分析，每个步骤都要展示思考过程：
-
-1. **[THINKING] 数据概览和初印象**
-   - 先整体浏览所有数据，说出你的第一印象
-   
-2. **[ANALYSIS] 库存健康度分析**
-   - 检查库存周转是否合理
-   - 评估各渠道库存分布
-   
-3. **[THINKING] 销售表现评估思路**
-   - 思考如何评估当前销售表现
-   
-4. **[ANALYSIS] 销售数据深度分析**
-   - 分析销售趋势和潜在问题
-   
-5. **[THINKING] 广告效果评估思路**
-   - 思考广告数据反映的问题
-   
-6. **[ANALYSIS] 广告效果分析**
-   - 详细分析广告投放效果
-   
-7. **[THINKING] 综合诊断思路**
-   - 综合所有数据，思考主要矛盾
-   
-8. **[RECOMMENDATION] 具体行动建议**
-   - 给出具体可执行的建议
-
-请开始你的分析过程：`;
+请开始你的分析：`;
   }
 
   // 流式生成分析
   async *streamAnalysis(productData: ProductAnalysisData): AsyncIterable<StreamingEvent> {
-    const startTime = Date.now();
     let step = 1;
-    const totalSteps = 8;
+    const totalSteps = 4;
 
     try {
       // 发送初始化事件
       yield {
         type: 'thinking',
-        step: '初始化',
+        step: '准备分析',
         content: '正在连接AI模型，准备开始分析...',
         timestamp: Date.now(),
-        progress: 0
+        isUpdate: false
       };
 
       const prompt = this.buildStreamingPrompt(productData);
       
-      // 使用streamText进行流式生成
-      const { textStream } = await streamText({
-        model: deepseek(this.model),
-        prompt,
-        maxTokens: 3000,
-        temperature: 0.7,
-      });
+      let textStream;
+      
+      // 根据可用的API密钥选择AI提供商
+      if (this.preferredProvider === 'deepseek' && this.deepseekApiKey) {
+        const result = streamText({
+          model: deepseek('deepseek-chat'),
+          prompt,
+          maxTokens: 3000,
+          temperature: 0.7,
+        });
+        textStream = result.textStream;
+      } else if (this.openaiApiKey) {
+        const result = streamText({
+          model: openai('gpt-4o-mini'),
+          prompt,
+          maxTokens: 3000,
+          temperature: 0.7,
+        });
+        textStream = result.textStream;
+      } else {
+        throw new Error('没有可用的AI API密钥');
+      }
 
       let accumulatedContent = '';
       let currentType: StreamingEvent['type'] = 'thinking';
       let currentStep = '准备分析';
       let currentSectionContent = '';
 
-      // 处理流式数据
+      // 处理流式数据 - 增强版，确保每个步骤清晰同步
       for await (const delta of textStream) {
         accumulatedContent += delta;
         
-        // 检查是否有新的标记
-        const newMarkFound = delta.includes('[THINKING]') || delta.includes('[ANALYSIS]') || delta.includes('[RECOMMENDATION]');
+        // 检查是否有新的主要部分标记
+        const hasAnalysis = accumulatedContent.includes('## 分析') || accumulatedContent.includes('**分析**');
+        const hasAction = accumulatedContent.includes('## 行动') || accumulatedContent.includes('**行动**');
         
-        if (newMarkFound) {
-          // 如果找到新标记，先发送当前累积的内容
+        // 如果找到分析部分且当前类型不匹配，则切换类型
+        if (hasAnalysis && currentType !== 'analysis') {
+          // 发送当前累积的内容
           if (currentSectionContent.trim()) {
             yield {
               type: currentType,
               step: currentStep,
               content: currentSectionContent,
               timestamp: Date.now(),
-              progress: Math.min((step / totalSteps) * 100, 90),
               isUpdate: false
             };
           }
           
-          // 处理新标记
-          if (delta.includes('[THINKING]')) {
-            currentType = 'thinking';
-            currentStep = '思考过程';
-            const content = delta.replace('[THINKING]', '').trim();
-            currentSectionContent = content;
-            step++;
-          } else if (delta.includes('[ANALYSIS]')) {
-            currentType = 'analysis';
-            currentStep = '深度分析';
-            const content = delta.replace('[ANALYSIS]', '').trim();
-            currentSectionContent = content;
-            step++;
-          } else if (delta.includes('[RECOMMENDATION]')) {
-            currentType = 'recommendation';
-            currentStep = '行动建议';
-            const content = delta.replace('[RECOMMENDATION]', '').trim();
-            currentSectionContent = content;
-            step++;
+          currentType = 'analysis';
+          currentStep = '深度分析';
+          currentSectionContent = '';
+          step++;
+        } else if (hasAction && currentType !== 'recommendation') {
+          // 发送当前累积的内容
+          if (currentSectionContent.trim()) {
+            yield {
+              type: currentType,
+              step: currentStep,
+              content: currentSectionContent,
+              timestamp: Date.now(),
+              isUpdate: false
+            };
           }
-        } else {
-          // 累积当前段落的内容
-          currentSectionContent += delta;
+          
+          currentType = 'recommendation';
+          currentStep = '行动建议';
+          currentSectionContent = '';
+          step++;
         }
         
-        // 实时更新当前段落的内容
+        // 累积当前段落的内容
+        currentSectionContent += delta;
+        
+        // 实时更新当前段落的内容（只在有实际内容时）
+        // 使用更智能的内容分割，确保按步骤显示
+        const trimmedDelta = delta.trim();
+        if (trimmedDelta && trimmedDelta !== '##' && !trimmedDelta.startsWith('##')) {
+          // 移除标题标记，保持内容干净
+          const cleanDelta = delta.replace(/^\s*#{1,6}\s*/g, '').replace(/^\*\*/g, '').replace(/\*\*$/g, '');
+          if (cleanDelta.trim()) {
+            yield {
+              type: currentType,
+              step: currentStep,
+              content: cleanDelta,
+              timestamp: Date.now(),
+              isUpdate: true
+            };
+          }
+        }
+      }
+
+      // 发送最后一段内容
+      if (currentSectionContent.trim()) {
         yield {
           type: currentType,
           step: currentStep,
           content: currentSectionContent,
           timestamp: Date.now(),
-          progress: Math.min((step / totalSteps) * 100, 90),
-          isUpdate: true
+          isUpdate: false
         };
-
-        // 添加小延迟，模拟真实思考过程
-        await new Promise(resolve => setTimeout(resolve, 50));
       }
 
       // 发送完成事件
@@ -214,8 +228,7 @@ ${history.map((h, i) => `${i + 1}. ${h.date}: 库存${h.inventory}件, 销售额
         type: 'completed',
         step: '分析完成',
         content: accumulatedContent,
-        timestamp: Date.now(),
-        progress: 100
+        timestamp: Date.now()
       };
 
     } catch (error) {
@@ -223,14 +236,13 @@ ${history.map((h, i) => `${i + 1}. ${h.date}: 库存${h.inventory}件, 销售额
       yield {
         type: 'error',
         step: '分析失败',
-        content: `分析过程中出现错误: ${error instanceof Error ? error.message : '未知错误'}`,
-        timestamp: Date.now(),
-        progress: 0
+        content: `流式分析失败: ${error instanceof Error ? error.message : '未知错误'}`,
+        timestamp: Date.now()
       };
     }
   }
 
-  // 从内容中提取步骤信息
+  // 从内容中提取步骤信息（已集成到主流程中，保留备用）
   private extractStepFromContent(content: string): string {
     // 尝试提取中文步骤描述
     const stepMatches = content.match(/[：:]\s*(.+?)(?=\s|$)/);

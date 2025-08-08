@@ -425,6 +425,31 @@ export async function getInventoryLocationHistory(
 }
 
 /**
+ * 根据日期范围获取特定产品的库存记录（用于聚合分析）
+ */
+export async function getByDateRange(
+  asin: string,
+  warehouseLocation: string,
+  startDate: string,
+  endDate: string
+): Promise<InventoryRecord[]> {
+  const records = await db()
+    .select()
+    .from(inventoryRecords)
+    .where(
+      and(
+        eq(inventoryRecords.asin, asin),
+        eq(inventoryRecords.warehouse_location, warehouseLocation),
+        gte(inventoryRecords.date, startDate),
+        lte(inventoryRecords.date, endDate)
+      )
+    )
+    .orderBy(desc(inventoryRecords.date));
+
+  return records.map(transformDbRecordToApi);
+}
+
+/**
  * 获取业务员列表
  */
 export async function getSalesPersonList(): Promise<string[]> {
@@ -511,3 +536,17 @@ function transformDbRecordToApiWithAnalysisCount(record: any): InventoryRecord {
     analysis_count: Number(record.analysis_count) || 0, // 添加分析数量
   };
 }
+
+// Export all functions as InventoryModel for consistency
+export const InventoryModel = {
+  createInventoryRecord,
+  createInventoryRecords,
+  upsertInventoryRecords,
+  getInventoryRecords,
+  getLatestInventoryRecords,
+  getInventoryStats,
+  getInventoryLocationHistory,
+  getByDateRange,
+  getSalesPersonList,
+  getAsinList,
+};
