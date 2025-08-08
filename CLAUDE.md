@@ -164,3 +164,87 @@ Currently no test framework is configured. When adding tests, check existing pat
 - The inventory system supports unique daily records per ASIN/location
 - Admin access is controlled via `ADMIN_EMAILS` environment variable
 - The application supports both light and dark themes
+
+## 📊 Database Setup (Completed: 2025-08-08)
+✅ **PostgreSQL 16.9** has been successfully installed and configured for this project.
+
+### 🎯 Database Configuration - **统一数据库架构**
+- **统一数据库**: `amazon_analyst` - 支持Next.js系统 + Python ERP同步系统
+- **用户**: `amazon_analyst` with password `amazon_analyst_2024`
+- **Host**: `localhost:5432`
+
+### 🔗 数据库架构说明
+**2025-08-08 更新**：数据库架构已从双数据库模式升级为统一数据库模式
+- ✅ **Next.js系统表**: 保留原有Drizzle ORM表结构
+- ✅ **赛狐ERP同步表**: 新增`saihu_***`系列表到同一数据库
+- ✅ **数据共享**: 两个系统共享同一数据库，支持SQL联合查询
+
+### 🔗 连接URI - 统一配置
+```bash
+# Next.js + 赛狐ERP统一连接 (已配置)
+DATABASE_URL="postgresql://amazon_analyst:amazon_analyst_2024@localhost:5432/amazon_analyst"
+
+# Python同步系统配置 (sync_saihu_erp/data_update/config/config.yml)
+host: localhost
+port: 5432
+database: amazon_analyst  # 统一使用amazon_analyst数据库
+user: amazon_analyst
+password: amazon_analyst_2024
+```
+
+### 🛠️ Database Management
+```bash
+# Check database status
+./manage_postgres.sh status
+
+# Create backup
+./manage_postgres.sh backup
+
+# Test connections
+python3 test_database.py
+
+# Reset databases (use with caution)
+./manage_postgres.sh reset
+```
+
+### 📁 新增赛狐ERP同步系统文件
+- **数据库表结构**: `/root/amazon-analyst/src/db/saihu_erp_schema.sql`
+- **测试脚本**: `/root/amazon-analyst/test_database.py`
+- **管理脚本**: `/root/amazon-analyst/manage_postgres.sh`
+- **Python同步目录**: `/root/amazon-analyst/sync_saihu_erp/data_update/`
+- **即时同步脚本**: `/root/amazon-analyst/sync_saihu_erp/data_update/run_sync_now.py`
+
+### 📊 赛狐ERP同步系统架构
+- **主表**: `saihu_product_analytics` (产品分析数据)
+- **库存表**: `saihu_fba_inventory` (FBA库存)
+- **明细表**: `saihu_inventory_details` (库存明细)
+- **日志表**: `saihu_sync_task_logs` (同步日志记录)
+- **配置表**: `saihu_api_configs` + `saihu_system_configs`
+- **分析视图**: `v_saihu_latest_inventory` + `v_saihu_product_summary`
+
+### ✅ Next Steps
+1. Run `pnpm db:migrate` to initialize schema
+2. Run `pnpm dev` to start development server
+3. Configure API credentials in Python sync system (see ./run_sync_now.py)
+4. Import initial data: `python run_sync_now.py`
+
+### 🔄 快速启动流程
+```bash
+# 1. 安装依赖
+pnpm install
+python3 -m venv venv_sync && source venv_sync/bin/activate
+pip install --break-system-packages -r sync_saihu_erp/data_update/requirements.txt
+
+# 2. 数据库已就绪 (表结构已创建)
+
+# 3. 配置API凭据 (编辑配置文件)
+vim sync_saihu_erp/data_update/config/config.yml
+
+# 4. 执行首次数据同步
+source venv_sync/bin/activate && python run_sync_now.py
+
+# 5. 启动Next.js开发服务器
+pnpm dev
+```
+
+All systems are ready to run with unified database architecture! 🚀
