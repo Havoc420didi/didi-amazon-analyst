@@ -8,7 +8,7 @@ import time
 import logging
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
-from ..config.settings import settings
+from ..config.secure_config import config
 
 logger = logging.getLogger(__name__)
 
@@ -17,9 +17,11 @@ class OAuthClient:
     
     def __init__(self):
         """初始化OAuth客户端"""
-        self.base_url = settings.get('api.base_url', 'https://openapi.sellfox.com')
-        self.client_id = settings.get('api.auth.client_id', '368000')
-        self.client_secret = settings.get('api.auth.client_secret', '3cc6efdf-6861-42e0-b9a5-874a0296640b')
+        # 使用安全配置获取凭据
+        api_credentials = config.get_api_credentials()
+        self.base_url = api_credentials.base_url
+        self.client_id = api_credentials.client_id
+        self.client_secret = api_credentials.client_secret
         self.auth_endpoint = '/api/oauth/v2/token.json'
         
         # Token缓存

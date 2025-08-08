@@ -1,0 +1,720 @@
+Date : 2025-08-08 22:17:52
+Directory : /Users/liuying/Documents/GitHub/amazon_analyst
+Total : 451 files,  54649 codes, 4296 comments, 7556 blanks, all 66501 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| TypeScript JSX     |        169 |     18,462 |        635 |      1,815 |     20,912 |
+| TypeScript         |        140 |     12,156 |      1,374 |      2,030 |     15,560 |
+| Python             |         65 |      9,097 |      1,857 |      2,049 |     13,003 |
+| JSON               |         18 |      6,892 |          0 |         10 |      6,902 |
+| Markdown           |         18 |      3,033 |          0 |        898 |      3,931 |
+| HTML               |          2 |      2,151 |         15 |        310 |      2,476 |
+| MS SQL             |          9 |        977 |        288 |        183 |      1,448 |
+| JavaScript         |          2 |        584 |         55 |        115 |        754 |
+| XML                |         16 |        539 |          4 |         22 |        565 |
+| PostCSS            |          4 |        358 |         12 |         48 |        418 |
+| Shell Script       |          3 |        300 |         33 |         52 |        385 |
+| JSON with Comments |          1 |         27 |          0 |          1 |         28 |
+| Docker             |          1 |         25 |          6 |         14 |         45 |
+| YAML               |          1 |         22 |          0 |          1 |         23 |
+| Properties         |          1 |         15 |         17 |          7 |         39 |
+| Ignore             |          1 |         11 |          0 |          1 |         12 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                    | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                       |        451 |     54,649 |      4,296 |      7,556 |     66,501 |
+| . (Files)                                                                                                               |         12 |      1,008 |         37 |        254 |      1,299 |
+| .claude                                                                                                                 |          1 |         15 |          0 |          0 |         15 |
+| .github                                                                                                                 |          3 |        118 |          0 |         26 |        144 |
+| .github/ISSUE_TEMPLATE                                                                                                  |          3 |        118 |          0 |         26 |        144 |
+| public                                                                                                                  |         16 |        539 |          4 |         22 |        565 |
+| public (Files)                                                                                                          |          1 |          7 |          0 |          1 |          8 |
+| public/imgs                                                                                                             |         15 |        532 |          4 |         21 |        557 |
+| public/imgs/badges                                                                                                      |          1 |          1 |          0 |          0 |          1 |
+| public/imgs/icons                                                                                                       |          6 |         49 |          3 |         17 |         69 |
+| public/imgs/logos                                                                                                       |          6 |         49 |          1 |          4 |         54 |
+| public/imgs/masks                                                                                                       |          2 |        433 |          0 |          0 |        433 |
+| scripts                                                                                                                 |          2 |        111 |         15 |         28 |        154 |
+| src                                                                                                                     |        338 |     41,334 |      2,187 |      4,574 |     48,095 |
+| src (Files)                                                                                                             |          1 |         10 |          0 |          3 |         13 |
+| src/aisdk                                                                                                               |         21 |        758 |          7 |        149 |        914 |
+| src/aisdk (Files)                                                                                                       |          1 |          1 |          0 |          1 |          2 |
+| src/aisdk/generate-video                                                                                                |          3 |        105 |          0 |         21 |        126 |
+| src/aisdk/kling                                                                                                         |         10 |        613 |          7 |        111 |        731 |
+| src/aisdk/provider                                                                                                      |          6 |         36 |          0 |         13 |         49 |
+| src/aisdk/provider (Files)                                                                                              |          1 |          1 |          0 |          1 |          2 |
+| src/aisdk/provider/video-model                                                                                          |          5 |         35 |          0 |         12 |         47 |
+| src/aisdk/provider/video-model (Files)                                                                                  |          1 |          1 |          0 |          1 |          2 |
+| src/aisdk/provider/video-model/v1                                                                                       |          4 |         34 |          0 |         11 |         45 |
+| src/aisdk/types                                                                                                         |          1 |          3 |          0 |          3 |          6 |
+| src/app                                                                                                                 |         87 |     11,263 |        779 |      1,782 |     13,824 |
+| src/app (Files)                                                                                                         |          3 |        211 |          0 |         19 |        230 |
+| src/app/(legal)                                                                                                         |          1 |         39 |          1 |          5 |         45 |
+| src/app/[locale]                                                                                                        |         30 |      2,324 |         57 |        249 |      2,630 |
+| src/app/[locale] (Files)                                                                                                |          1 |         49 |          0 |          7 |         56 |
+| src/app/[locale]/(admin)                                                                                                |          8 |        737 |          2 |         58 |        797 |
+| src/app/[locale]/(admin) (Files)                                                                                        |          1 |        131 |          0 |          5 |        136 |
+| src/app/[locale]/(admin)/admin                                                                                          |          7 |        606 |          2 |         53 |        661 |
+| src/app/[locale]/(admin)/admin (Files)                                                                                  |          1 |         80 |          2 |          8 |         90 |
+| src/app/[locale]/(admin)/admin/feedbacks                                                                                |          1 |         58 |          0 |          6 |         64 |
+| src/app/[locale]/(admin)/admin/orders                                                                                   |          1 |         25 |          0 |          5 |         30 |
+| src/app/[locale]/(admin)/admin/posts                                                                                    |          3 |        412 |          0 |         29 |        441 |
+| src/app/[locale]/(admin)/admin/posts (Files)                                                                            |          1 |         72 |          0 |          5 |         77 |
+| src/app/[locale]/(admin)/admin/posts/[uuid]                                                                             |          1 |        181 |          0 |         13 |        194 |
+| src/app/[locale]/(admin)/admin/posts/[uuid]/edit                                                                        |          1 |        181 |          0 |         13 |        194 |
+| src/app/[locale]/(admin)/admin/posts/add                                                                                |          1 |        159 |          0 |         11 |        170 |
+| src/app/[locale]/(admin)/admin/users                                                                                    |          1 |         31 |          0 |          5 |         36 |
+| src/app/[locale]/(default)                                                                                              |         18 |      1,466 |         55 |        174 |      1,695 |
+| src/app/[locale]/(default) (Files)                                                                                      |          2 |         86 |          1 |          9 |         96 |
+| src/app/[locale]/(default)/(console)                                                                                    |          6 |        437 |          4 |         56 |        497 |
+| src/app/[locale]/(default)/(console) (Files)                                                                            |          1 |         47 |          1 |          6 |         54 |
+| src/app/[locale]/(default)/(console)/api-keys                                                                           |          2 |        135 |          0 |         18 |        153 |
+| src/app/[locale]/(default)/(console)/api-keys (Files)                                                                   |          1 |         55 |          0 |          6 |         61 |
+| src/app/[locale]/(default)/(console)/api-keys/create                                                                    |          1 |         80 |          0 |         12 |         92 |
+| src/app/[locale]/(default)/(console)/my-credits                                                                         |          1 |         59 |          0 |          8 |         67 |
+| src/app/[locale]/(default)/(console)/my-invites                                                                         |          1 |        138 |          3 |         15 |        156 |
+| src/app/[locale]/(default)/(console)/my-orders                                                                          |          1 |         58 |          0 |          9 |         67 |
+| src/app/[locale]/(default)/analysis                                                                                     |          1 |        186 |          0 |         21 |        207 |
+| src/app/[locale]/(default)/i                                                                                            |          1 |         22 |          1 |          6 |         29 |
+| src/app/[locale]/(default)/i/[code]                                                                                     |          1 |         22 |          1 |          6 |         29 |
+| src/app/[locale]/(default)/inventory                                                                                    |          4 |        639 |         49 |         57 |        745 |
+| src/app/[locale]/(default)/inventory (Files)                                                                            |          1 |         43 |          8 |          8 |         59 |
+| src/app/[locale]/(default)/inventory/[location]                                                                         |          1 |         70 |         11 |         11 |         92 |
+| src/app/[locale]/(default)/inventory/analysis                                                                           |          1 |        491 |         23 |         33 |        547 |
+| src/app/[locale]/(default)/inventory/analysis/[asin]                                                                    |          1 |        491 |         23 |         33 |        547 |
+| src/app/[locale]/(default)/inventory/upload                                                                             |          1 |         35 |          7 |          5 |         47 |
+| src/app/[locale]/(default)/posts                                                                                        |          2 |         74 |          0 |         19 |         93 |
+| src/app/[locale]/(default)/posts (Files)                                                                                |          1 |         39 |          0 |          9 |         48 |
+| src/app/[locale]/(default)/posts/[slug]                                                                                 |          1 |         35 |          0 |         10 |         45 |
+| src/app/[locale]/(default)/pricing                                                                                      |          1 |         11 |          0 |          3 |         14 |
+| src/app/[locale]/(default)/showcase                                                                                     |          1 |         11 |          0 |          3 |         14 |
+| src/app/[locale]/auth                                                                                                   |          2 |         54 |          0 |          5 |         59 |
+| src/app/[locale]/auth/register                                                                                          |          1 |         27 |          0 |          2 |         29 |
+| src/app/[locale]/auth/signin                                                                                            |          1 |         27 |          0 |          3 |         30 |
+| src/app/[locale]/pay-success                                                                                            |          1 |         18 |          0 |          5 |         23 |
+| src/app/[locale]/pay-success/[session_id]                                                                               |          1 |         18 |          0 |          5 |         23 |
+| src/app/api                                                                                                             |         51 |      8,601 |        721 |      1,503 |     10,825 |
+| src/app/api/ad-data                                                                                                     |          8 |      1,082 |        169 |        190 |      1,441 |
+| src/app/api/ad-data/asin                                                                                                |          1 |        206 |         29 |         33 |        268 |
+| src/app/api/ad-data/asin/[asin]                                                                                         |          1 |        206 |         29 |         33 |        268 |
+| src/app/api/ad-data/compare                                                                                             |          1 |        177 |         33 |         38 |        248 |
+| src/app/api/ad-data/dashboard                                                                                           |          1 |         69 |         11 |         13 |         93 |
+| src/app/api/ad-data/inventory-points                                                                                    |          1 |        119 |         12 |         17 |        148 |
+| src/app/api/ad-data/metrics                                                                                             |          1 |        109 |         12 |         17 |        138 |
+| src/app/api/ad-data/sync                                                                                                |          2 |        217 |         43 |         35 |        295 |
+| src/app/api/ad-data/sync/status                                                                                         |          1 |        114 |         14 |         15 |        143 |
+| src/app/api/ad-data/sync/trigger                                                                                        |          1 |        103 |         29 |         20 |        152 |
+| src/app/api/ad-data/trends                                                                                              |          1 |        185 |         29 |         37 |        251 |
+| src/app/api/add-feedback                                                                                                |          1 |         24 |          0 |          7 |         31 |
+| src/app/api/ai-analysis                                                                                                 |         16 |      5,736 |        443 |      1,000 |      7,179 |
+| src/app/api/ai-analysis (Files)                                                                                         |          7 |      3,205 |         70 |        513 |      3,788 |
+| src/app/api/ai-analysis/[id]                                                                                            |          1 |        130 |          8 |         24 |        162 |
+| src/app/api/ai-analysis/agents                                                                                          |          1 |        501 |        106 |        108 |        715 |
+| src/app/api/ai-analysis/batch                                                                                           |          1 |        285 |         51 |         56 |        392 |
+| src/app/api/ai-analysis/docs                                                                                            |          1 |        336 |          0 |        112 |        448 |
+| src/app/api/ai-analysis/engines                                                                                         |          1 |        406 |         52 |         48 |        506 |
+| src/app/api/ai-analysis/generate                                                                                        |          1 |        185 |         19 |         26 |        230 |
+| src/app/api/ai-analysis/services                                                                                        |          2 |        524 |        121 |         90 |        735 |
+| src/app/api/ai-analysis/stream                                                                                          |          1 |        164 |         16 |         23 |        203 |
+| src/app/api/analyze-excel                                                                                               |          1 |        174 |         15 |         30 |        219 |
+| src/app/api/auth                                                                                                        |          2 |        113 |         12 |         20 |        145 |
+| src/app/api/auth/[...nextauth]                                                                                          |          1 |          2 |          0 |          2 |          4 |
+| src/app/api/auth/register                                                                                               |          1 |        111 |         12 |         18 |        141 |
+| src/app/api/checkout                                                                                                    |          1 |        172 |          2 |         34 |        208 |
+| src/app/api/demo                                                                                                        |          3 |        240 |          0 |         33 |        273 |
+| src/app/api/demo/gen-image                                                                                              |          1 |         87 |          0 |         13 |        100 |
+| src/app/api/demo/gen-stream-text                                                                                        |          1 |         76 |          0 |          9 |         85 |
+| src/app/api/demo/gen-text                                                                                               |          1 |         77 |          0 |         11 |         88 |
+| src/app/api/get-user-credits                                                                                            |          1 |         16 |          0 |          4 |         20 |
+| src/app/api/get-user-info                                                                                               |          1 |         26 |          0 |          7 |         33 |
+| src/app/api/inventory                                                                                                   |          7 |        492 |         34 |         78 |        604 |
+| src/app/api/inventory (Files)                                                                                           |          1 |        122 |          6 |         12 |        140 |
+| src/app/api/inventory/[location]                                                                                        |          1 |         61 |          2 |         10 |         73 |
+| src/app/api/inventory/options                                                                                           |          1 |         43 |          1 |          6 |         50 |
+| src/app/api/inventory/sales-persons                                                                                     |          1 |         27 |          1 |          5 |         33 |
+| src/app/api/inventory/stats                                                                                             |          1 |         55 |          3 |          9 |         67 |
+| src/app/api/inventory/upload                                                                                            |          1 |        157 |         20 |         31 |        208 |
+| src/app/api/inventory/warehouse-locations                                                                               |          1 |         27 |          1 |          5 |         33 |
+| src/app/api/ping                                                                                                        |          1 |         30 |          1 |          6 |         37 |
+| src/app/api/rpa                                                                                                         |          3 |        241 |         33 |         38 |        312 |
+| src/app/api/rpa/config                                                                                                  |          1 |         68 |          7 |          9 |         84 |
+| src/app/api/rpa/status                                                                                                  |          1 |        136 |         20 |         23 |        179 |
+| src/app/api/rpa/sync                                                                                                    |          1 |         37 |          6 |          6 |         49 |
+| src/app/api/stripe-notify                                                                                               |          1 |         40 |          0 |         11 |         51 |
+| src/app/api/test-adapter                                                                                                |          1 |         45 |          4 |          9 |         58 |
+| src/app/api/test-db                                                                                                     |          1 |         27 |          1 |          4 |         32 |
+| src/app/api/test-inventory                                                                                              |          1 |         50 |          4 |          9 |         63 |
+| src/app/api/update-invite                                                                                               |          1 |         51 |          3 |         11 |         65 |
+| src/app/api/update-invite-code                                                                                          |          1 |         42 |          0 |         12 |         54 |
+| src/app/simple                                                                                                          |          1 |         74 |          0 |          5 |         79 |
+| src/app/test                                                                                                            |          1 |         14 |          0 |          1 |         15 |
+| src/auth                                                                                                                |          4 |        244 |         13 |         34 |        291 |
+| src/components                                                                                                          |        131 |     15,909 |        576 |      1,523 |     18,008 |
+| src/components/ad-data                                                                                                  |          5 |      2,154 |        123 |        198 |      2,475 |
+| src/components/ai-analysis                                                                                              |         11 |      2,486 |        157 |        247 |      2,890 |
+| src/components/analytics                                                                                                |          4 |         62 |          0 |         16 |         78 |
+| src/components/blocks                                                                                                   |         36 |      3,292 |         13 |        221 |      3,526 |
+| src/components/blocks/blog                                                                                              |          1 |         60 |          0 |          3 |         63 |
+| src/components/blocks/blog-detail                                                                                       |          2 |         82 |          0 |          9 |         91 |
+| src/components/blocks/branding                                                                                          |          1 |         31 |          0 |          3 |         34 |
+| src/components/blocks/crumb                                                                                             |          1 |         27 |          0 |          3 |         30 |
+| src/components/blocks/cta                                                                                               |          1 |         43 |          0 |          3 |         46 |
+| src/components/blocks/data-cards                                                                                        |          1 |         38 |          0 |          3 |         41 |
+| src/components/blocks/data-charts                                                                                       |          1 |        198 |          0 |         13 |        211 |
+| src/components/blocks/editor                                                                                            |          3 |        457 |         12 |         43 |        512 |
+| src/components/blocks/empty                                                                                             |          1 |          7 |          0 |          1 |          8 |
+| src/components/blocks/faq                                                                                               |          1 |         39 |          0 |          3 |         42 |
+| src/components/blocks/feature                                                                                           |          1 |         34 |          0 |          3 |         37 |
+| src/components/blocks/feature1                                                                                          |          1 |         54 |          0 |          3 |         57 |
+| src/components/blocks/feature2                                                                                          |          1 |        124 |          0 |          9 |        133 |
+| src/components/blocks/feature3                                                                                          |          1 |         89 |          0 |          5 |         94 |
+| src/components/blocks/footer                                                                                            |          1 |         98 |          0 |          4 |        102 |
+| src/components/blocks/form                                                                                              |          1 |        216 |          0 |         24 |        240 |
+| src/components/blocks/header                                                                                            |          1 |        309 |          0 |         11 |        320 |
+| src/components/blocks/hero                                                                                              |          3 |        544 |          0 |         10 |        554 |
+| src/components/blocks/mdeditor                                                                                          |          1 |         19 |          1 |          2 |         22 |
+| src/components/blocks/pricing                                                                                           |          1 |        275 |          0 |         22 |        297 |
+| src/components/blocks/showcase                                                                                          |          1 |         47 |          0 |          5 |         52 |
+| src/components/blocks/showcase1                                                                                         |          1 |        121 |          0 |          7 |        128 |
+| src/components/blocks/stats                                                                                             |          1 |         45 |          0 |          4 |         49 |
+| src/components/blocks/table                                                                                             |          6 |        216 |          0 |         20 |        236 |
+| src/components/blocks/testimonial                                                                                       |          1 |         92 |          0 |          6 |         98 |
+| src/components/blocks/toolbar                                                                                           |          1 |         27 |          0 |          2 |         29 |
+| src/components/console                                                                                                  |          4 |        115 |          0 |         10 |        125 |
+| src/components/console (Files)                                                                                          |          1 |         25 |          0 |          2 |         27 |
+| src/components/console/sidebar                                                                                          |          1 |         44 |          0 |          4 |         48 |
+| src/components/console/slots                                                                                            |          2 |         46 |          0 |          4 |         50 |
+| src/components/console/slots/form                                                                                       |          1 |         24 |          0 |          2 |         26 |
+| src/components/console/slots/table                                                                                      |          1 |         22 |          0 |          2 |         24 |
+| src/components/dashboard                                                                                                |         10 |        536 |         37 |         41 |        614 |
+| src/components/dashboard (Files)                                                                                        |          1 |         25 |          0 |          3 |         28 |
+| src/components/dashboard/header                                                                                         |          1 |         53 |          0 |          4 |         57 |
+| src/components/dashboard/sidebar                                                                                        |          6 |        406 |         37 |         30 |        473 |
+| src/components/dashboard/slots                                                                                          |          2 |         52 |          0 |          4 |         56 |
+| src/components/dashboard/slots/form                                                                                     |          1 |         23 |          0 |          2 |         25 |
+| src/components/dashboard/slots/table                                                                                    |          1 |         29 |          0 |          2 |         31 |
+| src/components/excel                                                                                                    |          3 |        671 |         19 |         63 |        753 |
+| src/components/feedback                                                                                                 |          1 |        154 |          0 |         19 |        173 |
+| src/components/icon                                                                                                     |          1 |         34 |         65 |         13 |        112 |
+| src/components/inventory                                                                                                |          8 |      2,102 |        123 |        202 |      2,427 |
+| src/components/invite                                                                                                   |          2 |        189 |          4 |         19 |        212 |
+| src/components/locale                                                                                                   |          1 |         45 |          0 |          6 |         51 |
+| src/components/markdown                                                                                                 |          2 |         31 |          0 |          4 |         35 |
+| src/components/sign                                                                                                     |          6 |        560 |         14 |         49 |        623 |
+| src/components/theme                                                                                                    |          1 |         34 |          0 |          7 |         41 |
+| src/components/ui                                                                                                       |         36 |      3,444 |         21 |        408 |      3,873 |
+| src/contexts                                                                                                            |          1 |        125 |          5 |         24 |        154 |
+| src/db                                                                                                                  |         13 |      5,150 |        134 |        104 |      5,388 |
+| src/db (Files)                                                                                                          |          4 |        586 |        125 |        104 |        815 |
+| src/db/migrations                                                                                                       |          9 |      4,564 |          9 |          0 |      4,573 |
+| src/db/migrations (Files)                                                                                               |          4 |        160 |          9 |          0 |        169 |
+| src/db/migrations/meta                                                                                                  |          5 |      4,404 |          0 |          0 |      4,404 |
+| src/hooks                                                                                                               |          5 |        112 |         13 |         39 |        164 |
+| src/i18n                                                                                                                |         12 |      2,196 |          0 |         24 |      2,220 |
+| src/i18n (Files)                                                                                                        |          4 |         54 |          0 |         16 |         70 |
+| src/i18n/messages                                                                                                       |          2 |      1,012 |          0 |          2 |      1,014 |
+| src/i18n/pages                                                                                                          |          6 |      1,130 |          0 |          6 |      1,136 |
+| src/i18n/pages/landing                                                                                                  |          2 |        732 |          0 |          2 |        734 |
+| src/i18n/pages/pricing                                                                                                  |          2 |        218 |          0 |          2 |        220 |
+| src/i18n/pages/showcase                                                                                                 |          2 |        180 |          0 |          2 |        182 |
+| src/lib                                                                                                                 |         17 |      2,371 |        505 |        403 |      3,279 |
+| src/lib (Files)                                                                                                         |         10 |        349 |         20 |         71 |        440 |
+| src/lib/adapters                                                                                                        |          2 |        602 |        192 |        105 |        899 |
+| src/lib/database                                                                                                        |          3 |        915 |        152 |        139 |      1,206 |
+| src/lib/utils                                                                                                           |          2 |        505 |        141 |         88 |        734 |
+| src/models                                                                                                              |          9 |      1,396 |         80 |        238 |      1,714 |
+| src/providers                                                                                                           |          1 |         45 |          2 |          9 |         56 |
+| src/services                                                                                                            |          9 |        932 |         34 |        132 |      1,098 |
+| src/types                                                                                                               |         27 |        823 |         39 |        110 |        972 |
+| src/types (Files)                                                                                                       |         13 |        464 |         39 |         54 |        557 |
+| src/types/blocks                                                                                                        |         10 |        309 |          0 |         46 |        355 |
+| src/types/pages                                                                                                         |          1 |         27 |          0 |          4 |         31 |
+| src/types/slots                                                                                                         |          3 |         23 |          0 |          6 |         29 |
+| sync_saihu_erp                                                                                                          |         79 |     11,524 |      2,053 |      2,652 |     16,229 |
+| sync_saihu_erp (Files)                                                                                                  |          4 |        184 |          3 |         22 |        209 |
+| sync_saihu_erp/data_update                                                                                              |         75 |     11,340 |      2,050 |      2,630 |     16,020 |
+| sync_saihu_erp/data_update (Files)                                                                                      |         10 |      1,448 |        146 |        379 |      1,973 |
+| sync_saihu_erp/data_update/config                                                                                       |          1 |         22 |          0 |          1 |         23 |
+| sync_saihu_erp/data_update/docs                                                                                         |          3 |        977 |          0 |        249 |      1,226 |
+| sync_saihu_erp/data_update/sql                                                                                          |          4 |        573 |        187 |        112 |        872 |
+| sync_saihu_erp/data_update/src                                                                                          |         47 |      6,559 |      1,479 |      1,525 |      9,563 |
+| sync_saihu_erp/data_update/src/auth                                                                                     |          5 |        696 |        237 |        162 |      1,095 |
+| sync_saihu_erp/data_update/src/config                                                                                   |          5 |        301 |         49 |         61 |        411 |
+| sync_saihu_erp/data_update/src/database                                                                                 |          3 |        613 |         76 |         78 |        767 |
+| sync_saihu_erp/data_update/src/inventory                                                                                |          5 |        591 |        261 |        188 |      1,040 |
+| sync_saihu_erp/data_update/src/models                                                                                   |          7 |        964 |        188 |        201 |      1,353 |
+| sync_saihu_erp/data_update/src/parsers                                                                                  |          3 |        365 |         81 |        111 |        557 |
+| sync_saihu_erp/data_update/src/processors                                                                               |          4 |        907 |        147 |        212 |      1,266 |
+| sync_saihu_erp/data_update/src/scheduler                                                                                |          3 |        476 |         99 |        109 |        684 |
+| sync_saihu_erp/data_update/src/scrapers                                                                                 |          5 |      1,011 |        194 |        255 |      1,460 |
+| sync_saihu_erp/data_update/src/services                                                                                 |          4 |        588 |        133 |        139 |        860 |
+| sync_saihu_erp/data_update/src/utils                                                                                    |          3 |         47 |         14 |          9 |         70 |
+| sync_saihu_erp/data_update/tests                                                                                        |         10 |      1,761 |        238 |        364 |      2,363 |
+| sync_saihu_erp/data_update/tests (Files)                                                                                |          5 |      1,206 |        131 |        244 |      1,581 |
+| sync_saihu_erp/data_update/tests/inventory                                                                              |          4 |        483 |         96 |        113 |        692 |
+| sync_saihu_erp/data_update/tests/utils                                                                                  |          1 |         72 |         11 |          7 |         90 |
++-------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                                | language           | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| /Users/liuying/Documents/GitHub/amazon_analyst/.claude/settings.local.json                                              | JSON               |         15 |          0 |          0 |         15 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/.dockerignore                                                            | Ignore             |         11 |          0 |          1 |         12 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/.env                                                                     | Properties         |         15 |         17 |          7 |         39 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/.github/ISSUE_TEMPLATE/bug_report.md                                     | Markdown           |         35 |          0 |          8 |         43 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/.github/ISSUE_TEMPLATE/feature_request.md                                | Markdown           |         42 |          0 |          9 |         51 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/.github/ISSUE_TEMPLATE/question.md                                       | Markdown           |         41 |          0 |          9 |         50 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/CLAUDE.md                                                                | Markdown           |        199 |          0 |         51 |        250 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/Dockerfile                                                               | Docker             |         25 |          6 |         14 |         45 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/ENVIRONMENT_SETUP.md                                                     | Markdown           |        110 |          0 |         46 |        156 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/RELEASE-log-2025-08-08.md                                                | Markdown           |        147 |          0 |         40 |        187 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/manage_postgres.sh                                                       | Shell Script       |         92 |          5 |         15 |        112 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/package.json                                                             | JSON               |        152 |          0 |          1 |        153 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/badges/phdaily.svg                                           | XML                |          1 |          0 |          0 |          1 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/icons/1.svg                                                  | XML                |          2 |          0 |          0 |          2 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/icons/2.svg                                                  | XML                |          2 |          0 |          0 |          2 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/icons/3.svg                                                  | XML                |          7 |          0 |          0 |          7 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/icons/4.svg                                                  | XML                |          7 |          1 |          6 |         14 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/icons/5.svg                                                  | XML                |         14 |          1 |         11 |         26 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/icons/6.svg                                                  | XML                |         17 |          1 |          0 |         18 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/logos/nextjs.svg                                             | XML                |          7 |          1 |          1 |          9 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/logos/react.svg                                              | XML                |          5 |          0 |          0 |          5 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/logos/shadcn.svg                                             | XML                |          5 |          0 |          1 |          6 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/logos/supabase.svg                                           | XML                |         23 |          0 |          1 |         24 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/logos/tailwindcss.svg                                        | XML                |          8 |          0 |          0 |          8 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/logos/vercel.svg                                             | XML                |          1 |          0 |          1 |          2 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/masks/circle.svg                                             | XML                |         14 |          0 |          0 |         14 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/imgs/masks/line.svg                                               | XML                |        419 |          0 |          0 |        419 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/public/sitemap.xml                                                       | XML                |          7 |          0 |          1 |          8 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/scripts/release.sh                                                       | Shell Script       |         55 |         10 |         15 |         80 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/scripts/test-ai-analysis.js                                              | JavaScript         |         56 |          5 |         13 |         74 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/set_up.md                                                                | Markdown           |        154 |          0 |         65 |        219 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/generate-video/generate-video-result.ts                        | TypeScript         |         10 |          0 |          3 |         13 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/generate-video/generate-video.ts                               | TypeScript         |         90 |          0 |         17 |        107 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/generate-video/index.ts                                        | TypeScript         |          5 |          0 |          1 |          6 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/index.ts                                                       | TypeScript         |          1 |          0 |          1 |          2 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/kling/client.ts                                                | TypeScript         |         51 |          7 |         13 |         71 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/kling/image-generation.ts                                      | TypeScript         |        117 |          0 |         18 |        135 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/kling/index.ts                                                 | TypeScript         |          2 |          0 |          1 |          3 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/kling/kling-error.ts                                           | TypeScript         |         11 |          0 |          3 |         14 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/kling/kling-image-model.ts                                     | TypeScript         |        126 |          0 |         24 |        150 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/kling/kling-image-settings.ts                                  | TypeScript         |          4 |          0 |          2 |          6 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/kling/kling-provider.ts                                        | TypeScript         |         75 |          0 |          8 |         83 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/kling/kling-video-model.ts                                     | TypeScript         |        129 |          0 |         26 |        155 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/kling/kling-video-settings.ts                                  | TypeScript         |          4 |          0 |          2 |          6 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/kling/text2video.ts                                            | TypeScript         |         94 |          0 |         14 |        108 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/provider/index.ts                                              | TypeScript         |          1 |          0 |          1 |          2 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/provider/video-model/index.ts                                  | TypeScript         |          1 |          0 |          1 |          2 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/provider/video-model/v1/index.ts                               | TypeScript         |          3 |          0 |          1 |          4 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/provider/video-model/v1/video-model-v1-call-options.ts         | TypeScript         |          8 |          0 |          2 |         10 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/provider/video-model/v1/video-model-v1-call-warning.ts         | TypeScript         |         11 |          0 |          2 |         13 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/provider/video-model/v1/video-model-v1.ts                      | TypeScript         |         12 |          0 |          6 |         18 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/aisdk/types/video-model.ts                                           | TypeScript         |          3 |          0 |          3 |          6 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/(legal)/layout.tsx                                               | TypeScript JSX     |         39 |          1 |          5 |         45 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(admin)/admin/feedbacks/page.tsx                        | TypeScript JSX     |         58 |          0 |          6 |         64 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(admin)/admin/orders/page.tsx                           | TypeScript JSX     |         25 |          0 |          5 |         30 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(admin)/admin/page.tsx                                  | TypeScript JSX     |         80 |          2 |          8 |         90 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(admin)/admin/posts/[uuid]/edit/page.tsx                | TypeScript JSX     |        181 |          0 |         13 |        194 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(admin)/admin/posts/add/page.tsx                        | TypeScript JSX     |        159 |          0 |         11 |        170 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(admin)/admin/posts/page.tsx                            | TypeScript JSX     |         72 |          0 |          5 |         77 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(admin)/admin/users/page.tsx                            | TypeScript JSX     |         31 |          0 |          5 |         36 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(admin)/layout.tsx                                      | TypeScript JSX     |        131 |          0 |          5 |        136 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/(console)/api-keys/create/page.tsx            | TypeScript JSX     |         80 |          0 |         12 |         92 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/(console)/api-keys/page.tsx                   | TypeScript JSX     |         55 |          0 |          6 |         61 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/(console)/layout.tsx                          | TypeScript JSX     |         47 |          1 |          6 |         54 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/(console)/my-credits/page.tsx                 | TypeScript JSX     |         59 |          0 |          8 |         67 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/(console)/my-invites/page.tsx                 | TypeScript JSX     |        138 |          3 |         15 |        156 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/(console)/my-orders/page.tsx                  | TypeScript JSX     |         58 |          0 |          9 |         67 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/analysis/page.tsx                             | TypeScript JSX     |        186 |          0 |         21 |        207 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/i/[code]/page.tsx                             | TypeScript JSX     |         22 |          1 |          6 |         29 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/inventory/[location]/page.tsx                 | TypeScript JSX     |         70 |         11 |         11 |         92 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/inventory/analysis/[asin]/page.tsx            | TypeScript JSX     |        491 |         23 |         33 |        547 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/inventory/page.tsx                            | TypeScript JSX     |         43 |          8 |          8 |         59 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/inventory/upload/page.tsx                     | TypeScript JSX     |         35 |          7 |          5 |         47 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/layout.tsx                                    | TypeScript JSX     |         33 |          1 |          3 |         37 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/page.tsx                                      | TypeScript JSX     |         53 |          0 |          6 |         59 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/posts/[slug]/page.tsx                         | TypeScript JSX     |         35 |          0 |         10 |         45 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/posts/page.tsx                                | TypeScript JSX     |         39 |          0 |          9 |         48 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/pricing/page.tsx                              | TypeScript JSX     |         11 |          0 |          3 |         14 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/(default)/showcase/page.tsx                             | TypeScript JSX     |         11 |          0 |          3 |         14 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/auth/register/page.tsx                                  | TypeScript JSX     |         27 |          0 |          2 |         29 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/auth/signin/page.tsx                                    | TypeScript JSX     |         27 |          0 |          3 |         30 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/layout.tsx                                              | TypeScript JSX     |         49 |          0 |          7 |         56 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/[locale]/pay-success/[session_id]/page.tsx                       | TypeScript JSX     |         18 |          0 |          5 |         23 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ad-data/asin/[asin]/route.ts                                 | TypeScript         |        206 |         29 |         33 |        268 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ad-data/compare/route.ts                                     | TypeScript         |        177 |         33 |         38 |        248 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ad-data/dashboard/route.ts                                   | TypeScript         |         69 |         11 |         13 |         93 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ad-data/inventory-points/route.ts                            | TypeScript         |        119 |         12 |         17 |        148 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ad-data/metrics/route.ts                                     | TypeScript         |        109 |         12 |         17 |        138 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ad-data/sync/status/route.ts                                 | TypeScript         |        114 |         14 |         15 |        143 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ad-data/sync/trigger/route.ts                                | TypeScript         |        103 |         29 |         20 |        152 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ad-data/trends/route.ts                                      | TypeScript         |        185 |         29 |         37 |        251 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/add-feedback/route.ts                                        | TypeScript         |         24 |          0 |          7 |         31 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/[id]/route.ts                                    | TypeScript         |        130 |          8 |         24 |        162 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/agents/helios-agent.ts                           | TypeScript         |        501 |        106 |        108 |        715 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/batch/route.ts                                   | TypeScript         |        285 |         51 |         56 |        392 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/docs/brief.md                                    | Markdown           |        336 |          0 |        112 |        448 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/engines/rules-engine.ts                          | TypeScript         |        406 |         52 |         48 |        506 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/generate/route.ts                                | TypeScript         |        185 |         19 |         26 |        230 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/helios_flowchart_visualization.html              | HTML               |      1,055 |         10 |        140 |      1,205 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/helios_output_example.md                         | Markdown           |         80 |          0 |         35 |        115 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/langgraph-workflow-summary.md                    | Markdown           |        167 |          0 |         43 |        210 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/route.ts                                         | TypeScript         |        133 |          5 |         23 |        161 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/services/data-aggregation.ts                     | TypeScript         |        329 |         51 |         48 |        428 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/services/data-integration.ts                     | TypeScript         |        195 |         70 |         42 |        307 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/stream/route.ts                                  | TypeScript         |        164 |         16 |         23 |        203 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/test-backend.js                                  | JavaScript         |        528 |         50 |        102 |        680 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/test-frontend.html                               | HTML               |      1,096 |          5 |        170 |      1,271 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ai-analysis/test-report.json                                 | JSON               |        146 |          0 |          0 |        146 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/analyze-excel/route.ts                                       | TypeScript         |        174 |         15 |         30 |        219 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/auth/[...nextauth]/route.ts                                  | TypeScript         |          2 |          0 |          2 |          4 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/auth/register/route.ts                                       | TypeScript         |        111 |         12 |         18 |        141 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/checkout/route.ts                                            | TypeScript         |        172 |          2 |         34 |        208 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/demo/gen-image/route.ts                                      | TypeScript         |         87 |          0 |         13 |        100 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/demo/gen-stream-text/route.ts                                | TypeScript         |         76 |          0 |          9 |         85 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/demo/gen-text/route.ts                                       | TypeScript         |         77 |          0 |         11 |         88 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/get-user-credits/route.ts                                    | TypeScript         |         16 |          0 |          4 |         20 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/get-user-info/route.ts                                       | TypeScript         |         26 |          0 |          7 |         33 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/inventory/[location]/route.ts                                | TypeScript         |         61 |          2 |         10 |         73 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/inventory/options/route.ts                                   | TypeScript         |         43 |          1 |          6 |         50 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/inventory/route.ts                                           | TypeScript         |        122 |          6 |         12 |        140 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/inventory/sales-persons/route.ts                             | TypeScript         |         27 |          1 |          5 |         33 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/inventory/stats/route.ts                                     | TypeScript         |         55 |          3 |          9 |         67 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/inventory/upload/route.ts                                    | TypeScript         |        157 |         20 |         31 |        208 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/inventory/warehouse-locations/route.ts                       | TypeScript         |         27 |          1 |          5 |         33 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/ping/route.ts                                                | TypeScript         |         30 |          1 |          6 |         37 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/rpa/config/route.ts                                          | TypeScript         |         68 |          7 |          9 |         84 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/rpa/status/route.ts                                          | TypeScript         |        136 |         20 |         23 |        179 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/rpa/sync/route.ts                                            | TypeScript         |         37 |          6 |          6 |         49 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/stripe-notify/route.ts                                       | TypeScript         |         40 |          0 |         11 |         51 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/test-adapter/route.ts                                        | TypeScript         |         45 |          4 |          9 |         58 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/test-db/route.ts                                             | TypeScript         |         27 |          1 |          4 |         32 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/test-inventory/route.ts                                      | TypeScript         |         50 |          4 |          9 |         63 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/update-invite-code/route.ts                                  | TypeScript         |         42 |          0 |         12 |         54 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/api/update-invite/route.ts                                       | TypeScript         |         51 |          3 |         11 |         65 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/globals.css                                                      | PostCSS            |         22 |          0 |          6 |         28 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/layout.tsx                                                       | TypeScript JSX     |         38 |          0 |          7 |         45 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/simple/page.tsx                                                  | TypeScript JSX     |         74 |          0 |          5 |         79 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/test/page.tsx                                                    | TypeScript JSX     |         14 |          0 |          1 |         15 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/app/theme.css                                                        | PostCSS            |        151 |          0 |          6 |        157 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/auth/config.ts                                                       | TypeScript         |        196 |         13 |         24 |        233 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/auth/handler.ts                                                      | TypeScript         |         36 |          0 |          5 |         41 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/auth/index.ts                                                        | TypeScript         |          3 |          0 |          2 |          5 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/auth/session.tsx                                                     | TypeScript JSX     |          9 |          0 |          3 |         12 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ad-data/ad-dashboard.tsx                                  | TypeScript JSX     |        370 |         11 |         35 |        416 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ad-data/ad-distribution-chart.tsx                         | TypeScript JSX     |        330 |         13 |         26 |        369 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ad-data/ad-metrics-card.tsx                               | TypeScript JSX     |        266 |          7 |         21 |        294 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ad-data/ad-trends-chart.tsx                               | TypeScript JSX     |        308 |         10 |         32 |        350 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ad-data/inventory-points-table.tsx                        | TypeScript JSX     |        880 |         82 |         84 |      1,046 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ai-analysis/analysis-history.tsx                          | TypeScript JSX     |        299 |         11 |         24 |        334 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ai-analysis/analysis-panel.tsx                            | TypeScript JSX     |         23 |          1 |          6 |         30 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ai-analysis/analysis-period-selector.tsx                  | TypeScript JSX     |        324 |         14 |         21 |        359 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ai-analysis/analysis-result.tsx                           | TypeScript JSX     |        284 |         19 |         31 |        334 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ai-analysis/analysis-trigger.tsx                          | TypeScript JSX     |        375 |         31 |         51 |        457 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ai-analysis/index.tsx                                     | TypeScript JSX     |          8 |          4 |          2 |         14 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ai-analysis/multi-day-analysis-panel.tsx                  | TypeScript JSX     |        166 |         10 |         12 |        188 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ai-analysis/quick-analysis-buttons.tsx                    | TypeScript JSX     |         63 |          0 |          3 |         66 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ai-analysis/quick-rating.tsx                              | TypeScript JSX     |        188 |          8 |         17 |        213 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ai-analysis/streaming-analysis-display.tsx                | TypeScript JSX     |        542 |         44 |         58 |        644 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ai-analysis/streaming-rating.tsx                          | TypeScript JSX     |        214 |         15 |         22 |        251 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/analytics/google-analytics.tsx                            | TypeScript JSX     |         12 |          0 |          5 |         17 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/analytics/index.tsx                                       | TypeScript JSX     |         15 |          0 |          3 |         18 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/analytics/open-panel.tsx                                  | TypeScript JSX     |         18 |          0 |          4 |         22 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/analytics/plausible.tsx                                   | TypeScript JSX     |         17 |          0 |          4 |         21 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/blog-detail/crumb.tsx                              | TypeScript JSX     |         37 |          0 |          4 |         41 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/blog-detail/index.tsx                              | TypeScript JSX     |         45 |          0 |          5 |         50 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/blog/index.tsx                                     | TypeScript JSX     |         60 |          0 |          3 |         63 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/branding/index.tsx                                 | TypeScript JSX     |         31 |          0 |          3 |         34 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/crumb/index.tsx                                    | TypeScript JSX     |         27 |          0 |          3 |         30 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/cta/index.tsx                                      | TypeScript JSX     |         43 |          0 |          3 |         46 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/data-cards/index.tsx                               | TypeScript JSX     |         38 |          0 |          3 |         41 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/data-charts/index.tsx                              | TypeScript JSX     |        198 |          0 |         13 |        211 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/editor/index.tsx                                   | TypeScript JSX     |         44 |          0 |          5 |         49 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/editor/menubar.tsx                                 | TypeScript JSX     |        242 |          0 |          4 |        246 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/editor/style.css                                   | PostCSS            |        171 |         12 |         34 |        217 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/empty/index.tsx                                    | TypeScript JSX     |          7 |          0 |          1 |          8 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/faq/index.tsx                                      | TypeScript JSX     |         39 |          0 |          3 |         42 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/feature/index.tsx                                  | TypeScript JSX     |         34 |          0 |          3 |         37 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/feature1/index.tsx                                 | TypeScript JSX     |         54 |          0 |          3 |         57 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/feature2/index.tsx                                 | TypeScript JSX     |        124 |          0 |          9 |        133 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/feature3/index.tsx                                 | TypeScript JSX     |         89 |          0 |          5 |         94 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/footer/index.tsx                                   | TypeScript JSX     |         98 |          0 |          4 |        102 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/form/index.tsx                                     | TypeScript JSX     |        216 |          0 |         24 |        240 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/header/index.tsx                                   | TypeScript JSX     |        309 |          0 |         11 |        320 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/hero/bg.tsx                                        | TypeScript JSX     |        421 |          0 |          1 |        422 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/hero/happy-users.tsx                               | TypeScript JSX     |         31 |          0 |          3 |         34 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/hero/index.tsx                                     | TypeScript JSX     |         92 |          0 |          6 |         98 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/mdeditor/index.tsx                                 | TypeScript JSX     |         19 |          1 |          2 |         22 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/pricing/index.tsx                                  | TypeScript JSX     |        275 |          0 |         22 |        297 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/showcase/index.tsx                                 | TypeScript JSX     |         47 |          0 |          5 |         52 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/showcase1/index.tsx                                | TypeScript JSX     |        121 |          0 |          7 |        128 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/stats/index.tsx                                    | TypeScript JSX     |         45 |          0 |          4 |         49 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/table/copy.tsx                                     | TypeScript JSX     |         17 |          0 |          3 |         20 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/table/dropdown.tsx                                 | TypeScript JSX     |         50 |          0 |          4 |         54 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/table/image.tsx                                    | TypeScript JSX     |         17 |          0 |          1 |         18 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/table/index.tsx                                    | TypeScript JSX     |         98 |          0 |          8 |        106 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/table/label.tsx                                    | TypeScript JSX     |         16 |          0 |          2 |         18 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/table/time.tsx                                     | TypeScript JSX     |         18 |          0 |          2 |         20 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/testimonial/index.tsx                              | TypeScript JSX     |         92 |          0 |          6 |         98 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/blocks/toolbar/index.tsx                                  | TypeScript JSX     |         27 |          0 |          2 |         29 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/console/layout.tsx                                        | TypeScript JSX     |         25 |          0 |          2 |         27 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/console/sidebar/nav.tsx                                   | TypeScript JSX     |         44 |          0 |          4 |         48 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/console/slots/form/index.tsx                              | TypeScript JSX     |         24 |          0 |          2 |         26 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/console/slots/table/index.tsx                             | TypeScript JSX     |         22 |          0 |          2 |         24 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/dashboard/header/index.tsx                                | TypeScript JSX     |         53 |          0 |          4 |         57 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/dashboard/layout.tsx                                      | TypeScript JSX     |         25 |          0 |          3 |         28 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/dashboard/sidebar/bottom_nav.tsx                          | TypeScript JSX     |         37 |          0 |          4 |         41 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/dashboard/sidebar/footer.tsx                              | TypeScript JSX     |         30 |          0 |          6 |         36 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/dashboard/sidebar/index.tsx                               | TypeScript JSX     |         84 |          0 |          4 |         88 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/dashboard/sidebar/library.tsx                             | TypeScript JSX     |         68 |         28 |          6 |        102 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/dashboard/sidebar/nav.tsx                                 | TypeScript JSX     |         51 |          0 |          4 |         55 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/dashboard/sidebar/user.tsx                                | TypeScript JSX     |        136 |          9 |          6 |        151 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/dashboard/slots/form/index.tsx                            | TypeScript JSX     |         23 |          0 |          2 |         25 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/dashboard/slots/table/index.tsx                           | TypeScript JSX     |         29 |          0 |          2 |         31 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/excel/analysis-results.tsx                                | TypeScript JSX     |        261 |          4 |         14 |        279 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/excel/data-visualization.tsx                              | TypeScript JSX     |        209 |          7 |         17 |        233 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/excel/excel-upload.tsx                                    | TypeScript JSX     |        201 |          8 |         32 |        241 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/feedback/index.tsx                                        | TypeScript JSX     |        154 |          0 |         19 |        173 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/icon/index.tsx                                            | TypeScript JSX     |         34 |         65 |         13 |        112 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/inventory/inventory-dashboard-full.tsx                    | TypeScript JSX     |        155 |         16 |         23 |        194 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/inventory/inventory-dashboard.tsx                         | TypeScript JSX     |        222 |          7 |         20 |        249 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/inventory/inventory-data-table.tsx                        | TypeScript JSX     |        364 |         15 |         33 |        412 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/inventory/inventory-filter-panel.tsx                      | TypeScript JSX     |        255 |         19 |         27 |        301 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/inventory/inventory-location-detail.tsx                   | TypeScript JSX     |        263 |         29 |         39 |        331 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/inventory/inventory-stats-cards.tsx                       | TypeScript JSX     |        140 |          6 |         13 |        159 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/inventory/inventory-table.tsx                             | TypeScript JSX     |        398 |         12 |         20 |        430 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/inventory/inventory-upload.tsx                            | TypeScript JSX     |        305 |         19 |         27 |        351 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/invite/index.tsx                                          | TypeScript JSX     |        126 |          4 |         14 |        144 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/invite/modal.tsx                                          | TypeScript JSX     |         63 |          0 |          5 |         68 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/locale/toggle.tsx                                         | TypeScript JSX     |         45 |          0 |          6 |         51 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/markdown/index.tsx                                        | TypeScript JSX     |         17 |          0 |          2 |         19 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/markdown/markdown.css                                     | PostCSS            |         14 |          0 |          2 |         16 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/sign/form.tsx                                             | TypeScript JSX     |        155 |          0 |          9 |        164 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/sign/modal.tsx                                            | TypeScript JSX     |         97 |         12 |         12 |        121 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/sign/register-form.tsx                                    | TypeScript JSX     |        213 |          2 |         13 |        228 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/sign/sign_in.tsx                                          | TypeScript JSX     |         17 |          0 |          4 |         21 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/sign/toggle.tsx                                           | TypeScript JSX     |         14 |          0 |          4 |         18 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/sign/user.tsx                                             | TypeScript JSX     |         64 |          0 |          7 |         71 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/theme/toggle.tsx                                          | TypeScript JSX     |         34 |          0 |          7 |         41 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/accordion.tsx                                          | TypeScript JSX     |         50 |          0 |          9 |         59 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/alert.tsx                                              | TypeScript JSX     |         53 |          0 |          7 |         60 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/avatar.tsx                                             | TypeScript JSX     |         47 |          0 |          7 |         54 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/badge.tsx                                              | TypeScript JSX     |         41 |          0 |          6 |         47 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/breadcrumb.tsx                                         | TypeScript JSX     |         99 |          0 |         11 |        110 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/button.tsx                                             | TypeScript JSX     |         54 |          0 |          6 |         60 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/card.tsx                                               | TypeScript JSX     |         83 |          0 |         10 |         93 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/carousel.tsx                                           | TypeScript JSX     |        232 |          0 |         31 |        263 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/chart.tsx                                              | TypeScript JSX     |        315 |          2 |         37 |        354 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/checkbox.tsx                                           | TypeScript JSX     |         28 |          0 |          5 |         33 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/collapsible.tsx                                        | TypeScript JSX     |          6 |          0 |          6 |         12 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/dialog.tsx                                             | TypeScript JSX     |        109 |          0 |         14 |        123 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/drawer.tsx                                             | TypeScript JSX     |        119 |          0 |         14 |        133 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/dropdown-menu.tsx                                      | TypeScript JSX     |        239 |          0 |         19 |        258 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/form.tsx                                               | TypeScript JSX     |        153 |          0 |         26 |        179 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/icon.tsx                                               | TypeScript JSX     |         15 |          0 |          3 |         18 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/input.tsx                                              | TypeScript JSX     |         18 |          0 |          4 |         22 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/label.tsx                                              | TypeScript JSX     |         20 |          0 |          5 |         25 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/loading-spinner.tsx                                    | TypeScript JSX     |        156 |          7 |         14 |        177 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/navigation-menu.tsx                                    | TypeScript JSX     |        117 |          0 |         12 |        129 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/progress.tsx                                           | TypeScript JSX     |         24 |          0 |          4 |         28 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/radio-group.tsx                                        | TypeScript JSX     |         39 |          0 |          6 |         45 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/scroll-area.tsx                                        | TypeScript JSX     |         43 |          0 |          5 |         48 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/select.tsx                                             | TypeScript JSX     |        172 |          0 |         14 |        186 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/separator.tsx                                          | TypeScript JSX     |         24 |          0 |          5 |         29 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/sheet.tsx                                              | TypeScript JSX     |        126 |          0 |         14 |        140 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/sidebar.tsx                                            | TypeScript JSX     |        660 |         12 |         55 |        727 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/skeleton.tsx                                           | TypeScript JSX     |         11 |          0 |          3 |         14 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/sonner.tsx                                             | TypeScript JSX     |         21 |          0 |          5 |         26 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/switch.tsx                                             | TypeScript JSX     |         25 |          0 |          5 |         30 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/table.tsx                                              | TypeScript JSX     |        105 |          0 |         12 |        117 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/tabs.tsx                                               | TypeScript JSX     |         59 |          0 |          8 |         67 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/textarea.tsx                                           | TypeScript JSX     |         19 |          0 |          4 |         23 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/toggle-group.tsx                                       | TypeScript JSX     |         66 |          0 |          8 |         74 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/toggle.tsx                                             | TypeScript JSX     |         42 |          0 |          6 |         48 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/components/ui/tooltip.tsx                                            | TypeScript JSX     |         54 |          0 |          8 |         62 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/contexts/app.tsx                                                     | TypeScript JSX     |        125 |          5 |         24 |        154 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/config.ts                                                         | TypeScript         |         14 |          0 |          3 |         17 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/index.ts                                                          | TypeScript         |         87 |          8 |          9 |        104 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/migrations/0000_wealthy_squirrel_girl.sql                         | MS SQL             |        102 |          7 |          0 |        109 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/migrations/0001_needy_hobgoblin.sql                               | MS SQL             |         30 |          1 |          0 |         31 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/migrations/0002_dapper_thanos.sql                                 | MS SQL             |         24 |          1 |          0 |         25 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/migrations/0003_curious_black_tom.sql                             | MS SQL             |          4 |          0 |          0 |          4 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/migrations/meta/0000_snapshot.json                                | JSON               |        751 |          0 |          0 |        751 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/migrations/meta/0001_snapshot.json                                | JSON               |      1,055 |          0 |          0 |      1,055 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/migrations/meta/0002_snapshot.json                                | JSON               |      1,269 |          0 |          0 |      1,269 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/migrations/meta/0003_snapshot.json                                | JSON               |      1,295 |          0 |          0 |      1,295 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/migrations/meta/_journal.json                                     | JSON               |         34 |          0 |          0 |         34 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/saihu_erp_schema.sql                                              | MS SQL             |        244 |         92 |         71 |        407 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/db/schema.ts                                                         | TypeScript         |        241 |         25 |         21 |        287 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/hooks/use-analysis-history.ts                                        | TypeScript         |         27 |          7 |          9 |         43 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/hooks/use-mobile.ts                                                  | TypeScript         |         15 |          0 |          5 |         20 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/hooks/use-mobile.tsx                                                 | TypeScript JSX     |         15 |          0 |          5 |         20 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/hooks/useMediaQuery.tsx                                              | TypeScript JSX     |         16 |          4 |          8 |         28 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/hooks/useOneTapLogin.tsx                                             | TypeScript JSX     |         39 |          2 |         12 |         53 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/i18n/locale.ts                                                       | TypeScript         |         10 |          0 |          6 |         16 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/i18n/messages/en.json                                                | JSON               |        506 |          0 |          1 |        507 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/i18n/messages/zh.json                                                | JSON               |        506 |          0 |          1 |        507 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/i18n/navigation.ts                                                   | TypeScript         |          4 |          0 |          2 |          6 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/i18n/pages/landing/en.json                                           | JSON               |        398 |          0 |          1 |        399 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/i18n/pages/landing/zh.json                                           | JSON               |        334 |          0 |          1 |        335 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/i18n/pages/pricing/en.json                                           | JSON               |        109 |          0 |          1 |        110 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/i18n/pages/pricing/zh.json                                           | JSON               |        109 |          0 |          1 |        110 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/i18n/pages/showcase/en.json                                          | JSON               |         90 |          0 |          1 |         91 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/i18n/pages/showcase/zh.json                                          | JSON               |         90 |          0 |          1 |         91 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/i18n/request.ts                                                      | TypeScript         |         27 |          0 |          5 |         32 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/i18n/routing.ts                                                      | TypeScript         |         13 |          0 |          3 |         16 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/adapters/data-transformer.ts                                     | TypeScript         |        234 |        146 |         51 |        431 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/adapters/saihu-adapter.ts                                        | TypeScript         |        368 |         46 |         54 |        468 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/browser.ts                                                       | TypeScript         |          0 |          0 |          1 |          1 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/cache.ts                                                         | TypeScript         |         30 |          6 |         12 |         48 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/database/ad-data-dao.ts                                          | TypeScript         |        454 |         45 |         51 |        550 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/database/cache-manager.ts                                        | TypeScript         |        200 |         63 |         47 |        310 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/database/mysql-client.ts                                         | TypeScript         |        261 |         44 |         41 |        346 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/hash.ts                                                          | TypeScript         |         26 |          0 |          9 |         35 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/inventory-schema.ts                                              | TypeScript         |        137 |         14 |         14 |        165 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/ip.ts                                                            | TypeScript         |         10 |          0 |          5 |         15 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/resp.ts                                                          | TypeScript         |         20 |          0 |          5 |         25 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/storage.ts                                                       | TypeScript         |        104 |          0 |         15 |        119 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/time.ts                                                          | TypeScript         |         17 |          0 |          7 |         24 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/tools.ts                                                         | TypeScript         |          0 |          0 |          1 |          1 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/utils.ts                                                         | TypeScript         |          5 |          0 |          2 |          7 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/utils/api-logger.ts                                              | TypeScript         |        276 |         88 |         50 |        414 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/lib/utils/api-validation.ts                                          | TypeScript         |        229 |         53 |         38 |        320 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/middleware.ts                                                        | TypeScript         |         10 |          0 |          3 |         13 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/models/affiliate.ts                                                  | TypeScript         |        102 |          0 |         25 |        127 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/models/ai-analysis.ts                                                | TypeScript         |        302 |         30 |         44 |        376 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/models/apikey.ts                                                     | TypeScript         |         46 |          0 |          9 |         55 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/models/credit.ts                                                     | TypeScript         |         59 |          0 |         11 |         70 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/models/feedback.ts                                                   | TypeScript         |         45 |          0 |         12 |         57 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/models/inventory.ts                                                  | TypeScript         |        443 |         50 |         59 |        552 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/models/order.ts                                                      | TypeScript         |        184 |          0 |         30 |        214 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/models/post.ts                                                       | TypeScript         |         79 |          0 |         18 |         97 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/models/user.ts                                                       | TypeScript         |        136 |          0 |         30 |        166 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/providers/theme.tsx                                                  | TypeScript JSX     |         45 |          2 |          9 |         56 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/services/affiliate.ts                                                | TypeScript         |         31 |          0 |          4 |         35 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/services/ai-analysis.ts                                              | TypeScript         |        254 |          6 |         39 |        299 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/services/apikey.ts                                                   | TypeScript         |          7 |          0 |          2 |          9 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/services/constant.ts                                                 | TypeScript         |         16 |          0 |          4 |         20 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/services/credit.ts                                                   | TypeScript         |        135 |          3 |         17 |        155 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/services/order.ts                                                    | TypeScript         |         58 |          2 |          9 |         69 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/services/page.ts                                                     | TypeScript         |         28 |          0 |          7 |         35 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/services/streaming-analysis.ts                                       | TypeScript         |        266 |          8 |         15 |        289 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/services/user.ts                                                     | TypeScript         |        137 |         15 |         35 |        187 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/affiliate.d.ts                                                 | TypeScript         |         13 |          0 |          2 |         15 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/ai-analysis.d.ts                                               | TypeScript         |        151 |         20 |         18 |        189 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/apikey.d.ts                                                    | TypeScript         |          7 |          0 |          1 |          8 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/blocks/base.d.ts                                               | TypeScript         |        104 |          0 |         20 |        124 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/blocks/blog.d.ts                                               | TypeScript         |         26 |          0 |          3 |         29 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/blocks/footer.d.ts                                             | TypeScript         |         10 |          0 |          2 |         12 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/blocks/form.d.ts                                               | TypeScript         |         53 |          0 |          5 |         58 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/blocks/header.d.ts                                             | TypeScript         |         12 |          0 |          2 |         14 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/blocks/hero.d.ts                                               | TypeScript         |         21 |          0 |          3 |         24 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/blocks/pricing.d.ts                                            | TypeScript         |         38 |          0 |          4 |         42 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/blocks/section.d.ts                                            | TypeScript         |         23 |          0 |          3 |         26 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/blocks/sidebar.d.ts                                            | TypeScript         |         10 |          0 |          2 |         12 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/blocks/table.d.ts                                              | TypeScript         |         12 |          0 |          2 |         14 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/context.d.ts                                                   | TypeScript         |          4 |          0 |          2 |          6 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/credit.d.ts                                                    | TypeScript         |          9 |          0 |          1 |         10 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/feedback.d.ts                                                  | TypeScript         |         10 |          0 |          2 |         12 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/global.d.ts                                                    | TypeScript         |          1 |          0 |          1 |          2 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/inventory.d.ts                                                 | TypeScript         |        175 |         19 |         19 |        213 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/mdx.d.ts                                                       | TypeScript         |          5 |          0 |          1 |          6 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/next-auth.d.ts                                                 | TypeScript         |         19 |          0 |          3 |         22 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/order.d.ts                                                     | TypeScript         |         26 |          0 |          1 |         27 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/pages/landing.d.ts                                             | TypeScript         |         27 |          0 |          4 |         31 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/post.d.ts                                                      | TypeScript         |         14 |          0 |          1 |         15 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/slots/base.d.ts                                                | TypeScript         |         11 |          0 |          2 |         13 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/slots/form.d.ts                                                | TypeScript         |          6 |          0 |          2 |          8 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/slots/table.d.ts                                               | TypeScript         |          6 |          0 |          2 |          8 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/src/types/user.d.ts                                                      | TypeScript         |         30 |          0 |          2 |         32 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/README.md                                                 | Markdown           |          0 |          0 |          2 |          2 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/README.md                                     | Markdown           |        273 |          0 |         89 |        362 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/config/config.yml                             | YAML               |         22 |          0 |          1 |         23 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/continuous_sync_4hours.py                     | Python             |        168 |         34 |         46 |        248 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/docs/postgresql_migration_guide.md            | Markdown           |        163 |          0 |         40 |        203 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/docs/库存点合并功能实现总结.md                           | Markdown           |        200 |          0 |         51 |        251 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/docs/库存点合并逻辑设计文档.md                           | Markdown           |        614 |          0 |        158 |        772 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/final_sync.py                                 | Python             |        163 |         19 |         43 |        225 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/manual_sync_guide.md                          | Markdown           |        100 |          0 |         31 |        131 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/run_sync_now.py                               | Python             |        133 |         24 |         35 |        192 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/sql/init.sql                                  | MS SQL             |        176 |         22 |         20 |        218 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/sql/inventory_points_init.sql                 | MS SQL             |        157 |         32 |         34 |        223 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/sql/postgresql_init.sql                       | MS SQL             |        177 |         53 |         25 |        255 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/sql/product_analytics_schema_upgrade.sql      | MS SQL             |         63 |         80 |         33 |        176 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/auth/__init__.py                          | Python             |          3 |          1 |          1 |          5 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/auth/api_signer.py                        | Python             |         72 |         46 |         19 |        137 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/auth/oauth_client.py                      | Python             |        157 |         52 |         36 |        245 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/auth/saihu_api_client.py                  | Python             |        279 |        105 |         54 |        438 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/auth/saihu_api_client_v2.py               | Python             |        185 |         33 |         52 |        270 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/config/__init__.py                        | Python             |          4 |          1 |          1 |          6 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/config/api.py                             | Python             |         57 |         10 |         11 |         78 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/config/database.py                        | Python             |         33 |          7 |          8 |         48 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/config/secure_config.py                   | Python             |         68 |         11 |         16 |         95 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/config/settings.py                        | Python             |        139 |         20 |         25 |        184 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/database/__init__.py                      | Python             |          5 |          4 |          3 |         12 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/database/connection.py                    | Python             |        396 |         42 |         44 |        482 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/database/postgresql_connection.py         | Python             |        212 |         30 |         31 |        273 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/inventory/__init__.py                     | Python             |         10 |          9 |          2 |         21 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/inventory/ad_merger.py                    | Python             |        133 |         91 |         50 |        274 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/inventory/eu_merger.py                    | Python             |        141 |         63 |         46 |        250 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/inventory/merger.py                       | Python             |        132 |         38 |         40 |        210 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/inventory/non_eu_merger.py                | Python             |        175 |         60 |         50 |        285 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/models/__init__.py                        | Python             |         15 |          1 |          1 |         17 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/models/base.py                            | Python             |         62 |         19 |         25 |        106 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/models/fba_inventory.py                   | Python             |        138 |         22 |         24 |        184 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/models/inventory_details.py               | Python             |        165 |         26 |         30 |        221 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/models/inventory_point.py                 | Python             |        154 |         35 |         39 |        228 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/models/product_analytics.py               | Python             |        300 |         58 |         50 |        408 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/models/sync_task_log.py                   | Python             |        130 |         27 |         32 |        189 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/parsers/__init__.py                       | Python             |          3 |          1 |          1 |          5 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/parsers/api_template.py                   | Python             |        132 |         26 |         38 |        196 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/parsers/md_parser.py                      | Python             |        230 |         54 |         72 |        356 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/processors/__init__.py                    | Python             |          8 |          1 |          1 |         10 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/processors/base_processor.py              | Python             |        246 |         40 |         68 |        354 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/processors/inventory_merge_processor.py   | Python             |        416 |         59 |         75 |        550 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/processors/product_analytics_processor.py | Python             |        237 |         47 |         68 |        352 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/scheduler/__init__.py                     | Python             |          3 |          1 |          1 |          5 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/scheduler/sync_jobs.py                    | Python             |        269 |         70 |         82 |        421 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/scheduler/task_scheduler.py               | Python             |        204 |         28 |         26 |        258 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/scrapers/__init__.py                      | Python             |         10 |          1 |          1 |         12 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/scrapers/base_scraper.py                  | Python             |        207 |         37 |         54 |        298 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/scrapers/fba_inventory_scraper.py         | Python             |        295 |         55 |         72 |        422 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/scrapers/inventory_details_scraper.py     | Python             |        295 |         56 |         75 |        426 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/scrapers/product_analytics_scraper.py     | Python             |        204 |         45 |         53 |        302 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/services/data_sync_service.py             | Python             |        225 |         77 |         54 |        356 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/services/data_validator.py                | Python             |        180 |         27 |         40 |        247 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/services/secure_api_client.py             | Python             |        141 |         19 |         36 |        196 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/services/sync_notifier.py                 | Python             |         42 |         10 |          9 |         61 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/utils/__init__.py                         | Python             |          2 |          1 |          1 |          4 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/utils/logging_utils.py                    | Python             |         13 |          5 |          2 |         20 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/src/utils/web_integration.py                  | Python             |         32 |          8 |          6 |         46 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/sync_now.py                                   | Python             |        143 |         16 |         33 |        192 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/sync_status_report.md                         | Markdown           |        106 |          0 |         30 |        136 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/test_integration.py                           | Python             |         24 |          7 |          9 |         40 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/test_postgresql.py                            | Python             |        185 |         28 |         41 |        254 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/tests/README.md                               | Markdown           |        266 |          0 |         79 |        345 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/tests/integration_test.py                     | Python             |        402 |         49 |         67 |        518 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/tests/integration_test_report_2025-07-25.json | JSON               |         26 |          0 |          0 |         26 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/tests/inventory/__init__.py                   | Python             |          0 |          1 |          0 |          1 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/tests/inventory/test_ad_merger.py             | Python             |        165 |         38 |         41 |        244 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/tests/inventory/test_eu_merger.py             | Python             |        162 |         30 |         34 |        226 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/tests/inventory/test_merger.py                | Python             |        156 |         27 |         38 |        221 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/tests/run_inventory_tests.py                  | Python             |         81 |         17 |         30 |        128 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/tests/test_runner.py                          | Python             |        431 |         65 |         68 |        564 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/tests/utils/test_config.py                    | Python             |         72 |         11 |          7 |         90 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/data_update/validate_postgresql.sh                        | Shell Script       |        153 |         18 |         22 |        193 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/db.py                                                     | Python             |         41 |          0 |          7 |         48 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/main.py                                                   | Python             |         78 |          2 |          8 |         88 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/sync_saihu_erp/test_data.py                                              | Python             |         65 |          1 |          5 |         71 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/test_database.py                                                         | Python             |         69 |          9 |         12 |         90 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/tsconfig.json                                                            | JSON with Comments |         27 |          0 |          1 |         28 |
+| /Users/liuying/Documents/GitHub/amazon_analyst/vercel.json                                                              | JSON               |          7 |          0 |          1 |          8 |
+| Total                                                                                                                   |                    |     54,649 |      4,296 |      7,556 |     66,501 |
++-------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

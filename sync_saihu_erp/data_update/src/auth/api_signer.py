@@ -8,7 +8,7 @@ import time
 import random
 import logging
 from typing import Dict, Any, Optional
-from ..config.settings import settings
+from ..config.secure_config import config
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +17,10 @@ class ApiSigner:
     
     def __init__(self):
         """初始化签名生成器"""
-        self.client_id = settings.get('api.auth.client_id', '368000')
-        self.client_secret = settings.get('api.auth.client_secret', '3cc6efdf-6861-42e0-b9a5-874a0296640b')
+        # 使用安全配置获取凭据
+        api_credentials = config.get_api_credentials()
+        self.client_id = api_credentials.client_id
+        self.client_secret = api_credentials.client_secret
         logger.info("API签名生成器初始化完成")
     
     def generate_timestamp(self) -> str:
