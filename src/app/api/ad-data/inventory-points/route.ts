@@ -8,6 +8,9 @@ import { saiHuAdapter } from '@/lib/adapters/saihu-adapter';
 import { inventoryCache, CacheKeys } from '@/lib/database/cache-manager';
 import { z } from 'zod';
 
+// 缓存项的强类型，避免被推断为 {}
+type InventoryPointsCache = Awaited<ReturnType<typeof saiHuAdapter.getInventoryPoints>>;
+
 // 请求参数验证schema
 const inventoryPointsQuerySchema = z.object({
   asin: z.string().optional(),
@@ -47,8 +50,8 @@ export async function GET(request: NextRequest) {
     // 生成缓存键
     const cacheKey = inventoryCache.generateKey(CacheKeys.INVENTORY_POINTS, params);
     
-    // 尝试从缓存获取数据
-    const cachedData = inventoryCache.get(cacheKey);
+    // 尝试从缓存获取数据（显式泛型，确保类型正确）
+    const cachedData = inventoryCache.get<InventoryPointsCache>(cacheKey);
     if (cachedData) {
       return NextResponse.json({
         success: true,

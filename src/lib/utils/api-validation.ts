@@ -158,7 +158,7 @@ export async function validateBody<T>(
  * API错误处理装饰器
  */
 export function withErrorHandling<T extends any[], R>(
-  handler: (...args: T) => Promise<NextResponse<R>>
+  handler: (...args: T) => Promise<NextResponse<ApiResponse<R>>>
 ) {
   return async (...args: T): Promise<NextResponse<ApiResponse<R>>> => {
     try {

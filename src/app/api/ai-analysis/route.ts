@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
     };
 
     // 验证分页参数
-    if (queryParams.page < 1) queryParams.page = 1;
-    if (queryParams.limit < 1 || queryParams.limit > 100) queryParams.limit = 20;
+    if ((queryParams.page ?? 1) < 1) queryParams.page = 1;
+    if ((queryParams.limit ?? 20) < 1 || (queryParams.limit ?? 20) > 100) queryParams.limit = 20;
 
     const result = await AIAnalysisModel.queryTasks(queryParams);
 

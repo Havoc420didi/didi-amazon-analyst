@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const data = await request.json();
     
     // 验证数据格式
-    if (!data.analysis_data || !data.source === 'rpa_system') {
+    if (!data.analysis_data || data.source !== 'rpa_system') {
       return NextResponse.json(
         { error: 'Invalid data format' },
         { status: 400 }

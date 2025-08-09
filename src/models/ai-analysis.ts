@@ -42,14 +42,14 @@ export class AIAnalysisModel {
           product_data: JSON.stringify(data.product_data),
           status: 'pending',
           ai_model: 'mock',
-          created_at: new Date(),
-          updated_at: new Date(),
-          analysis_content: null,
-          processing_time: null,
-          tokens_used: null,
-          completed_at: null,
-          rating: null,
-          rating_feedback: null
+          created_at: new Date() as any,
+          updated_at: new Date() as any,
+          analysis_content: undefined,
+          processing_time: undefined,
+          tokens_used: undefined,
+          completed_at: undefined,
+          rating: undefined,
+          rating_feedback: undefined
         } as AIAnalysisTask;
       }
 
@@ -74,14 +74,14 @@ export class AIAnalysisModel {
         product_data: JSON.stringify(data.product_data),
         status: 'pending',
         ai_model: 'mock',
-        created_at: new Date(),
-        updated_at: new Date(),
-        analysis_content: null,
-        processing_time: null,
-        tokens_used: null,
-        completed_at: null,
-        rating: null,
-        rating_feedback: null
+        created_at: new Date() as any,
+        updated_at: new Date() as any,
+        analysis_content: undefined,
+        processing_time: undefined,
+        tokens_used: undefined,
+        completed_at: undefined,
+        rating: undefined,
+        rating_feedback: undefined
       } as AIAnalysisTask;
     }
   }

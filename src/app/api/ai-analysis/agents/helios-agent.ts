@@ -13,58 +13,73 @@ import { InventoryPoint } from '@/types/inventory-view';
 const AgentState = Annotation.Root({
   // 输入数据
   productData: Annotation<ProductAnalysisData | null>({
+    value: (_prev, next) => next,
     default: () => null,
   }),
   inventoryPoint: Annotation<InventoryPoint | null>({
+    value: (_prev, next) => next,
     default: () => null,
   }),
   
   // 分析结果
   validationErrors: Annotation<string[]>({
+    value: (prev, next) => [...prev, ...next],
     default: () => [],
   }),
   inventoryAnalysis: Annotation<any>({
+    value: (_prev, next) => next,
     default: () => null,
   }),
   adPerformanceAnalysis: Annotation<any>({
+    value: (_prev, next) => next,
     default: () => null,
   }),
   salesAnalysis: Annotation<any>({
+    value: (_prev, next) => next,
     default: () => null,
   }),
   
   // 诊断结果
   diagnosisScenario: Annotation<DiagnosisScenario | null>({
+    value: (_prev, next) => next,
     default: () => null,
   }),
   priorityLevel: Annotation<'highest' | 'high' | 'medium' | 'low'>({
+    value: (_prev, next) => next,
     default: () => 'medium',
   }),
   
   // 行动建议
   actionSuggestions: Annotation<string[]>({
+    value: (prev, next) => [...prev, ...next],
     default: () => [],
   }),
   ruleViolations: Annotation<string[]>({
+    value: (prev, next) => [...prev, ...next],
     default: () => [],
   }),
   
   // 最终输出
   analysisReport: Annotation<string>({
+    value: (_prev, next) => next,
     default: () => '',
   }),
   actionPlan: Annotation<string>({
+    value: (_prev, next) => next,
     default: () => '',
   }),
   
   // 处理状态
   messages: Annotation<BaseMessage[]>({
+    value: (prev, next) => [...prev, ...next],
     default: () => [],
   }),
   isComplete: Annotation<boolean>({
+    value: (_prev, next) => next,
     default: () => false,
   }),
   hasErrors: Annotation<boolean>({
+    value: (_prev, next) => next,
     default: () => false,
   }),
 });
@@ -75,7 +90,7 @@ export type HeliosAgentState = typeof AgentState.State;
  * Helios智能体类
  */
 export class HeliosAgent {
-  private graph: StateGraph<HeliosAgentState>;
+  private graph: any;
   private memory: MemorySaver;
 
   constructor() {
@@ -86,7 +101,7 @@ export class HeliosAgent {
   /**
    * 构建LangGraph决策图
    */
-  private buildGraph(): StateGraph<HeliosAgentState> {
+  private buildGraph(): any {
     const workflow = new StateGraph(AgentState)
       // 数据验证节点
       .addNode("dataValidation", this.dataValidationNode.bind(this))
@@ -631,7 +646,7 @@ export class HeliosAgent {
         hasErrors: false
       };
 
-      const result = await this.graph.invoke(initialState, {
+      const result: any = await (this.graph as any).invoke(initialState, {
         configurable: { thread_id: `analysis_${Date.now()}` }
       });
 
@@ -645,9 +660,9 @@ export class HeliosAgent {
         processing_time: processingTime,
         tokens_used: 0, // LangGraph不直接提供token统计
         recommendations: {
-          inventory_action: result.actionSuggestions.filter(a => a.includes('库存') || a.includes('补货')).join('; ') || '无库存操作建议',
-          sales_strategy: result.actionSuggestions.filter(a => a.includes('促销') || a.includes('Coupon')).join('; ') || '无销售策略建议',
-          ad_optimization: result.actionSuggestions.filter(a => a.includes('广告') || a.includes('BID')).join('; ') || '无广告优化建议',
+          inventory_action: (result.actionSuggestions as string[]).filter((a: string) => a.includes('库存') || a.includes('补货')).join('; ') || '无库存操作建议',
+          sales_strategy: (result.actionSuggestions as string[]).filter((a: string) => a.includes('促销') || a.includes('Coupon')).join('; ') || '无销售策略建议',
+          ad_optimization: (result.actionSuggestions as string[]).filter((a: string) => a.includes('广告') || a.includes('BID')).join('; ') || '无广告优化建议',
           risk_level: result.priorityLevel === 'highest' ? 'high' : 
                      result.priorityLevel === 'high' ? 'high' :
                      result.priorityLevel === 'medium' ? 'medium' : 'low'

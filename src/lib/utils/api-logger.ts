@@ -205,7 +205,7 @@ class ApiLogger {
   /**
    * 核心日志记录方法
    */
-  private log(level: LogLevel, message: string, metadata?: Record<string, any>): void {
+  public log(level: LogLevel, message: string, metadata?: Record<string, any>): void {
     // 检查日志级别
     if (!this.shouldLog(level)) {
       return;

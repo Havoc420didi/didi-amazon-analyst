@@ -32,14 +32,56 @@ class PostgreSQLManager {
     };
   }
 }
-import { 
-  InventoryPoint, 
-  ProductAnalytics, 
-  InventoryQueryParams, 
-  PaginatedInventoryResponse,
-  InventoryAggregationParams,
-  AggregateDataResult
-} from '@/types/inventory';
+import { InventoryPoint } from '@/types/inventory-view';
+
+// 仅在本适配器内部使用的类型定义（避免引用不存在的模块）
+export interface InventoryQueryParams {
+  asin?: string;
+  marketplace?: string;
+  startDate?: string;
+  endDate?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface PaginatedInventoryResponse {
+  data: InventoryPoint[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+}
+
+export interface InventoryAggregationParams {
+  asin: string;
+  marketplace: string;
+  days: number;
+  endDate?: string;
+  method?: 'latest' | 'average' | 'sum' | 'trend';
+}
+
+export interface AggregateDataResult {
+  asin: string;
+  product_name: string;
+  warehouse_location: string;
+  sales_person: string;
+  total_inventory: number;
+  fba_available: number;
+  local_warehouse: number;
+  avg_sales: number;
+  daily_revenue: number;
+  inventory_turnover_days?: number;
+  ad_impressions: number;
+  ad_clicks: number;
+  ad_spend: number;
+  ad_orders: number;
+  trends: { inventory_change: number; revenue_change: number; sales_change: number };
+  history: Array<{ date: string; inventory: number; revenue: number; sales: number }>;
+}
 
 export class PostgreSQLAdapter {
   private pgManager: PostgreSQLManager;
@@ -458,7 +500,11 @@ export class PostgreSQLAdapter {
       adClicks: parseInt(row.ad_clicks) || 0,
       adSpend: parseFloat(row.ad_spend) || 0,
       adOrderCount: parseInt(row.ad_order_count) || 0,
-      dataDate: row.data_date ? new Date(row.data_date) : new Date()
+      isOutOfStock: Boolean(row.is_out_of_stock ?? (parseInt(row.total_inventory) <= 0)),
+      isLowInventory: Boolean(row.is_low_inventory ?? (parseFloat(row.turnover_days) <= 45)),
+      isTurnoverExceeded: Boolean(row.is_turnover_exceeded ?? (parseFloat(row.turnover_days) >= 90)),
+      isZeroSales: Boolean((parseInt(row.ad_order_count) || 0) === 0 && (parseFloat(row.average_sales) || 0) === 0),
+      dataDate: row.data_date ? new Date(row.data_date).toISOString() : new Date().toISOString()
     };
   }
 

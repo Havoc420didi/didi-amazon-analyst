@@ -372,9 +372,10 @@ export class DataTransformer {
    * @returns 清洗后的数据
    */
   cleanData<T extends Record<string, any>>(data: T): T {
-    const cleaned = { ...data };
+    // 使用可写的字典类型承接，避免泛型只读索引限制
+    const cleaned: Record<string, any> = { ...data };
     
-    Object.keys(cleaned).forEach(key => {
+    Object.keys(cleaned).forEach((key: string) => {
       const value = cleaned[key];
       
       // 处理数字字段
@@ -402,7 +403,7 @@ export class DataTransformer {
       }
     });
     
-    return cleaned;
+    return cleaned as T;
   }
 
   /**

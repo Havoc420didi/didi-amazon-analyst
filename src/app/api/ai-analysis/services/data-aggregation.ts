@@ -35,7 +35,7 @@ export class DataAggregationService {
     }
 
     // 转换数据格式
-    const records = result.data.map(point => ({
+    const records = result.data.map((point: any) => ({
       asin: point.asin,
       product_name: point.productName,
       warehouse_location: point.marketplace,
@@ -76,13 +76,27 @@ export class DataAggregationService {
       sales_person: records[0].sales_person,
 
       // 聚合后的核心指标
-      ...aggregatedData,
+      total_inventory: aggregatedData.total_inventory ?? DataAggregationService.latestValue(records, 'total_inventory'),
+      fba_available: aggregatedData.fba_available ?? DataAggregationService.latestValue(records, 'fba_available'),
+      fba_in_transit: aggregatedData.fba_in_transit ?? DataAggregationService.latestValue(records, 'fba_in_transit'),
+      local_warehouse: aggregatedData.local_warehouse ?? DataAggregationService.latestValue(records, 'local_warehouse'),
+      avg_sales: aggregatedData.avg_sales ?? 0,
+      daily_revenue: aggregatedData.daily_revenue ?? 0,
+      inventory_turnover_days: aggregatedData.inventory_turnover_days,
+      inventory_status: aggregatedData.inventory_status,
+      ad_impressions: aggregatedData.ad_impressions ?? 0,
+      ad_clicks: aggregatedData.ad_clicks ?? 0,
+      ad_spend: aggregatedData.ad_spend ?? 0,
+      ad_orders: aggregatedData.ad_orders ?? 0,
+      ad_ctr: aggregatedData.ad_ctr,
+      ad_conversion_rate: aggregatedData.ad_conversion_rate,
+      acos: aggregatedData.acos,
 
       // 趋势分析
       trends: this.calculateTrends(records),
 
       // 历史数据
-      history: records.map(record => ({
+      history: records.map((record: any) => ({
         date: record.date,
         inventory: record.total_inventory,
         revenue: parseFloat(record.daily_revenue.toString()),
@@ -101,6 +115,13 @@ export class DataAggregationService {
         missing_days: qualityAssessment.missingDays
       }
     };
+  }
+
+  // 取最新记录的某个字段，保证返回number
+  private static latestValue(records: any[], key: string): number {
+    const latest = records[0];
+    const val = latest?.[key];
+    return typeof val === 'number' ? val : parseFloat(val?.toString?.() || '0') || 0;
   }
 
   /**

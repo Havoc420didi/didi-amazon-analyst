@@ -132,6 +132,22 @@ export const pgClient = {
   queryWithPagination: execQueryWithPagination,
   batchInsert: execBatchInsert,
   buildWhereClause,
+  async getDatabaseStatus() {
+    try {
+      const versionRows = await sql`SELECT version()`;
+      const version = versionRows?.[0]?.version || '';
+      const activityRows = await sql`
+        SELECT COUNT(*)::int AS total, 
+               SUM(CASE WHEN state = 'active' THEN 1 ELSE 0 END)::int AS active
+        FROM pg_stat_activity
+      `;
+      const totalConnections = activityRows?.[0]?.total ?? 0;
+      const activeConnections = activityRows?.[0]?.active ?? 0;
+      return { connected: true, version, totalConnections, activeConnections };
+    } catch (e: any) {
+      return { connected: false, version: '', totalConnections: 0, activeConnections: 0, error: e?.message };
+    }
+  },
 };
 
 export default pgClient;

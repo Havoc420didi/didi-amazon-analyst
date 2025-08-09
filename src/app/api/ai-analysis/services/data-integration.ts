@@ -4,12 +4,33 @@
  */
 
 import { InventoryPoint } from '@/types/inventory-view';
-import { ProductAnalysisData } from '@/types/ai-analysis';
+import { ProductAnalysisData, EnhancedProductAnalysisData } from '@/types/ai-analysis';
 // import { calculateInventoryPoints } from '@/../../sync_saihu_erp/data_project/src/services/analysisService';
 
 /**
  * 本地实现的库存点计算函数
  */
+export interface ProductData {
+  asin: string;
+  sku?: string;
+  productName: string;
+  salesPerson: string;
+  marketplace: string;
+  fbaAvailable: number;
+  fbaInbound: number;
+  localAvailable?: number;
+  averageSales: number;
+  sales7Days?: number;
+  adImpressions?: number;
+  adClicks?: number;
+  adSpend?: number;
+  adOrderCount?: number;
+  productTag?: string;
+  fbaSellable?: number;
+  averagePrice?: string;
+  dailySalesAmount?: number;
+}
+
 function calculateInventoryPoints(products: ProductData[]): InventoryPoint[] {
   if (!products || products.length === 0) {
     return [];
@@ -42,7 +63,7 @@ function calculateInventoryPoints(products: ProductData[]): InventoryPoint[] {
       isOutOfStock: totalInventory <= 0,
       isLowInventory: turnoverDays < 45,
       isTurnoverExceeded: turnoverDays > 90,
-      isEffectiveInventoryPoint: dailySalesAmount >= 16.7,
+      isZeroSales: averageSales === 0,
       
       productTag: product.productTag,
       fbaSellable: product.fbaSellable,
@@ -92,7 +113,7 @@ export class DataIntegrationService {
       asin: inventoryPoint.asin,
       product_name: inventoryPoint.productName,
       warehouse_location: inventoryPoint.marketplace,
-      sales_person: inventoryPoint.salesPerson,
+      sales_person: inventoryPoint.salesPerson || '',
       
       // 库存数据
       total_inventory: totalInventory,
@@ -226,7 +247,7 @@ export class DataIntegrationService {
   /**
    * 增强分析数据（添加计算字段）
    */
-  static enhanceAnalysisData(data: ProductAnalysisData): ProductAnalysisData {
+  static enhanceAnalysisData(data: ProductAnalysisData): EnhancedProductAnalysisData {
     const avgPrice = data.avg_sales > 0 ? data.daily_revenue / data.avg_sales : 0;
     const standardCvr = this.calculateStandardConversionRate(avgPrice);
     
@@ -239,17 +260,18 @@ export class DataIntegrationService {
     // 返回增强后的数据（临时移除enhanced_metrics以避免类型错误）
     return {
       ...data,
-      // 将增强指标包含在主数据中，而不是单独的enhanced_metrics字段
-      avg_price: avgPrice,
-      standard_cvr: standardCvr,
-      actual_cvr: actualCvr,
-      ctr: ctr,
-      cvr_health: actualCvr >= standardCvr * 0.9 ? 'good' : 'poor',
-      ctr_health: ctr >= 0.5 ? 'good' : 'poor',
-      acoas_health: (data.acos || 0) >= 0.07 && (data.acos || 0) <= 0.15 ? 'good' : 
-                    ((data.acos || 0) < 0.07 ? 'low' : 'high'),
-      inventory_health: (data.inventory_turnover_days || 0) >= 40 && (data.inventory_turnover_days || 0) <= 90 ? 'good' :
-                       ((data.inventory_turnover_days || 0) < 40 ? 'low' : 'high')
+      enhanced_metrics: {
+        avg_price: avgPrice,
+        standard_cvr: standardCvr,
+        actual_cvr: actualCvr,
+        ctr: ctr,
+        cvr_health: actualCvr >= standardCvr * 0.9 ? 'good' : 'poor',
+        ctr_health: ctr >= 0.5 ? 'good' : 'poor',
+        acoas_health: (data.acos || 0) >= 0.07 && (data.acos || 0) <= 0.15 ? 'good' : 
+                      ((data.acos || 0) < 0.07 ? 'low' : 'high'),
+        inventory_health: (data.inventory_turnover_days || 0) >= 40 && (data.inventory_turnover_days || 0) <= 90 ? 'good' :
+                         ((data.inventory_turnover_days || 0) < 40 ? 'low' : 'high')
+      }
     };
   }
 

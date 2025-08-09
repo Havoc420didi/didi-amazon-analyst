@@ -8,6 +8,11 @@ import { saiHuAdapter } from '@/lib/adapters/saihu-adapter';
 import { statisticsCache, CacheKeys } from '@/lib/database/cache-manager';
 import { z } from 'zod';
 
+// 响应类型：在汇总结构上可选叠加 filteredMetrics
+type SummaryResponse = Awaited<ReturnType<typeof saiHuAdapter.getAdSummary>> & {
+  filteredMetrics?: Record<string, number>;
+};
+
 // 请求参数验证schema
 const metricsQuerySchema = z.object({
   asin: z.string().optional(),
@@ -61,10 +66,10 @@ export async function GET(request: NextRequest) {
     });
     
     // 根据请求的指标筛选数据
-    let responseData = summaryData;
+    let responseData: SummaryResponse = summaryData;
     
     if (params.metrics && !params.metrics.includes('all')) {
-      const filteredMetrics: any = {};
+      const filteredMetrics: Record<string, number> = {};
       
       params.metrics.forEach(metric => {
         switch (metric) {

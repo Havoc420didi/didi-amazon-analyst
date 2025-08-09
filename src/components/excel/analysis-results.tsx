@@ -14,7 +14,7 @@ import {
   PieChart,
   LineChart
 } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Cell, LineChart as RechartsLineChart, Line } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Cell, LineChart as RechartsLineChart, Line, Pie } from "recharts";
 import { useTranslations } from "next-intl";
 
 interface AnalysisResult {
@@ -102,11 +102,11 @@ export function AnalysisResults({ result }: AnalysisResultsProps) {
         return (
           <ResponsiveContainer width="100%" height={300}>
             <RechartsPieChart>
-              <RechartsPieChart data={chart.data} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="value">
+              <Pie data={chart.data} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="value">
                 {chart.data.map((entry: any, index: number) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
-              </RechartsPieChart>
+              </Pie>
               <Tooltip />
             </RechartsPieChart>
           </ResponsiveContainer>

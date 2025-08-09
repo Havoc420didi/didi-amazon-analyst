@@ -6,7 +6,7 @@ const isCloudflareWorker =
   typeof globalThis !== "undefined" && "Cloudflare" in globalThis;
 
 // Database instance for Node.js environment
-let dbInstance: ReturnType<typeof drizzle> | null = null;
+let dbInstance: any | null = null;
 
 export function db() {
   const databaseUrl = process.env.DATABASE_URL;
@@ -57,8 +57,7 @@ export function db() {
   // In Cloudflare Workers, create new connection each time
   if (isCloudflareWorker) {
     // Workers environment uses minimal configuration
-    const connection = mysql.createConnection(databaseUrl);
-    return drizzle(connection);
+    return drizzle(mysql.createPool(databaseUrl) as any) as any;
   }
 
   // In Node.js environment, use singleton pattern  
@@ -69,7 +68,7 @@ export function db() {
   // Node.js environment with connection pool configuration
   try {
     const pool = mysql.createPool(databaseUrl);
-    dbInstance = drizzle(pool);
+    dbInstance = drizzle(pool as any) as any;
   } catch (error) {
     console.error('Failed to create database connection:', error);
     // Return mock database for development

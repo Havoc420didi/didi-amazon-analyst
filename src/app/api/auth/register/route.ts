@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 获取客户端IP
-    const clientIp = getClientIp(request);
+    const clientIp = await getClientIp();
 
     // 创建用户
     const user = await createPasswordUser({

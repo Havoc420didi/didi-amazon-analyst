@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AIAnalysisModel } from '@/models/ai-analysis';
 import { getHeliosAgent } from '@/app/api/ai-analysis/agents/helios-agent';
-import DataIntegrationService from '@/app/api/ai-analysis/services/data-integration';
+import DataIntegrationService, { type ProductData } from '@/app/api/ai-analysis/services/data-integration';
 // import { ProductData } from '@/types/inventory';
 import { ProductAnalysisData } from '@/types/ai-analysis';
 import { z } from 'zod';
@@ -191,10 +191,10 @@ function applyFilterCriteria(data: ProductAnalysisData[], criteria: any): Produc
     }
 
     // 库存天数范围过滤
-    if (criteria.max_inventory_days && item.inventory_turnover_days > criteria.max_inventory_days) {
+    if (criteria.max_inventory_days && (item.inventory_turnover_days ?? Infinity) > criteria.max_inventory_days) {
       return false;
     }
-    if (criteria.min_inventory_days && item.inventory_turnover_days < criteria.min_inventory_days) {
+    if (criteria.min_inventory_days && (item.inventory_turnover_days ?? 0) < criteria.min_inventory_days) {
       return false;
     }
 
@@ -220,10 +220,10 @@ function applyFilterCriteria(data: ProductAnalysisData[], criteria: any): Produc
 function selectPriorityProducts(data: ProductAnalysisData[]): ProductAnalysisData[] {
   const priorityData = data.filter(item => {
     // 库存不足
-    if (item.inventory_turnover_days < 40) return true;
+    if ((item.inventory_turnover_days ?? 0) < 40) return true;
     
     // 库存积压
-    if (item.inventory_turnover_days > 90) return true;
+    if ((item.inventory_turnover_days ?? 0) > 90) return true;
     
     // 转化率问题（需要计算）
     const avgPrice = item.avg_sales > 0 ? item.daily_revenue / item.avg_sales : 0;
@@ -232,7 +232,7 @@ function selectPriorityProducts(data: ProductAnalysisData[]): ProductAnalysisDat
     if (actualCvr < standardCvr * 0.9) return true;
     
     // ACOAS过高
-    if (item.acos > 0.15) return true;
+    if ((item.acos ?? 0) > 0.15) return true;
     
     // 日收入较高的产品
     if (item.daily_revenue >= 50) return true;
@@ -333,7 +333,6 @@ export async function GET(request: NextRequest) {
 
     // 查询批次任务
     const tasks = await AIAnalysisModel.queryTasks({
-      batch_id: batchId,
       limit: 1000 // 假设单批次不超过1000个任务
     });
 

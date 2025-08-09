@@ -129,7 +129,7 @@ if (process.env.NEXT_PUBLIC_AUTH_CREDENTIALS_ENABLED !== "false") {
 
         try {
           // 查找用户（支持邮箱或用户名）
-          const user = await getUserByEmailOrUsername(credentials.identifier);
+          const user = await getUserByEmailOrUsername(String(credentials.identifier));
           
           if (!user || !user.password_hash) {
             return null;
@@ -137,7 +137,7 @@ if (process.env.NEXT_PUBLIC_AUTH_CREDENTIALS_ENABLED !== "false") {
 
           // 验证密码
           const isValidPassword = await verifyPassword(
-            credentials.password,
+            String(credentials.password),
             user.password_hash
           );
 

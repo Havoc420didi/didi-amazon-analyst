@@ -48,7 +48,7 @@ export class BusinessRulesEngine {
         priority: 'critical',
         category: 'advertising',
         condition: (data, actions) => {
-          if (data.acos > 0.25) {
+          if ((data.acos ?? 0) > 0.25) {
             const hasBidReduction = actions.some(action => 
               action.includes('BID降低') || action.includes('降低出价') || action.includes('降低')
             );
@@ -67,7 +67,7 @@ export class BusinessRulesEngine {
         priority: 'critical',
         category: 'advertising',
         condition: (data, actions) => {
-          if (data.acos > 0.60) {
+          if ((data.acos ?? 0) > 0.60) {
             const hasPause = actions.some(action => 
               action.includes('暂停') || action.includes('关闭')
             );
@@ -228,7 +228,7 @@ export class BusinessRulesEngine {
         priority: 'high',
         category: 'advertising',
         condition: (data, actions) => {
-          if (data.acos > 0.15) {
+          if ((data.acos ?? 0) > 0.15) {
             const hasBudgetIncrease = actions.some(action => 
               action.includes('预算提升') || action.includes('增加预算') || action.includes('扩大投放')
             );
@@ -252,7 +252,7 @@ export class BusinessRulesEngine {
           const standardCvr = this.getStandardConversionRate(avgPrice);
           const actualCvr = data.ad_clicks > 0 ? (data.ad_orders / data.ad_clicks) * 100 : 0;
           
-          if (actualCvr >= standardCvr * 0.9 && data.acos <= 0.15) {
+          if (actualCvr >= standardCvr * 0.9 && (data.acos ?? 0) <= 0.15) {
             const hasBidBoost = actions.some(action => 
               action.includes('BID提升') || action.includes('提升BID')
             );
@@ -272,7 +272,7 @@ export class BusinessRulesEngine {
         priority: 'medium',
         category: 'advertising',
         condition: (data, actions) => {
-          if (data.acos > 0.45) {
+          if ((data.acos ?? 0) > 0.45) {
             const hasKeywordOptimization = actions.some(action => 
               action.includes('关键词') || action.includes('无效词') || action.includes('暂停')
             );

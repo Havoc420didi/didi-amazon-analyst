@@ -42,13 +42,13 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const fetchUserInfo = async function () {
     // 开发模式：使用mock用户数据
     if (process.env.NODE_ENV === 'development') {
-      const mockUser = {
+      const mockUser: User = {
         uuid: 'dev-user-uuid',
         email: 'dev@example.com',
-        name: 'Development User',
-        image: '/imgs/users/1.png',
+        nickname: 'Development User',
+        avatar_url: '/imgs/users/1.png',
         created_at: new Date().toISOString(),
-        invited_by: null
+        invited_by: undefined
       };
       setUser(mockUser);
       return;

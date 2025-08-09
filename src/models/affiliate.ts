@@ -42,10 +42,10 @@ export async function getAffiliatesByUserUuid(
     return undefined;
   }
 
-  const user_uuids = Array.from(new Set(data.map((item) => item.user_uuid)));
+  const user_uuids = Array.from(new Set(data.map((item: typeof affiliates.$inferSelect) => item.user_uuid)));
 
   const users = await getUsersByUuids(user_uuids as string[]);
-  return data.map((item) => {
+  return data.map((item: typeof affiliates.$inferSelect) => {
     const user = users?.find((user) => user.uuid === item.user_uuid);
     return { ...item, user };
   });
@@ -66,7 +66,7 @@ export async function getAffiliateSummary(user_uuid: string) {
   const invited_users = new Set();
   const paid_users = new Set();
 
-  data.forEach((item) => {
+  data.forEach((item: typeof affiliates.$inferSelect) => {
     invited_users.add(item.user_uuid);
     if (item.paid_amount > 0) {
       paid_users.add(item.user_uuid);
@@ -108,15 +108,15 @@ export async function getAllAffiliates(
     return undefined;
   }
 
-  const user_uuids = Array.from(new Set(data.map((item) => item.user_uuid)));
+  const user_uuids = Array.from(new Set(data.map((item: typeof affiliates.$inferSelect) => item.user_uuid)));
   const invited_by_uuids = Array.from(
-    new Set(data.map((item) => item.invited_by))
+    new Set(data.map((item: typeof affiliates.$inferSelect) => item.invited_by))
   );
 
   const users = await getUsersByUuids(user_uuids as string[]);
   const invited_by_users = await getUsersByUuids(invited_by_uuids as string[]);
 
-  return data.map((item) => {
+  return data.map((item: typeof affiliates.$inferSelect) => {
     const user = users?.find((user) => user.uuid === item.user_uuid);
     const invited_by = invited_by_users?.find(
       (user) => user.uuid === item.invited_by

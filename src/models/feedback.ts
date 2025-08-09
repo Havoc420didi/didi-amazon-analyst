@@ -40,10 +40,10 @@ export async function getFeedbacks(
     return [];
   }
 
-  const user_uuids = Array.from(new Set(data.map((item) => item.user_uuid)));
+  const user_uuids = Array.from(new Set(data.map((item: typeof feedbacks.$inferSelect) => item.user_uuid)));
   const users = await getUsersByUuids(user_uuids as string[]);
 
-  return data.map((item) => {
+  return data.map((item: typeof feedbacks.$inferSelect) => {
     const user = users?.find((user) => user.uuid === item.user_uuid);
     return { ...item, user };
   });

@@ -1,5 +1,18 @@
 # 变更日志
 
+## [2025-08-09 晚间] - 开发提效与类型收口
+
+### ⚙️ 提效配置
+- 新增 `package.json` 脚本：`typecheck`、`typecheck:watch`、`dev:fast`
+- 安装 `concurrently` 支持并行（tsc watch + next dev）
+- `next.config.mjs` 在本地开发跳过构建期类型/ESLint（CI 保持严格）
+
+### 🧹 类型收口
+- 运行 `pnpm typecheck` 一次性暴露并修复隐式 any 与返回类型不匹配问题
+- 修复位置：`models/user.ts` 等（隐式 any、排序与 forEach 的参数类型）
+
+---
+
 ## [2025-08-09 17:30-18:10] - 构建修复与依赖清理
 
 ### 🔧 构建修复

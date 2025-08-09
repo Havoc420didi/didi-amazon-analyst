@@ -37,7 +37,7 @@ import { AnalysisPeriodSelector } from './analysis-period-selector';
 interface AnalysisTriggerProps {
   inventoryPoint: InventoryPoint;
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'lg' | 'default';
   variant?: 'default' | 'outline' | 'ghost';
 }
 
@@ -100,7 +100,7 @@ export function AnalysisTrigger({
       asin: point.asin,
       product_name: point.productName,
       warehouse_location: point.marketplace,
-      sales_person: point.salesPerson,
+      sales_person: point.salesPerson || '',
       
       // 库存数据
       total_inventory: point.totalInventory,
@@ -166,7 +166,7 @@ export function AnalysisTrigger({
             asin: inventoryPoint.asin,
             product_name: inventoryPoint.productName,
             warehouse_location: inventoryPoint.marketplace,
-            sales_person: inventoryPoint.salesPerson,
+            sales_person: inventoryPoint.salesPerson || '',
             total_inventory: 0,
             fba_available: 0,
             fba_in_transit: 0,
@@ -341,10 +341,6 @@ export function AnalysisTrigger({
                   variant={variant}
                   size={size}
                   onClick={() => { try { console.log('[AnalysisTrigger] dialog trigger clicked'); } catch {}; setIsDialogOpen(true); }}
-                  onClick={analysisState.status === 'completed' || analysisState.status === 'error' 
-                    ? () => setIsDialogOpen(true) 
-                    : undefined
-                  }
                   disabled={isPending || analysisState.status === 'analyzing'}
                   className="w-full"
                 >
@@ -459,7 +455,7 @@ export function AnalysisTrigger({
                   <div className="space-y-1 text-sm">
                     <p>日均销售额: ${inventoryPoint.dailySalesAmount.toFixed(2)}</p>
                     <p>业务员: {inventoryPoint.salesPerson}</p>
-                    <p>有效库存点: {inventoryPoint.isEffectivePoint ? '是' : '否'}</p>
+                    <p>有效库存点: {inventoryPoint.dailySalesAmount >= 16.7 ? '是' : '否'}</p>
                   </div>
                 </div>
               </div>

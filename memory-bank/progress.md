@@ -1,5 +1,22 @@
 # 项目进度记录
 
+### 2025-08-09（晚间）
+
+✅ 开发提效配置与类型检查收口
+- 新增脚本：`typecheck`、`typecheck:watch`、`dev:fast`（并行 tsc watch + next dev）
+- 安装 `concurrently` 以支持并行开发流程
+- `next.config.mjs` 增加本地开发跳过构建期类型/ESLint 校验（CI 下仍严格）
+- 运行 `pnpm typecheck` 全量收口，修复剩余隐式 any 等类型问题（`models/user.ts` 等）
+- 构建通过（本地模式跳过类型/ESLint 校验），可快速验证产物
+
+使用建议
+- 本地开发：
+  - 长开类型监视：`pnpm typecheck:watch`
+  - 或快速开发：`pnpm dev:fast`（并行跑 tsc 与 next）
+- 上线前/CI：保留 Next.js 构建期类型与 ESLint 校验，确保严格质量门槛
+
+---
+
 ### 2025-08-09
 
 #### 17:30-18:10 构建修复与依赖清理

@@ -201,10 +201,10 @@ export async function getOrderCountByDate(
     .from(orders)
     .where(gte(orders.created_at, new Date(startTime)));
 
-  data.sort((a, b) => a.created_at!.getTime() - b.created_at!.getTime());
+  data.sort((a: { created_at: Date | null }, b: { created_at: Date | null }) => (a.created_at!.getTime() - b.created_at!.getTime()));
 
   const dateCountMap = new Map<string, number>();
-  data.forEach((item) => {
+  data.forEach((item: { created_at: Date | null }) => {
     const date = item.created_at!.toISOString().split("T")[0];
     dateCountMap.set(date, (dateCountMap.get(date) || 0) + 1);
   });
