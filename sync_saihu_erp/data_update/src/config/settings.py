@@ -50,8 +50,8 @@ class Settings:
             'database': {
                 'host': os.getenv('DB_HOST', 'localhost'),
                 'port': int(os.getenv('DB_PORT', '5432')),
-                'user': os.getenv('DB_USER', 'postgres'),
-                'password': os.getenv('DB_PASSWORD', ''),
+                'user': os.getenv('DB_USER', 'amazon_analyst'),
+                'password': os.getenv('DB_PASSWORD', 'amazon_analyst_2024'),
                 'database': os.getenv('DB_NAME', 'amazon_analyst'),
                 'sslmode': 'prefer',
                 'pool_size': 10,

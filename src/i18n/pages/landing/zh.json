@@ -16,11 +16,6 @@
           "title": "亚马逊数据分析",
           "url": "/analysis",
           "icon": "RiBarChartBoxLine"
-        },
-        {
-          "title": "产品数据分析",
-          "url": "/inventory",
-          "icon": "RiArchiveDrawerLine"
         }
       ]
     },

@@ -48,8 +48,8 @@ class PostgreSQLManager:
         return {
             'host': db_config.get('host', 'localhost'),
             'port': db_config.get('port', 5432),
-            'user': db_config.get('user', 'postgres'),
-            'password': db_config.get('password', ''),
+            'user': db_config.get('user', 'amazon_analyst'),
+            'password': db_config.get('password', 'amazon_analyst_2024'),
             'dbname': db_config.get('database', 'amazon_analyst'),
             'sslmode': db_config.get('sslmode', 'prefer')
         }

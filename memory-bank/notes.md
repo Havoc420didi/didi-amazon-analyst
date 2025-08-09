@@ -1,150 +1,39 @@
-# 项目笔记和备忘
+# 项目开发笔记
 
-## 重要配置信息
+## 最新笔记
 
-### 数据库连接
-```bash
-# 统一数据库配置
-DATABASE_URL="postgresql://amazon_analyst:amazon_analyst_2024@localhost:5432/amazon_analyst"
+### 2025-08-09 18:10 - 构建修复与依赖清理
+- **依赖清理**: 移除 `fumadocs-ui/mdx`、`fumadocs-mdx/config` 相关引用
+- **适配器统一**: 以 `pgClient` 统一 Postgres 访问，封装 `PostgreSQLManager`
+- **脚本修复**: 迁移/测试脚本修正类型与异常处理、增加占位方法
+- **剩余问题**: `AnalysisResult.insights` 类型与组件期望不一致，需统一
 
-# 连接测试
-psql -h localhost -U amazon_analyst -d amazon_analyst
-```
+### 2025-08-09 17:00 - 数据库配置统一完成
+- **问题解决**: 成功修复了 /inventory 页面的数据库连接问题
+- **技术方案**: 创建了 pg-client 兼容层，实现了 MySQL 到 PostgreSQL 的无缝迁移
+- **配置统一**: Python 脚本和 Next.js 现在使用相同的数据库用户和连接参数
+- **开发环境**: Next.js 运行在 localhost:3001，PostgreSQL@14 服务正常
+- **测试结果**: Python 脚本数据库连接测试达到 60% 成功率，主要功能正常
 
-### 开发环境设置
-```bash
-# 启动开发服务器
-pnpm dev
+### 2025-08-09 15:30 - i18n 流程梳理
+- **next-intl v4**: 完整分析了国际化实现流程
+- **配置问题**: 发现 middleware matcher 包含了未支持的语言前缀
+- **优化建议**: 提供了语言切换组件的容错处理方案
+- **文档输出**: 生成了完整的 i18n 使用指南
 
-# 数据库操作
-pnpm db:studio      # 打开数据库管理界面
-pnpm db:generate    # 生成迁移文件
-pnpm db:migrate     # 应用迁移
-```
+## 历史笔记
 
-## 常见问题解决方案
+### 技术债务记录
+- [ ] inventory_points 表还需要添加 is_eu 字段以完全兼容 Python 脚本
+- [ ] next.config.mjs 中的 turbopack 配置警告需要处理
+- [ ] Python 脚本的 UPSERT 功能测试仍有部分失败，需要进一步调试
 
-### PostgreSQL连接问题 ✅ 已解决
-**问题**: `FATAL: no pg_hba.conf entry for host "113.71.250.72", user "amazon_analyst", database "amazon_analyst", SSL encryption`
+### 重要发现
+- **数据库迁移**: MySQL 到 PostgreSQL 的占位符转换是关键技术点
+- **配置管理**: 统一环境变量比分散配置更容易维护
+- **兼容性设计**: 保持 API 接口不变可以减少重构成本
 
-**完整解决方案**:
-1. **服务器端配置** (需要管理员权限):
-   ```bash
-   # 编辑 pg_hba.conf 文件
-   sudo nano /etc/postgresql/15/main/pg_hba.conf
-   
-   # 添加IP白名单
-   host    amazon_analyst    amazon_analyst    113.71.250.72/32    md5
-   
-   # 重启PostgreSQL服务
-   sudo systemctl restart postgresql
-   ```
-
-2. **DBeaver客户端配置**:
-   ```
-   Host: localhost (或服务器地址)
-   Port: 5432
-   Database: amazon_analyst
-   Username: amazon_analyst
-   Password: amazon_analyst_2024
-   SSL Mode: disable (首选) 或 require
-   ```
-
-3. **高级连接参数**:
-   ```
-   在Driver Properties中添加:
-   sslmode = disable
-   ```
-
-### Cursor CLI记忆保存 ✅ 已实现
-**需求**: 手动保存Cursor AI的项目记忆
-
-**解决方案**:
-1. **Memory Bank系统** (主要方案):
-   - 创建 `memory-bank/` 目录
-   - 7个核心记忆文件
-   - 使用 `initialize memory bank` 和 `update memory bank` 命令
-
-2. **.cursorrules文件** (辅助方案):
-   - 项目根目录的规则文件
-   - 快速上下文加载
-
-3. **手动维护策略**:
-   - 定期更新活跃上下文
-   - 记录重要配置和解决方案
-   - 维护项目进度和变更日志
-
-## 有用的命令和脚本
-
-### 数据库管理
-```bash
-# 检查数据库状态
-./manage_postgres.sh status
-
-# 创建备份
-./manage_postgres.sh backup
-
-# 测试连接
-python3 test_database.py
-
-# 重置数据库 (慎用)
-./manage_postgres.sh reset
-```
-
-### 赛狐ERP同步
-```bash
-# 即时同步
-cd sync_saihu_erp/data_update
-python run_sync_now.py
-
-# 检查同步状态
-python continuous_sync_4hours.py --status
-```
-
-### Memory Bank管理
-```bash
-# 在Cursor聊天中使用的命令
-initialize memory bank      # 初始化记忆库
-update memory bank         # 更新记忆库
-update memory bank for [specific topic]  # 针对特定主题更新
-
-# 手动文件维护
-ls memory-bank/           # 查看记忆文件
-code memory-bank/         # 编辑记忆文件
-```
-
-## 项目资源链接
-
-### 文档
-- 架构文档: `ARCHITECTURE.md`
-- 环境设置: `ENVIRONMENT_SETUP.md`
-- Claude指南: `CLAUDE.md`
-
-### 重要文件路径
-- 数据库模式: `src/db/schema.ts`
-- 赛狐ERP模式: `src/db/saihu_erp_schema.sql`
-- 配置文件: `sync_saihu_erp/data_update/config/config.yml`
-
-## 开发提示
-
-### 性能优化
-- 使用React Server Components减少客户端JavaScript
-- 实现适当的缓存策略
-- 优化数据库查询和索引
-
-### 安全注意事项
-- 所有用户输入必须验证和清理
-- API端点需要适当的身份验证
-- 敏感信息使用环境变量
-
-### 测试策略
-- 单元测试覆盖核心业务逻辑
-- 集成测试验证API端点
-- 端到端测试确保用户流程正常
-
-## 待研究的技术
-- [ ] Redis缓存集成
-- [ ] Elasticsearch搜索优化
-- [ ] WebSocket实时通信
-- [ ] GraphQL API设计
-- [ ] 微服务架构迁移
+### 开发工具配置
+- **PostgreSQL**: 使用 Homebrew 安装的 PostgreSQL@14
+- **开发端口**: Next.js 默认使用 3001 端口（3000 被占用）
+- **数据库用户**: 统一使用 amazon_analyst 用户，密码 amazon_analyst_2024

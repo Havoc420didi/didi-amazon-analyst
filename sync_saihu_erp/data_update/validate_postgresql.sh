@@ -141,7 +141,8 @@ main() {
     # 设置默认环境变量
     export DB_HOST=${DB_HOST:-localhost}
     export DB_PORT=${DB_PORT:-5432}
-    export DB_USER=${DB_USER:-postgres}
+    export DB_USER=${DB_USER:-amazon_analyst}
+    export DB_PASSWORD=${DB_PASSWORD:-amazon_analyst_2024}
     export DB_NAME=${DB_NAME:-amazon_analyst}
     
     check_postgresql

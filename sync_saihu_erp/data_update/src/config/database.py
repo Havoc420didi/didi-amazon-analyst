@@ -14,11 +14,11 @@ class DatabaseConfig:
         
         return {
             'host': db_config.get('host', 'localhost'),
-            'port': db_config.get('port', 3306),
-            'user': db_config.get('user', 'root'),
-            'password': db_config.get('password', ''),
+            'port': db_config.get('port', 5432),
+            'user': db_config.get('user', 'amazon_analyst'),
+            'password': db_config.get('password', 'amazon_analyst_2024'),
             'database': db_config.get('database', 'amazon_analyst'),
-            'charset': db_config.get('charset', 'utf8mb4'),
+            'charset': db_config.get('charset', 'utf8'),
             'autocommit': False,
             'cursorclass': None
         }
@@ -41,9 +41,8 @@ class DatabaseConfig:
         """获取数据库连接URL"""
         params = DatabaseConfig.get_connection_params()
         
-        url = (f"mysql+pymysql://{params['user']}:{params['password']}"
-               f"@{params['host']}:{params['port']}/{params['database']}"
-               f"?charset={params['charset']}")
-        # Note: This class appears to be for MySQL, but project uses PostgreSQL
+        url = (f"postgresql+psycopg2://{params['user']}:{params['password']}"
+               f"@{params['host']}:{params['port']}/{params['database']}")
+        # Updated to use PostgreSQL connection string
         
         return url

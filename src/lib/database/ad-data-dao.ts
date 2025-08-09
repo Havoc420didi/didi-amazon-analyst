@@ -3,7 +3,7 @@
  * 提供对 sync_saihu_erp 数据库中广告相关数据的访问接口
  */
 
-import { mysqlClient } from './mysql-client';
+import { pgClient as mysqlClient } from './pg-client';
 
 // 数据模型定义
 export interface ProductAnalyticsData {

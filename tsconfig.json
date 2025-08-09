@@ -18,6 +18,7 @@
       }
     ],
     "paths": {
+      "@/.source": ["./.source/index.ts"],
       "@/*": ["./src/*"]
     },
     "target": "ES2017"

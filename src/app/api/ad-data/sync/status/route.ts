@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { saiHuAdapter } from '@/lib/adapters/saihu-adapter';
-import { mysqlClient } from '@/lib/database/mysql-client';
+import { pgClient as mysqlClient } from '@/lib/database/pg-client';
 import { statisticsCache, CacheKeys } from '@/lib/database/cache-manager';
 
 export async function GET(request: NextRequest) {

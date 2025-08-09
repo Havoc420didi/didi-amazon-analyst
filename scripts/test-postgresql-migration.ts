@@ -66,6 +66,7 @@ class PostgreSQLMigrationTest {
     return {
       test_name: 'PostgreSQL连接测试',
       status: success ? 'PASS' : 'FAIL',
+      duration_ms: 0,
       error: success ? undefined : '无法连接到PostgreSQL数据库'
     };
   }
@@ -79,6 +80,7 @@ class PostgreSQLMigrationTest {
     return {
       test_name: '数据统计测试',
       status: stats.total_inventory_points > 0 ? 'PASS' : 'FAIL',
+      duration_ms: 0,
       details: {
         total_records: stats.total_inventory_points,
         unique_products: stats.total_products,
@@ -102,6 +104,7 @@ class PostgreSQLMigrationTest {
     return {
       test_name: '库存点查询测试',
       status: result.data.length > 0 ? 'PASS' : 'FAIL',
+      duration_ms: 0,
       details: {
         records_returned: result.data.length,
         pagination: result.pagination,
@@ -119,6 +122,7 @@ class PostgreSQLMigrationTest {
     return {
       test_name: '最新数据查询测试',
       status: data !== null ? 'PASS' : 'FAIL',
+      duration_ms: 0,
       details: data ? {
         asin: data.asin,
         inventory: data.totalInventory,
@@ -132,7 +136,7 @@ class PostgreSQLMigrationTest {
    * 聚合方法测试
    */
   private async testAggregationMethods(): Promise<TestResult> {
-    const methods = ['latest', 'average', 'sum', 'trend'];
+    const methods = ['latest', 'average', 'sum', 'trend'] as const;
     const results: any[] = [];
 
     for (const method of methods) {
@@ -144,7 +148,8 @@ class PostgreSQLMigrationTest {
         );
         results.push({ method, success: true, data: result });
       } catch (error) {
-        results.push({ method, success: false, error: error.message });
+        const msg = error instanceof Error ? error.message : String(error);
+        results.push({ method, success: false, error: msg });
       }
     }
 
@@ -153,6 +158,7 @@ class PostgreSQLMigrationTest {
     return {
       test_name: '聚合方法测试',
       status: allPass ? 'PASS' : 'FAIL',
+      duration_ms: 0,
       details: results
     };
   }
@@ -189,6 +195,7 @@ class PostgreSQLMigrationTest {
       return {
         test_name: '数据集成验证',
         status: validation.valid ? 'PASS' : 'FAIL',
+        duration_ms: 0,
         details: {
           valid: validation.valid,
           errors: validation.errors,
@@ -197,10 +204,12 @@ class PostgreSQLMigrationTest {
       };
 
     } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error);
       return {
         test_name: '数据集成验证',
         status: 'FAIL',
-        error: error.message
+        duration_ms: 0,
+        error: msg
       };
     }
   }
@@ -233,15 +242,17 @@ class PostgreSQLMigrationTest {
           return {
             test_name: `性能测试: ${testCase.operation}`,
             status: 'FAIL',
+            duration_ms: duration,
             error: `查询耗时过长: ${duration}ms (期望<5000ms)`
           };
         }
       } catch (error) {
+        const msg = error instanceof Error ? error.message : String(error);
         performances.push({
           operation: testCase.operation,
           duration_ms: Date.now() - start,
           status: 'ERROR',
-          error: error.message
+          error: msg
         });
       }
     }
@@ -249,6 +260,7 @@ class PostgreSQLMigrationTest {
     return {
       test_name: '性能基准测试',
       status: 'PASS',
+      duration_ms: 0,
       details: performances
     };
   }
@@ -296,9 +308,10 @@ class PostgreSQLMigrationTest {
           status: value === 0 ? 'OK' : 'ISSUE'
         });
       } catch (error) {
+        const msg = error instanceof Error ? error.message : String(error);
         validationResults.push({
           check: validation.name,
-          error: error.message,
+          error: msg,
           status: 'ERROR'
         });
       }
@@ -309,6 +322,7 @@ class PostgreSQLMigrationTest {
     return {
       test_name: '数据完整性验证',
       status: !hasIssues ? 'PASS' : 'FAIL',
+      duration_ms: 0,
       details: validationResults
     };
   }
@@ -318,7 +332,7 @@ class PostgreSQLMigrationTest {
    */
   private printResults() {
     console.log('\n📊 测试结果总结:');
-    console.log('=' * 50);
+    console.log('='.repeat(50));
     
     const passCount = this.results.filter(r => r.status === 'PASS').length;
     const failCount = this.results.filter(r => r.status === 'FAIL').length;

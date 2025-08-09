@@ -1,5 +1,58 @@
 # 变更日志
 
+## [2025-08-09 17:30-18:10] - 构建修复与依赖清理
+
+### 🔧 构建修复
+- 修复 `fumadocs-ui/mdx` 与 `fumadocs-mdx/config` 缺失导致的构建失败
+- 更新 `src/mdx-components.tsx` 与 `source.config.ts`，去除无效依赖
+
+### 🗄️ 数据库与适配器
+- `status/route.ts` 切换为 `pg-client`
+- `postgresql-adapter.ts` 使用内部 `pgClient`，补齐查询/连接信息封装
+
+### 🧪 脚本与类型
+- 迁移与测试脚本补齐类型与方法占位，解决 unknown error 报错
+
+### ⚠️ 未决事项
+- `analysis/page.tsx` 仍有 `AnalysisResult.insights` 类型不匹配，待统一
+
+## [2025-08-09 16:30-17:00] - 数据库配置统一与应用修复
+
+### 🔧 系统修复
+- ✅ **Next.js应用修复**: 修复/inventory页面数据库连接错误
+- ✅ **数据库连接统一**: Python脚本与Next.js使用统一的数据库配置
+- ✅ **表结构完善**: 创建缺失的inventory_points表和相关字段
+- ✅ **兼容层实现**: 创建pg-client替换mysqlClient，保持API兼容性
+
+### 🛠️ 配置更新
+- 📝 **环境变量统一**: 创建.env.local统一数据库连接配置
+- 📝 **Python配置更新**: 修改所有Python配置文件使用amazon_analyst用户
+- 📝 **数据库用户统一**: 从postgres用户切换到amazon_analyst用户
+- 📝 **连接字符串统一**: 所有系统使用相同的PostgreSQL连接参数
+
+### 🗃️ 数据库更新  
+- 🔄 **表结构扩展**: inventory_points表添加warehouse_code, warehouse_name, country_code, is_eu字段
+- 🔄 **视图创建**: 创建sync_task_log视图映射到sync_task_logs表
+- 🔄 **索引优化**: 为inventory_points表创建必要的索引
+
+### ✨ 技术改进
+- 🆕 **pg-client模块**: 新建PostgreSQL客户端，兼容原有mysqlClient接口
+- 🆕 **占位符转换**: 实现MySQL风格?占位符到PostgreSQL $1,$2风格的自动转换
+- 🆕 **分页查询**: 实现兼容的分页查询功能
+- 🆕 **批量插入**: 支持ON CONFLICT DO NOTHING的批量插入操作
+
+### 🌐 i18n流程梳理
+- 📋 **next-intl v4**: 完整梳理了国际化实现流程和配置
+- 📋 **配置优化**: 识别并修复了middleware matcher与locales不一致问题
+- 📋 **文档更新**: 提供了完整的i18n使用指南和最佳实践
+
+### 💾 开发环境状态
+- **应用状态**: Next.js运行在http://localhost:3001，编译正常
+- **数据库状态**: PostgreSQL@14服务正常，连接测试通过
+- **Python脚本**: 数据库连接配置已统一，测试连接成功
+
+---
+
 ## [2025-08-09] - 数据库架构统一化重构
 
 ### 🚀 重大系统重构
@@ -77,7 +130,7 @@ memory-bank/
 - 🔧 优化项目上下文的结构化存储
 - 🔧 实现多层次的记忆保存策略
 
-## [2024-12-08] - 数据库架构升级
+## [2025-08-08] - 数据库架构升级
 
 ### 重大变更
 - 🚀 **数据库架构统一**: 从双数据库模式升级为统一数据库
@@ -95,7 +148,7 @@ memory-bank/
 - 🔧 查询性能优化
 - 🔧 索引策略优化
 
-## [2024-11] - 赛狐ERP同步系统
+## [2025-07] - 赛狐ERP同步系统
 
 ### 新增功能
 - ✨ 赛狐ERP数据同步系统
@@ -110,7 +163,7 @@ memory-bank/
 - 🏗️ 数据验证和清洗
 - 🏗️ 错误处理和重试机制
 
-## [2024-10] - 核心平台建设
+## [2025-07] - 核心平台建设
 
 ### 新增功能
 - ✨ Next.js 15 + React 19 升级

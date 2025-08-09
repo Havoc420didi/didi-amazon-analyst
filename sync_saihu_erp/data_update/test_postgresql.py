@@ -230,7 +230,8 @@ def main():
     # 设置默认环境变量（如果不存在）
     os.environ.setdefault('DB_HOST', 'localhost')
     os.environ.setdefault('DB_PORT', '5432')
-    os.environ.setdefault('DB_USER', 'postgres')
+    os.environ.setdefault('DB_USER', 'amazon_analyst')
+    os.environ.setdefault('DB_PASSWORD', 'amazon_analyst_2024')
     os.environ.setdefault('DB_NAME', 'amazon_analyst')
     
     # 如果设置了环境变量，使用配置的密码

@@ -22,7 +22,6 @@ src/types/                 # TypeScript类型
 ### 数据库规范
 - 使用Drizzle ORM进行数据库操作
 - 表名使用snake_case命名
-- 赛狐ERP表使用`saihu_`前缀
 - 所有表必须包含created_at和updated_at字段
 
 ## 开发流程

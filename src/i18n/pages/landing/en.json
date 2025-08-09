@@ -16,11 +16,6 @@
           "title": "Amazon Data Analysis",
           "url": "/analysis",
           "icon": "RiBarChartBoxLine"
-        },
-        {
-          "title": "Product Data Analysis",
-          "url": "/inventory",
-          "icon": "RiArchiveDrawerLine"
         }
       ]
     },

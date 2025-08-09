@@ -3,7 +3,35 @@
  * 替换现有的MySQL适配器，支持AI分析功能
  */
 
-import { PostgreSQLManager } from '@/sync/saihu-erp/database/postgresql-connection';
+import { pgClient } from '@/lib/database/pg-client';
+
+// 轻量封装，与原先 Python Manager 同名以兼容现有调用
+class PostgreSQLManager {
+  async execute_single<T = any>(query: string, params: any[] = []): Promise<T | undefined> {
+    const res = await pgClient.query<T>(query, params);
+    if (!res.success) return undefined;
+    return res.data?.[0];
+  }
+
+  async execute_query<T = any>(query: string, params: any[] = []): Promise<T[]> {
+    const res = await pgClient.query<T>(query, params);
+    if (!res.success) return [];
+    return res.data || [];
+  }
+
+  async test_connection(): Promise<boolean> {
+    const res = await pgClient.query<{ ok: number }>('SELECT 1 as ok');
+    return !!(res.success && res.data && res.data[0]?.ok === 1);
+  }
+
+  async get_connection_info(): Promise<any> {
+    const versionRes = await pgClient.query<{ version: string }>('SELECT version() as version');
+    return {
+      connected: !!versionRes.success,
+      version: versionRes.data?.[0]?.version || 'unknown',
+    };
+  }
+}
 import { 
   InventoryPoint, 
   ProductAnalytics, 
@@ -18,6 +46,39 @@ export class PostgreSQLAdapter {
   
   constructor() {
     this.pgManager = new PostgreSQLManager();
+  }
+
+  /**
+   * 供迁移脚本使用的单条查询代理
+   */
+  async execute_single<T = any>(query: string, params: any[] = []): Promise<T | undefined> {
+    return this.pgManager.execute_single<T>(query, params);
+  }
+
+  /**
+   * 执行SQL脚本（分号分割，忽略空语句与注释），用于初始化表结构/索引
+   */
+  async executeSQLScript(sqlScript: string): Promise<void> {
+    // 简单切分脚本语句；保留分号内的语句块
+    const statements = sqlScript
+      .split(/;\s*\n|;\s*$/gm)
+      .map(s => s.trim())
+      .filter(s => s.length > 0 && !s.startsWith('--'));
+
+    // 使用事务执行
+    const begin = await pgClient.query('BEGIN');
+    if (!begin.success) throw new Error(begin.error || 'BEGIN failed');
+    try {
+      for (const stmt of statements) {
+        const res = await pgClient.query(stmt);
+        if (!res.success) throw new Error(res.error || 'Statement failed');
+      }
+      const commit = await pgClient.query('COMMIT');
+      if (!commit.success) throw new Error(commit.error || 'COMMIT failed');
+    } catch (err) {
+      await pgClient.query('ROLLBACK');
+      throw err;
+    }
   }
 
   /**
@@ -327,8 +388,9 @@ export class PostgreSQLAdapter {
       'latest': `FIRST_VALUE(column_name) OVER (PARTITION BY asin, marketplace ORDER BY data_date DESC)`,
       'average': 'AVG(column_name)',
       'sum': 'SUM(column_name)',
-      'trend': 'AVG(column_name)'  -- 带权重的平均值
-    };
+      // trend: 暂时等同于平均值，如需带权重平均可在此扩展
+      'trend': 'AVG(column_name)'
+    } as const;
 
     const aggMethod = aggregations[method as keyof typeof aggregations] || aggregations.average;
 
