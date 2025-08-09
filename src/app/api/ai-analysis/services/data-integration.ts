@@ -3,7 +3,7 @@
  * 复用现有的赛狐ERP数据处理逻辑，为AI分析提供标准化数据
  */
 
-import { ProductData, InventoryPoint } from '@/types/inventory';
+import { InventoryPoint } from '@/types/inventory-view';
 import { ProductAnalysisData } from '@/types/ai-analysis';
 // import { calculateInventoryPoints } from '@/../../sync_saihu_erp/data_project/src/services/analysisService';
 

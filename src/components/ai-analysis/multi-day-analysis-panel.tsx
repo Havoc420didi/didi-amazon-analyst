@@ -8,7 +8,7 @@ import { Brain, BarChart3, Target, Calendar, Clock, TrendingUp } from 'lucide-re
 import { AnalysisTrigger } from './analysis-trigger';
 import { AnalysisPeriodSelector } from './analysis-period-selector';
 import { AnalysisPeriod } from '@/types/ai-analysis';
-import { InventoryPoint } from '@/types/inventory';
+import { InventoryPoint } from '@/types/inventory-view';
 
 interface MultiDayAnalysisPanelProps {
   inventoryPoint: InventoryPoint;

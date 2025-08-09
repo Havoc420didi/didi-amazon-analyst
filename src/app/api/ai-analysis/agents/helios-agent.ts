@@ -6,7 +6,7 @@
 import { StateGraph, MemorySaver, Annotation } from "@langchain/langgraph";
 import { BaseMessage } from "@langchain/core/messages";
 import { ProductAnalysisData, AIAnalysisResult, DiagnosisScenario } from '@/types/ai-analysis';
-import { InventoryPoint } from '@/types/inventory';
+import { InventoryPoint } from '@/types/inventory-view';
 
 // 定义智能体状态
 const AgentState = Annotation.Root({

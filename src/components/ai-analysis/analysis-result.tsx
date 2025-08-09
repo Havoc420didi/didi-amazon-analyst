@@ -27,7 +27,7 @@ import {
   Clock
 } from 'lucide-react';
 import { AIAnalysisResult } from '@/types/ai-analysis';
-import { InventoryPoint } from '@/types/inventory';
+import { InventoryPoint } from '@/types/inventory-view';
 import { toast } from 'sonner';
 
 interface AnalysisResultProps {

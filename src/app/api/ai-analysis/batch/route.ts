@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { AIAnalysisModel } from '@/models/ai-analysis';
 import { getHeliosAgent } from '@/app/api/ai-analysis/agents/helios-agent';
 import DataIntegrationService from '@/app/api/ai-analysis/services/data-integration';
-import { ProductData } from '@/types/inventory';
+// import { ProductData } from '@/types/inventory';
 import { ProductAnalysisData } from '@/types/ai-analysis';
 import { z } from 'zod';
 

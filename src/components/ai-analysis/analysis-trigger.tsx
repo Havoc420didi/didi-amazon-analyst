@@ -29,7 +29,7 @@ import {
   AlertTriangle,
   Info
 } from 'lucide-react';
-import { InventoryPoint } from '@/types/inventory';
+import { InventoryPoint } from '@/types/inventory-view';
 import { ProductAnalysisData, AIAnalysisResult, AnalysisPeriod } from '@/types/ai-analysis';
 import { AnalysisResult } from './analysis-result';
 import { AnalysisPeriodSelector } from './analysis-period-selector';
