@@ -39,7 +39,21 @@ def main():
     api_config = settings.get('api', {})
     print(f"API配置:")
     print(f"  Base URL: {api_config.get('base_url', 'N/A')}")
-    print(f"  Client ID: {api_config.get('client_id', 'N/A')}")
+
+    # 启动前凭据/令牌预检
+    try:
+        from src.config.secure_config import config
+        from src.auth.oauth_client import oauth_client
+        creds = config.get_api_credentials()
+        print(f"  Client ID: {creds.client_id}")
+        # 试图获取一次访问令牌
+        token = oauth_client.get_access_token()
+        if not token:
+            raise RuntimeError("无法获取访问令牌，请检查 SELLFOX_CLIENT_ID/SELLFOX_CLIENT_SECRET 是否正确")
+        print("  访问令牌: 已获取")
+    except Exception as precheck_err:
+        print(f"❌ 凭据预检失败: {precheck_err}")
+        raise
     
     try:
         # Web状态集成 - 报告开始
@@ -117,35 +131,35 @@ def main():
         
         # 6. 验证数据
         print("\n🔍 5. 验证同步数据...")
-        from src.database import get_db_session
-        from src.models import ProductAnalytics, FbaInventory
+        from src.database import db_manager
         
-        with get_db_session() as session:
-            # 检查产品分析数据
-            analytics_count = session.query(ProductAnalytics).count()
-            print(f"   产品分析数据总数: {analytics_count}")
-            
-            if analytics_count > 0:
-                # 检查是否有广告数据
-                ad_data = session.query(ProductAnalytics).filter(
-                    ProductAnalytics.ad_cost > 0
-                ).limit(5).all()
-                print(f"   有广告数据的记录数: {len(ad_data)}")
-                
-                if ad_data:
-                    print("   广告数据示例:")
-                    for item in ad_data[:3]:
-                        print(f"     SKU: {item.sku}, 广告花费: {item.ad_cost}, 广告销售: {item.ad_sales}")
-            
-            # 检查FBA库存数据
-            fba_count = session.query(FbaInventory).count()
-            print(f"   FBA库存数据总数: {fba_count}")
-            
-            if fba_count > 0:
-                fba_sample = session.query(FbaInventory).limit(3).all()
-                print("   FBA库存数据示例:")
-                for item in fba_sample:
-                    print(f"     SKU: {item.sku}, 可用库存: {item.available_quantity}, 总库存: {item.total_quantity}")
+        # 检查产品分析数据
+        analytics_count_row = db_manager.execute_single("SELECT COUNT(*) AS count FROM product_analytics")
+        analytics_count = analytics_count_row['count'] if analytics_count_row else 0
+        print(f"   产品分析数据总数: {analytics_count}")
+        
+        if analytics_count > 0:
+            ad_sample_rows = db_manager.execute_query(
+                "SELECT sku, ad_cost, ad_sales FROM product_analytics WHERE ad_cost > 0 ORDER BY data_date DESC LIMIT 3"
+            )
+            print(f"   有广告数据的记录数示例: {len(ad_sample_rows)}")
+            if ad_sample_rows:
+                print("   广告数据示例:")
+                for row in ad_sample_rows:
+                    print(f"     SKU: {row.get('sku')}, 广告花费: {row.get('ad_cost')}, 广告销售: {row.get('ad_sales')}")
+        
+        # 检查FBA库存数据
+        fba_count_row = db_manager.execute_single("SELECT COUNT(*) AS count FROM fba_inventory")
+        fba_count = fba_count_row['count'] if fba_count_row else 0
+        print(f"   FBA库存数据总数: {fba_count}")
+        
+        if fba_count > 0:
+            fba_sample_rows = db_manager.execute_query(
+                "SELECT sku, available, total_inventory FROM fba_inventory ORDER BY snapshot_date DESC NULLS LAST LIMIT 3"
+            )
+            print("   FBA库存数据示例:")
+            for row in fba_sample_rows:
+                print(f"     SKU: {row.get('sku')}, 可用库存: {row.get('available')}, 总库存: {row.get('total_inventory')}")
         
         # Web状态集成 - 报告完成
         end_time = datetime.now()
@@ -177,7 +191,7 @@ def main():
             json.dump(results, f, ensure_ascii=False, indent=2)
         
         print(f"\n📁 执行结果已保存到: sync_execution_result.json")
-        print(f"⏱️  总执行时间: {duration}")
+        print(f"⏱️  总执行时间: {final_duration}")
     
     print("\n🎉 数据同步执行完成!")
     return True
