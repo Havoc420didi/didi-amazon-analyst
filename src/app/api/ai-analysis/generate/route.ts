@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AIAnalysisModel } from '@/models/ai-analysis';
-import { getAnalysisService, DeepseekAnalysisService } from '@/services/ai-analysis';
 import { getHeliosAgent } from '@/app/api/ai-analysis/agents/helios-agent';
-import { getRulesEngine } from '@/app/api/ai-analysis/engines/rules-engine';
 import DataIntegrationService from '@/app/api/ai-analysis/services/data-integration';
 import { CreateAnalysisTask, ProductAnalysisData, AnalysisPeriod } from '@/types/ai-analysis';
 import DataAggregationService from '@/app/api/ai-analysis/services/data-aggregation';
@@ -166,63 +164,25 @@ async function processAnalysisAsync(taskId: number, productData: ProductAnalysis
     // 使用数据集成服务增强分析数据
     const enhancedData = DataIntegrationService.enhanceAnalysisData(productData);
 
-    // 选择分析引擎：优先使用LangGraph智能体，降级到DeepSeek
-    let result;
-    let analysisMethod = 'helios_agent';
-    
-    try {
-      // 尝试使用Helios智能体分析
-      const heliosAgent = getHeliosAgent();
-      result = await heliosAgent.analyze(enhancedData);
-      console.log(`Task ${taskId}: Helios Agent analysis completed`);
-    } catch (heliosError) {
-      console.warn(`Task ${taskId}: Helios Agent failed, falling back to DeepSeek:`, heliosError);
-      
-      // 降级到DeepSeek分析服务
-      const analysisService = getAnalysisService();
-      result = await analysisService.generateAnalysis(enhancedData);
-      analysisMethod = 'deepseek_fallback';
-    }
+    // 仅使用 Helios 智能体；失败则任务失败
+    const heliosAgent = getHeliosAgent();
+    const result = await heliosAgent.analyze(enhancedData);
+    console.log(`Task ${taskId}: Helios Agent analysis completed`);
 
-    // 使用业务规则引擎验证结果（如果是DeepSeek需要额外验证）
-    if (analysisMethod === 'deepseek_fallback') {
-      const rulesEngine = getRulesEngine();
-      // 从分析内容中提取行动建议（简化实现）
-      const actionLines = result.analysis_content.split('\n')
-        .filter(line => line.match(/^\d+\.\s/))
-        .map(line => line.replace(/^\d+\.\s/, ''));
-      
-      if (actionLines.length > 0) {
-        const violations = rulesEngine.validateActions(enhancedData, actionLines);
-        
-        if (violations.length > 0) {
-          console.log(`Task ${taskId}: Found ${violations.length} rule violations, correcting...`);
-          const correctedActions = rulesEngine.correctViolatingActions(enhancedData, actionLines, violations);
-          
-          // 重新组装分析内容
-          const analysisSection = result.analysis_content.split('\n## 行动')[0];
-          const correctedActionSection = '\n## 行动\n\n' + 
-            correctedActions.map((action, i) => `${i + 1}. ${action}`).join('\n\n');
-          
-          result.analysis_content = analysisSection + correctedActionSection;
-        }
-      }
-    }
-
-    // 保存分析结果，包含分析方法信息
+    // 保存分析结果（仅记录 Helios 方法）
     await AIAnalysisModel.saveAnalysisResult(
       taskId,
       result.analysis_content,
       result.processing_time,
       result.tokens_used,
       {
-        analysis_method: analysisMethod,
+        analysis_method: 'helios_agent',
         enhanced_data_used: true,
-        rules_engine_applied: analysisMethod === 'deepseek_fallback'
+        rules_engine_applied: false,
       }
     );
 
-    console.log(`Analysis task ${taskId} completed successfully using ${analysisMethod}`);
+    console.log(`Analysis task ${taskId} completed successfully using helios_agent`);
   } catch (error) {
     console.error(`Analysis task ${taskId} processing error:`, error);
     throw error;
