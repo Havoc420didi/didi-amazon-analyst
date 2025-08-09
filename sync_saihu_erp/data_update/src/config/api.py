@@ -14,7 +14,6 @@ class ApiConfig:
         
         return {
             'base_url': api_config.get('base_url', 'https://openapi.sellfox.com'),
-
             'timeout': api_config.get('timeout', 60),
             'retry_count': api_config.get('retry_count', 3),
             'retry_delay': api_config.get('retry_delay', 1),

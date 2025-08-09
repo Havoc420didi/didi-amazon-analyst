@@ -1,45 +1,42 @@
-# Project: Next.js Boilerplate Application
+# Cursor AI Rules for Amazon Analyst Project
 
-## General
+## Project Context
+- Amazon operations analysis platform
+- Next.js 15 + React 19 + TypeScript
+- PostgreSQL database with Drizzle ORM
+- Integrated with Saihu ERP system
 
-- This is a Next.js TypeScript application with App Router.
-- Use React for components development, prefer to use functional components.
-- Use Tailwind CSS for styling.
-- Use Shadcn UI components.
-- Use sonner for toast notifications.
-- Use React Context for state management.
-- Component names are in CamelCase.
-- Use next-auth for authentication.
-- Use next-intl for internationalization.
-- Use Stripe for payment.
+## Current Database Configuration
+- Database: amazon_analyst
+- User: amazon_analyst
+- Password: amazon_analyst_2024
+- Host: localhost:5432
+- Connection: postgresql://amazon_analyst:amazon_analyst_2024@localhost:5432/amazon_analyst
 
-## File Structure
+## Development Guidelines
+- Use functional components over class components
+- Prefer React Server Components (RSC)
+- Minimize 'use client', useEffect, useState usage
+- Use descriptive variable names (isLoading, hasError)
+- Directory naming: lowercase with dashes (auth-wizard)
 
-- src/app/: Next.js App Router pages and API routes
-  - [locale]/: Locale-specific pages
-  - api/: API routes (e.g. checkout)
-  - theme.css: Theme styles
-- src/components/: React components
-  - blocks/: Layout blocks (header, footer, etc.), commonly used in Landing Page
-  - ui/: Reusable UI components
-- src/contexts/: React contexts (e.g. app context)
-- src/i18n/: Internationalization
-  - pages/landing/: Page-specific translations for Landing Page
-  - messages/: Global messages
-- src/types/: TypeScript type definitions
-  - blocks/: Types for layout blocks
-  - pages/: Types for pages
-- src/models/: Data models and data operations.
-- src/services/: Business logics.
-- src/lib/: Custom libraries and functions
-- public/: Static assets
-- .env.development: Development environment variables
+## Recent Issues Resolved
+- PostgreSQL connection issues with pg_hba.conf
+- DBeaver SSL configuration
+- IP whitelist configuration (113.71.250.72)
 
-## Coding Conventions
+## Important Commands
+```bash
+# Development
+pnpm dev                # Start development server
+pnpm db:studio         # Open database UI
+pnpm db:migrate        # Apply database migrations
 
-- Use TypeScript for type safety
-- Follow React best practices and hooks
-- Implement responsive design with Tailwind CSS and Shadcn UI
-- Maintain consistent internationalization structure
-- Keep components modular and reusable
-- Use proper type definitions for components and data
+# Database Management
+./manage_postgres.sh status    # Check database status
+python3 test_database.py      # Test connections
+```
+
+## Memory Bank Location
+- All project memory stored in `memory-bank/` directory
+- Use "initialize memory bank" and "update memory bank" commands
