@@ -10,8 +10,8 @@ from typing import Dict, Any, List
 
 from ..scrapers import ProductAnalyticsScraper, FbaInventoryScraper, InventoryDetailsScraper
 from ..processors import ProductAnalyticsProcessor, InventoryMergeProcessor
-from ..models import SyncTaskLog, InventoryPoint
-from ..database import get_db_session
+from ..models import SyncTaskLog
+from ..database import db_manager
 from ..utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
@@ -288,19 +288,13 @@ class SyncJobs:
             
             cutoff_date = (date.today() - timedelta(days=keep_days)).strftime('%Y-%m-%d')
             
-            with get_db_session() as session:
-                # 清理旧的库存点数据
-                deleted_points = session.query(InventoryPoint).filter(
-                    InventoryPoint.data_date < cutoff_date
-                ).delete()
-                
-                # 清理同步任务日志（保留更长时间，60天）
-                log_cutoff_date = (date.today() - timedelta(days=60)).strftime('%Y-%m-%d')
-                deleted_logs = session.query(SyncTaskLog).filter(
-                    SyncTaskLog.created_at < log_cutoff_date
-                ).delete()
-                
-                session.commit()
+            # 清理旧的库存点数据
+            delete_points_sql = "DELETE FROM inventory_points WHERE data_date < %s"
+            deleted_points = db_manager.execute_update(delete_points_sql, (cutoff_date,))
+            
+            # 清理同步任务日志（保留更长时间，60天）
+            delete_logs_sql = "DELETE FROM sync_task_log WHERE start_time < NOW() - INTERVAL '60 days'"
+            deleted_logs = db_manager.execute_update(delete_logs_sql)
             
             result = {
                 'status': 'success',
@@ -342,21 +336,36 @@ class SyncJobs:
             # 获取库存点合并统计
             merge_summary = self.inventory_merge_processor.get_merge_summary(data_date)
             
-            # 获取最近的任务执行记录
-            with get_db_session() as session:
-                recent_tasks = session.query(SyncTaskLog).filter(
-                    SyncTaskLog.created_at >= datetime.utcnow() - timedelta(hours=24)
-                ).order_by(SyncTaskLog.created_at.desc()).limit(10).all()
-                
-                task_summary = []
-                for task in recent_tasks:
-                    task_summary.append({
-                        'task_id': task.task_id,
-                        'task_type': task.task_type,
-                        'status': task.status,
-                        'created_at': task.created_at.isoformat(),
-                        'data_date': task.data_date
-                    })
+            # 获取最近的任务执行记录（过去24小时）
+            recent_tasks_sql = (
+                "SELECT task_name, task_type, status, start_time "
+                "FROM sync_task_log "
+                "WHERE start_time >= NOW() - INTERVAL '24 hours' "
+                "ORDER BY start_time DESC LIMIT 10"
+            )
+            rows = db_manager.execute_query(recent_tasks_sql)
+            
+            task_summary = []
+            for row in rows:
+                task_id = row.get('task_name')
+                # 从task_id中尝试解析日期（例如 product_analytics_YYYY-MM-DD_...）
+                parsed_date = None
+                try:
+                    parts = (task_id or '').split('_')
+                    if len(parts) >= 3:
+                        candidate = parts[-2]
+                        # 简单校验格式YYYY-MM-DD
+                        if len(candidate) == 10 and candidate[4] == '-' and candidate[7] == '-':
+                            parsed_date = candidate
+                except Exception:
+                    parsed_date = None
+                task_summary.append({
+                    'task_id': task_id,
+                    'task_type': row.get('task_type'),
+                    'status': row.get('status'),
+                    'created_at': row.get('start_time').isoformat() if row.get('start_time') else None,
+                    'data_date': parsed_date,
+                })
             
             return {
                 'data_date': data_date,
@@ -375,47 +384,44 @@ class SyncJobs:
     def _log_task_start(self, task_id: str, task_type: str, data_date: str = None):
         """记录任务开始"""
         try:
-            with get_db_session() as session:
-                task_log = SyncTaskLog(
-                    task_id=task_id,
-                    task_type=task_type,
-                    status='running',
-                    data_date=data_date or date.today().strftime('%Y-%m-%d'),
-                    started_at=datetime.utcnow()
-                )
-                session.add(task_log)
-                session.commit()
+            # 将日志写入PostgreSQL表 sync_task_log
+            insert_sql = (
+                "INSERT INTO sync_task_log (task_name, task_type, status, start_time, records_processed) "
+                "VALUES (%s, %s, %s, NOW(), %s)"
+            )
+            db_manager.execute_update(insert_sql, (task_id, task_type, 'running', 0))
         except Exception as e:
             self.logger.warning(f"任务日志记录失败: {e}")
     
     def _log_task_success(self, task_id: str, result: Dict[str, Any]):
         """记录任务成功"""
         try:
-            with get_db_session() as session:
-                task_log = session.query(SyncTaskLog).filter(
-                    SyncTaskLog.task_id == task_id
-                ).first()
-                
-                if task_log:
-                    task_log.status = 'success'
-                    task_log.completed_at = datetime.utcnow()
-                    task_log.result_data = str(result)
-                    session.commit()
+            # 估算处理记录数
+            processed = (
+                result.get('processed_count')
+                or result.get('data_count')
+                or result.get('raw_count')
+                or 0
+            )
+            update_sql = (
+                "UPDATE sync_task_log "
+                "SET status = 'success', end_time = NOW(), duration_seconds = EXTRACT(EPOCH FROM (NOW() - start_time))::INT, "
+                "records_processed = %s "
+                "WHERE task_name = %s"
+            )
+            db_manager.execute_update(update_sql, (processed, task_id))
         except Exception as e:
             self.logger.warning(f"任务成功日志记录失败: {e}")
     
     def _log_task_failure(self, task_id: str, error_result: Dict[str, Any]):
         """记录任务失败"""
         try:
-            with get_db_session() as session:
-                task_log = session.query(SyncTaskLog).filter(
-                    SyncTaskLog.task_id == task_id
-                ).first()
-                
-                if task_log:
-                    task_log.status = 'failed'
-                    task_log.completed_at = datetime.utcnow()
-                    task_log.error_message = error_result.get('error', '')
-                    session.commit()
+            update_sql = (
+                "UPDATE sync_task_log "
+                "SET status = 'failed', end_time = NOW(), duration_seconds = EXTRACT(EPOCH FROM (NOW() - start_time))::INT, "
+                "error_message = %s "
+                "WHERE task_name = %s"
+            )
+            db_manager.execute_update(update_sql, (error_result.get('error', ''), task_id))
         except Exception as e:
             self.logger.warning(f"任务失败日志记录失败: {e}")

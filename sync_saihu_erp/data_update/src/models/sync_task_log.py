@@ -37,9 +37,11 @@ class SyncTaskLog(BaseModel):
                  retry_count: Optional[int] = 0,
                  created_at: Optional[datetime] = None,
                  updated_at: Optional[datetime] = None,
+                 task_id: Optional[str] = None,
                  id: Optional[int] = None):
         """初始化同步任务记录"""
         self.id = id
+        self.task_id = task_id
         self.task_type = task_type
         self.task_date = task_date
         self.status = status or TaskStatus.RUNNING.value

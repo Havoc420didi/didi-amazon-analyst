@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Bash(pnpm add:*)",
@@ -8,7 +9,11 @@
       "Bash(pnpm db:migrate:*)",
       "Bash(pnpm build:*)",
       "Bash(pnpm typecheck:*)",
-      "Bash(pnpm lint:*)"
+      "Bash(pnpm lint:*)",
+      "Bash(ls -la /root/amazon-analyst)",
+      "Bash(find /root/amazon-analyst -name \"docker-compose*\" -o -name \"*docker*\")",
+      "Bash(apt:*)",
+      "Bash(apt install:*)"
     ],
     "deny": []
   }

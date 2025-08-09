@@ -3,7 +3,7 @@
 特别处理前七天数据的更新逻辑
 """
 import logging
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 from .base_processor import BaseProcessor
@@ -22,6 +22,178 @@ class ProductAnalyticsProcessor(BaseProcessor):
         self.update_history_days = 7  # 更新前7天的历史数据
         logger.info("产品分析数据处理器初始化完成")
     
+    def process(self, raw_data: List[Dict[str, Any]], data_date: Optional[str] = None) -> Dict[str, Any]:
+        """处理抓取到的原始产品分析数据，并返回用于库存合并的标准结构
+
+        Args:
+            raw_data: 抓取器返回的字典数据列表（由 ProductAnalytics.to_dict() 生成）
+            data_date: 可选的数据日期（YYYY-MM-DD），用于记录
+
+        Returns:
+            { status, processed_count, processed_data, errors }
+        """
+        try:
+            # 1) 字典 -> 模型对象
+            model_list: List[ProductAnalytics] = []
+            for item in raw_data or []:
+                try:
+                    model = self._dict_to_model(item)
+                    if model is not None and model.is_valid():
+                        model_list.append(model)
+                except Exception as ex:
+                    logger.warning(f"字典转换模型失败: {ex}")
+                    continue
+
+            # 2) 走标准处理流水线（预处理/验证/清洗/转换/入库）
+            processed = self._preprocess_data(model_list)
+            if self.enable_validation:
+                validated, validation_errors = self._validate_data(processed)
+            else:
+                validated, validation_errors = processed, []
+            cleaned = self._clean_data(validated)
+            transformed = self._transform_data(cleaned)
+
+            persist_result = self._persist_data(transformed)
+
+            # 3) 构造用于库存合并的字典数据
+            merge_ready: List[Dict[str, Any]] = [self._to_merge_dict(m) for m in transformed]
+
+            errors = validation_errors + persist_result.get('errors', [])
+            return {
+                'status': 'success',
+                'processed_count': len(merge_ready),
+                'processed_data': merge_ready,
+                'errors': errors,
+                'data_date': data_date,
+            }
+
+        except Exception as e:
+            logger.error(f"产品分析数据处理失败: {e}")
+            return {
+                'status': 'error',
+                'error': str(e),
+                'processed_count': 0,
+                'processed_data': [],
+                'data_date': data_date,
+            }
+
+    def _dict_to_model(self, data: Dict[str, Any]) -> Optional[ProductAnalytics]:
+        """将字典还原为 ProductAnalytics 模型（尽量保留有效字段）"""
+        if not isinstance(data, dict):
+            return None
+
+        def to_decimal(value: Any) -> Decimal:
+            try:
+                return Decimal(str(value))
+            except Exception:
+                return Decimal('0.00')
+
+        def to_int(value: Any) -> int:
+            try:
+                return int(value)
+            except Exception:
+                return 0
+
+        parsed_date: Optional[date] = None
+        dd = data.get('data_date')
+        if isinstance(dd, str):
+            try:
+                parsed_date = datetime.strptime(dd, '%Y-%m-%d').date()
+            except Exception:
+                parsed_date = None
+        elif isinstance(dd, date):
+            parsed_date = dd
+
+        return ProductAnalytics(
+            product_id=data.get('product_id'),
+            asin=data.get('asin'),
+            sku=data.get('sku'),
+            parent_asin=data.get('parent_asin'),
+            spu=data.get('spu'),
+            msku=data.get('msku'),
+            data_date=parsed_date,
+            sales_amount=to_decimal(data.get('sales_amount')) if data.get('sales_amount') is not None else None,
+            sales_quantity=to_int(data.get('sales_quantity')) if data.get('sales_quantity') is not None else None,
+            impressions=to_int(data.get('impressions')) if data.get('impressions') is not None else None,
+            clicks=to_int(data.get('clicks')) if data.get('clicks') is not None else None,
+            conversion_rate=to_decimal(data.get('conversion_rate')) if data.get('conversion_rate') is not None else None,
+            acos=to_decimal(data.get('acos')) if data.get('acos') is not None else None,
+            marketplace_id=data.get('marketplace_id'),
+            dev_name=data.get('dev_name'),
+            operator_name=data.get('operator_name'),
+            currency=data.get('currency'),
+            shop_id=data.get('shop_id'),
+            dev_id=data.get('dev_id'),
+            operator_id=data.get('operator_id'),
+            category_name=data.get('category_name'),
+            ad_cost=to_decimal(data.get('ad_cost')) if data.get('ad_cost') is not None else None,
+            ad_sales=to_decimal(data.get('ad_sales')) if data.get('ad_sales') is not None else None,
+            cpc=to_decimal(data.get('cpc')) if data.get('cpc') is not None else None,
+            cpa=to_decimal(data.get('cpa')) if data.get('cpa') is not None else None,
+            ad_orders=to_int(data.get('ad_orders')) if data.get('ad_orders') is not None else None,
+            ad_conversion_rate=to_decimal(data.get('ad_conversion_rate')) if data.get('ad_conversion_rate') is not None else None,
+            order_count=to_int(data.get('order_count')) if data.get('order_count') is not None else None,
+            refund_count=to_int(data.get('refund_count')) if data.get('refund_count') is not None else None,
+            refund_rate=to_decimal(data.get('refund_rate')) if data.get('refund_rate') is not None else None,
+            return_count=to_int(data.get('return_count')) if data.get('return_count') is not None else None,
+            return_rate=to_decimal(data.get('return_rate')) if data.get('return_rate') is not None else None,
+            rating=to_decimal(data.get('rating')) if data.get('rating') is not None else None,
+            rating_count=to_int(data.get('rating_count')) if data.get('rating_count') is not None else None,
+            title=data.get('title'),
+            brand_name=data.get('brand_name'),
+            profit_amount=to_decimal(data.get('profit_amount')) if data.get('profit_amount') is not None else None,
+            profit_rate=to_decimal(data.get('profit_rate')) if data.get('profit_rate') is not None else None,
+            avg_profit=to_decimal(data.get('avg_profit')) if data.get('avg_profit') is not None else None,
+            available_days=to_decimal(data.get('available_days')) if data.get('available_days') is not None else None,
+            fba_inventory=to_int(data.get('fba_inventory')) if data.get('fba_inventory') is not None else None,
+            total_inventory=to_int(data.get('total_inventory')) if data.get('total_inventory') is not None else None,
+            sessions=to_int(data.get('sessions')) if data.get('sessions') is not None else None,
+            page_views=to_int(data.get('page_views')) if data.get('page_views') is not None else None,
+            buy_box_price=to_decimal(data.get('buy_box_price')) if data.get('buy_box_price') is not None else None,
+            spu_name=data.get('spu_name'),
+            brand=data.get('brand'),
+            metrics_json=data.get('metrics_json'),
+        )
+
+    def _to_merge_dict(self, item: ProductAnalytics) -> Dict[str, Any]:
+        """将模型转换为库存合并需要的字典结构（补充必要字段）"""
+        base = item.to_dict()
+
+        # 1) 产品名称
+        base['product_name'] = base.get('title') or ''
+
+        # 2) 市场/国家代码映射
+        marketplace_id = (base.get('marketplace_id') or '').strip()
+        country = self._map_marketplace_to_country(marketplace_id)
+        base['marketplace'] = country
+
+        # 3) 店铺名（用于从中解析国家代码）
+        shop_id = str(base.get('shop_id') or '').strip()
+        if shop_id and country:
+            base['store'] = f"Shop{shop_id}-{country}"
+        else:
+            base['store'] = country or 'Unknown'
+
+        # 确保核心字段存在
+        base['asin'] = base.get('asin') or ''
+        return base
+
+    def _map_marketplace_to_country(self, marketplace_id: str) -> str:
+        """将Amazon marketplaceId映射为国家/地区简码"""
+        mapping = {
+            'A1F83G8C2ARO7P': 'UK',  # Amazon.co.uk
+            'A1PA6795UKMFR9': 'DE',  # Amazon.de
+            'A13V1IB3VIYZZH': 'FR',  # Amazon.fr
+            'APJ6JRA9NG5V4':  'IT',  # Amazon.it
+            'A1RKKUPIHCS9HS': 'ES',  # Amazon.es
+            'ATVPDKIKX0DER':  'US',  # Amazon.com
+            'A2EUQ1WTGCTBG2': 'CA',  # Amazon.ca
+            'A39IBJ37TRP1C6': 'AU',  # Amazon.com.au
+            'A1VC38T7YXB528': 'JP',  # Amazon.co.jp
+            'A21TJRUUN4KGV':  'IN',  # Amazon.in
+        }
+        return mapping.get(marketplace_id, marketplace_id or '')
+
     def _clean_data(self, data_list: List[ProductAnalytics]) -> List[ProductAnalytics]:
         """清洗产品分析数据"""
         cleaned_data = []
@@ -193,38 +365,25 @@ class ProductAnalyticsProcessor(BaseProcessor):
         return merged_item
     
     def _persist_data(self, data_list: List[ProductAnalytics]) -> Dict[str, Any]:
-        """持久化产品分析数据"""
+        """持久化产品分析数据（使用专用的批量UPSERT函数，避免自定义字段不匹配）"""
         if not data_list:
             return {'success': 0, 'failed': 0, 'errors': []}
-        
-        # 区分新增数据和历史更新数据
-        new_data, update_data = self._separate_new_and_update_data(data_list)
-        
-        total_success = 0
-        total_failed = 0
-        errors = []
-        
-        # 处理新增数据
-        if new_data:
-            logger.info(f"处理新增数据: {len(new_data)} 条")
-            new_result = self._persist_data_in_batches(new_data, self.table_name)
-            total_success += new_result['success']
-            total_failed += new_result['failed']
-            errors.extend(new_result['errors'])
-        
-        # 处理历史数据更新
-        if update_data:
-            logger.info(f"处理历史数据更新: {len(update_data)} 条")
-            update_result = self._update_historical_data(update_data)
-            total_success += update_result['success']
-            total_failed += update_result['failed']
-            errors.extend(update_result['errors'])
-        
-        return {
-            'success': total_success,
-            'failed': total_failed,
-            'errors': errors
-        }
+
+        try:
+            saved_count = db_manager.upsert_product_analytics(data_list, None)
+            failed = max(len(data_list) - (saved_count or 0), 0)
+            return {
+                'success': saved_count or 0,
+                'failed': failed,
+                'errors': []
+            }
+        except Exception as e:
+            logger.error(f"保存产品分析数据失败: {e}")
+            return {
+                'success': 0,
+                'failed': len(data_list),
+                'errors': [str(e)]
+            }
     
     def _separate_new_and_update_data(self, data_list: List[ProductAnalytics]) -> tuple:
         """区分新增数据和需要更新的历史数据"""

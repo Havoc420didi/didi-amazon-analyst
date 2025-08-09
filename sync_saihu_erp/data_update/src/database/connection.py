@@ -472,9 +472,31 @@ class DatabaseManager:
                 )
             """
             result = self.execute_single(sql, (table_name,))
-            return result and result[0] or False
+            if not result:
+                return False
+            # RealDictCursor returns key 'exists'
+            return bool(result.get('exists'))
         except Exception as e:
             logger.error(f"检查PostgreSQL表存在性失败: {e}")
+            return False
+
+    def column_exists(self, table_name: str, column_name: str) -> bool:
+        """检查PostgreSQL表的列是否存在"""
+        try:
+            sql = """
+                SELECT EXISTS (
+                    SELECT FROM information_schema.columns 
+                    WHERE table_schema = 'public' 
+                    AND table_name = %s
+                    AND column_name = %s
+                )
+            """
+            result = self.execute_single(sql, (table_name, column_name))
+            if not result:
+                return False
+            return bool(result.get('exists'))
+        except Exception as e:
+            logger.error(f"检查PostgreSQL列存在性失败: {e}")
             return False
 
 

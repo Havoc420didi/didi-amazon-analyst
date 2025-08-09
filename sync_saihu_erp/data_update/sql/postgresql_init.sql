@@ -14,8 +14,7 @@
 -- 创建uuid扩展
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 创建json扩展
-CREATE EXTENSION IF NOT EXISTS "json";
+-- JSON 类型已内置于PostgreSQL，无需额外扩展
 
 -- ===========================================
 -- 表结构定义
@@ -81,10 +80,10 @@ CREATE TABLE IF NOT EXISTS product_analytics (
     sales_quantity INTEGER DEFAULT 0,
     impressions INTEGER DEFAULT 0,
     clicks INTEGER DEFAULT 0,
-    conversion_rate DECIMAL(5,4) DEFAULT 0,
-    acos DECIMAL(5,4) DEFAULT 0,
+    conversion_rate DECIMAL(7,4) DEFAULT 0,
+    acos DECIMAL(7,4) DEFAULT 0,
     data_date DATE NOT NULL,
-    marketplace_id VARCHAR(10),
+    marketplace_id VARCHAR(20),
     dev_name VARCHAR(100),
     operator_name VARCHAR(100),
     currency VARCHAR(3) DEFAULT 'USD',
@@ -97,13 +96,13 @@ CREATE TABLE IF NOT EXISTS product_analytics (
     cpc DECIMAL(8,4) DEFAULT 0,
     cpa DECIMAL(8,4) DEFAULT 0,
     ad_orders INTEGER DEFAULT 0,
-    ad_conversion_rate DECIMAL(5,4) DEFAULT 0,
+    ad_conversion_rate DECIMAL(7,4) DEFAULT 0,
     -- 业务指标
     order_count INTEGER DEFAULT 0,
     refund_count INTEGER DEFAULT 0,
-    refund_rate DECIMAL(5,4) DEFAULT 0,
+    refund_rate DECIMAL(7,4) DEFAULT 0,
     return_count INTEGER DEFAULT 0,
-    return_rate DECIMAL(5,4) DEFAULT 0,
+    return_rate DECIMAL(7,4) DEFAULT 0,
     rating DECIMAL(3,2) DEFAULT 0,
     rating_count INTEGER DEFAULT 0,
     -- 商品信息
@@ -112,7 +111,7 @@ CREATE TABLE IF NOT EXISTS product_analytics (
     category_name VARCHAR(200),
     -- 利润指标
     profit_amount DECIMAL(15,2) DEFAULT 0,
-    profit_rate DECIMAL(5,4) DEFAULT 0,
+    profit_rate DECIMAL(7,4) DEFAULT 0,
     avg_profit DECIMAL(12,2) DEFAULT 0,
     -- 库存信息
     available_days INTEGER DEFAULT 0,
@@ -130,18 +129,71 @@ CREATE TABLE IF NOT EXISTS product_analytics (
     UNIQUE(asin, sku, data_date)
 );
 
--- 库存点表
+-- 库存点表（合并后的产品日度统计）
 DROP TABLE IF EXISTS inventory_points CASCADE;
 CREATE TABLE IF NOT EXISTS inventory_points (
     id SERIAL PRIMARY KEY,
-    warehouse_code VARCHAR(10) NOT NULL,
-    warehouse_name VARCHAR(100) NOT NULL,
-    country_code VARCHAR(2) NOT NULL,
-    is_eu BOOLEAN DEFAULT FALSE,
+    asin VARCHAR(20) NOT NULL,
+    product_name VARCHAR(255) NOT NULL,
+    sku VARCHAR(100),
+    category VARCHAR(100),
+    sales_person VARCHAR(100),
+    product_tag VARCHAR(100),
+    dev_name VARCHAR(100),
+    marketplace VARCHAR(50) NOT NULL,
+    store VARCHAR(255),
+    inventory_point_name VARCHAR(255),
+
+    fba_available NUMERIC(10,2) DEFAULT 0,
+    fba_inbound NUMERIC(10,2) DEFAULT 0,
+    fba_sellable NUMERIC(10,2) DEFAULT 0,
+    fba_unsellable NUMERIC(10,2) DEFAULT 0,
+    local_available NUMERIC(10,2) DEFAULT 0,
+    inbound_shipped NUMERIC(10,2) DEFAULT 0,
+    total_inventory NUMERIC(10,2) DEFAULT 0,
+
+    sales_7days NUMERIC(10,2) DEFAULT 0,
+    total_sales NUMERIC(10,2) DEFAULT 0,
+    average_sales NUMERIC(10,2) DEFAULT 0,
+    order_count INTEGER DEFAULT 0,
+    promotional_orders INTEGER DEFAULT 0,
+
+    average_price VARCHAR(50),
+    sales_amount VARCHAR(50),
+    net_sales VARCHAR(50),
+    refund_rate VARCHAR(50),
+
+    ad_impressions INTEGER DEFAULT 0,
+    ad_clicks INTEGER DEFAULT 0,
+    ad_spend NUMERIC(10,2) DEFAULT 0,
+    ad_order_count INTEGER DEFAULT 0,
+    ad_sales NUMERIC(10,2) DEFAULT 0,
+    ad_ctr NUMERIC(8,4) DEFAULT 0,
+    ad_cvr NUMERIC(8,4) DEFAULT 0,
+    acoas NUMERIC(8,4) DEFAULT 0,
+    ad_cpc NUMERIC(8,2) DEFAULT 0,
+    ad_roas NUMERIC(8,2) DEFAULT 0,
+
+    turnover_days NUMERIC(8,1) DEFAULT 0,
+    daily_sales_amount NUMERIC(10,2) DEFAULT 0,
+    is_turnover_exceeded BOOLEAN DEFAULT FALSE,
+    is_out_of_stock BOOLEAN DEFAULT FALSE,
+    is_zero_sales BOOLEAN DEFAULT FALSE,
+    is_low_inventory BOOLEAN DEFAULT FALSE,
+    is_effective_point BOOLEAN DEFAULT FALSE,
+
+    merge_type VARCHAR(50),
+    merged_stores TEXT,
+    store_count INTEGER DEFAULT 1,
+    data_date DATE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(warehouse_code)
+
+    CONSTRAINT unique_point UNIQUE (asin, marketplace, data_date)
 );
+CREATE INDEX IF NOT EXISTS idx_inventory_points_date ON inventory_points(data_date);
+CREATE INDEX IF NOT EXISTS idx_inventory_points_marketplace ON inventory_points(marketplace);
+CREATE INDEX IF NOT EXISTS idx_inventory_points_asin ON inventory_points(asin);
 
 -- 同步任务日志表
 DROP TABLE IF EXISTS sync_task_log CASCADE;
@@ -185,8 +237,7 @@ CREATE INDEX IF NOT EXISTS idx_analytics_shop ON product_analytics(shop_id);
 CREATE INDEX IF NOT EXISTS idx_analytics_dev ON product_analytics(dev_id);
 
 -- 库存点索引
-CREATE INDEX IF NOT EXISTS idx_inventory_points_country ON inventory_points(country_code);
-CREATE INDEX IF NOT EXISTS idx_inventory_points_eu ON inventory_points(is_eu);
+-- 移除已废弃的旧字段索引
 
 -- 同步任务日志索引
 CREATE INDEX IF NOT EXISTS idx_sync_log_task ON sync_task_log(task_name);
@@ -230,16 +281,7 @@ CREATE TRIGGER update_inventory_points_updated_at
 -- 初始数据插入
 -- ===========================================
 
--- 默认库存点数据
-INSERT INTO inventory_points (warehouse_code, warehouse_name, country_code, is_eu) VALUES
-('AMAZON_US', 'Amazon US Warehouse', 'US', FALSE),
-('AMAZON_UK', 'Amazon UK Warehouse', 'GB', TRUE),
-('AMAZON_DE', 'Amazon Germany Warehouse', 'DE', TRUE),
-('AMAZON_FR', 'Amazon France Warehouse', 'FR', TRUE),
-('AMAZON_IT', 'Amazon Italy Warehouse', 'IT', TRUE),
-('AMAZON_ES', 'Amazon Spain Warehouse', 'ES', TRUE),
-('AMAZON_PL', 'Amazon Poland Warehouse', 'PL', TRUE),
-('AMAZON_CZ', 'Amazon Czech Warehouse', 'CZ', TRUE);
+-- 默认数据不再插入（按实际同步生成）
 
 -- ===========================================
 -- 配置说明

@@ -6,6 +6,7 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime, date
 from .base_scraper import BaseScraper
 from ..models import InventoryDetails
+from ..auth.saihu_api_client import saihu_api_client
 
 logger = logging.getLogger(__name__)
 
@@ -58,19 +59,39 @@ class InventoryDetailsScraper(BaseScraper):
             raise
     
     def fetch_current_inventory(self, warehouse_codes: List[str] = None, skus: List[str] = None) -> List[InventoryDetails]:
-        """抓取当前库存明细数据"""
-        params = {
-            'snapshot_date': date.today().strftime('%Y-%m-%d'),
-            'type': 'current'
-        }
-        
-        if warehouse_codes:
-            params['warehouse_codes'] = ','.join(warehouse_codes)
-        
-        if skus:
-            params['skus'] = ','.join(skus)
-        
-        return self.fetch_data(params)
+        """抓取当前库存明细数据（使用签名API客户端）"""
+        try:
+            # 聚合所有仓库与SKU的结果
+            all_rows: List[dict] = []
+
+            # 如果未指定仓库，单次拉取（API允许不传仓库ID）
+            target_warehouses = warehouse_codes or [None]
+
+            for wh in target_warehouses:
+                rows = saihu_api_client.fetch_all_pages(
+                    fetch_func=saihu_api_client.fetch_warehouse_inventory,
+                    warehouse_id=wh,
+                    page_size=100
+                )
+                if rows:
+                    all_rows.extend(rows)
+
+            # 转换为模型
+            inventory_list: List[InventoryDetails] = []
+            snapshot_date = date.today()
+            for item in all_rows:
+                try:
+                    inv = InventoryDetails.from_api_response(item, snapshot_date)
+                    if inv.is_valid():
+                        inventory_list.append(inv)
+                except Exception as ex:
+                    logger.warning(f"转换库存明细数据失败: {ex}")
+
+            return inventory_list
+
+        except Exception as e:
+            logger.error(f"抓取库存明细数据失败: {e}")
+            return []
     
     def fetch_inventory_by_warehouse(self, warehouse_code: str) -> List[InventoryDetails]:
         """按仓库代码抓取库存明细数据"""
@@ -332,22 +353,16 @@ class InventoryDetailsScraper(BaseScraper):
             包含抓取结果的字典
         """
         try:
-            # 使用fetch_current_inventory抓取当前库存明细
             inventory_data = self.fetch_current_inventory(**kwargs)
-            
             return {
                 'status': 'success',
                 'data': [item.to_dict() for item in inventory_data],
                 'data_count': len(inventory_data),
                 'snapshot_date': date.today().strftime('%Y-%m-%d')
             }
-            
         except Exception as e:
             logger.error(f"抓取库存明细数据失败: {e}")
-            return {
-                'status': 'error',
-                'error': str(e)
-            }
+            return {'status': 'error', 'error': str(e)}
 
     def scrape_by_date(self, data_date: str, **kwargs) -> Dict[str, Any]:
         """

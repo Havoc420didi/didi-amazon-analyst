@@ -322,11 +322,11 @@ class InventoryMergeProcessor(BaseProcessor):
         return saved_count
     
     def _ensure_inventory_points_table(self):
-        """确保库存点表存在"""
+        """确保库存点表存在（PostgreSQL版）"""
         try:
             create_table_sql = """
             CREATE TABLE IF NOT EXISTS inventory_points (
-                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                id SERIAL PRIMARY KEY,
                 asin VARCHAR(20) NOT NULL,
                 product_name VARCHAR(255) NOT NULL,
                 sku VARCHAR(100),
@@ -338,38 +338,38 @@ class InventoryMergeProcessor(BaseProcessor):
                 store VARCHAR(255),
                 inventory_point_name VARCHAR(255),
                 
-                fba_available DECIMAL(10,2) DEFAULT 0,
-                fba_inbound DECIMAL(10,2) DEFAULT 0,
-                fba_sellable DECIMAL(10,2) DEFAULT 0,
-                fba_unsellable DECIMAL(10,2) DEFAULT 0,
-                local_available DECIMAL(10,2) DEFAULT 0,
-                inbound_shipped DECIMAL(10,2) DEFAULT 0,
-                total_inventory DECIMAL(10,2) DEFAULT 0,
+                fba_available NUMERIC(10,2) DEFAULT 0,
+                fba_inbound NUMERIC(10,2) DEFAULT 0,
+                fba_sellable NUMERIC(10,2) DEFAULT 0,
+                fba_unsellable NUMERIC(10,2) DEFAULT 0,
+                local_available NUMERIC(10,2) DEFAULT 0,
+                inbound_shipped NUMERIC(10,2) DEFAULT 0,
+                total_inventory NUMERIC(10,2) DEFAULT 0,
                 
-                sales_7days DECIMAL(10,2) DEFAULT 0,
-                total_sales DECIMAL(10,2) DEFAULT 0,
-                average_sales DECIMAL(10,2) DEFAULT 0,
-                order_count INT DEFAULT 0,
-                promotional_orders INT DEFAULT 0,
+                sales_7days NUMERIC(10,2) DEFAULT 0,
+                total_sales NUMERIC(10,2) DEFAULT 0,
+                average_sales NUMERIC(10,2) DEFAULT 0,
+                order_count INTEGER DEFAULT 0,
+                promotional_orders INTEGER DEFAULT 0,
                 
                 average_price VARCHAR(50),
                 sales_amount VARCHAR(50),
                 net_sales VARCHAR(50),
                 refund_rate VARCHAR(50),
                 
-                ad_impressions INT DEFAULT 0,
-                ad_clicks INT DEFAULT 0,
-                ad_spend DECIMAL(10,2) DEFAULT 0,
-                ad_order_count INT DEFAULT 0,
-                ad_sales DECIMAL(10,2) DEFAULT 0,
-                ad_ctr DECIMAL(8,4) DEFAULT 0,
-                ad_cvr DECIMAL(8,4) DEFAULT 0,
-                acoas DECIMAL(8,4) DEFAULT 0,
-                ad_cpc DECIMAL(8,2) DEFAULT 0,
-                ad_roas DECIMAL(8,2) DEFAULT 0,
+                ad_impressions INTEGER DEFAULT 0,
+                ad_clicks INTEGER DEFAULT 0,
+                ad_spend NUMERIC(10,2) DEFAULT 0,
+                ad_order_count INTEGER DEFAULT 0,
+                ad_sales NUMERIC(10,2) DEFAULT 0,
+                ad_ctr NUMERIC(8,4) DEFAULT 0,
+                ad_cvr NUMERIC(8,4) DEFAULT 0,
+                acoas NUMERIC(8,4) DEFAULT 0,
+                ad_cpc NUMERIC(8,2) DEFAULT 0,
+                ad_roas NUMERIC(8,2) DEFAULT 0,
                 
-                turnover_days DECIMAL(8,1) DEFAULT 0,
-                daily_sales_amount DECIMAL(10,2) DEFAULT 0,
+                turnover_days NUMERIC(8,1) DEFAULT 0,
+                daily_sales_amount NUMERIC(10,2) DEFAULT 0,
                 is_turnover_exceeded BOOLEAN DEFAULT FALSE,
                 is_out_of_stock BOOLEAN DEFAULT FALSE,
                 is_zero_sales BOOLEAN DEFAULT FALSE,
@@ -378,19 +378,19 @@ class InventoryMergeProcessor(BaseProcessor):
                 
                 merge_type VARCHAR(50),
                 merged_stores TEXT,
-                store_count INT DEFAULT 1,
+                store_count INTEGER DEFAULT 1,
                 data_date DATE NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                 
-                UNIQUE KEY unique_point (asin, marketplace, data_date),
-                INDEX idx_data_date (data_date),
-                INDEX idx_marketplace (marketplace),
-                INDEX idx_asin (asin)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                CONSTRAINT unique_point UNIQUE (asin, marketplace, data_date)
+            );
+            CREATE INDEX IF NOT EXISTS idx_inventory_points_date ON inventory_points(data_date);
+            CREATE INDEX IF NOT EXISTS idx_inventory_points_marketplace ON inventory_points(marketplace);
+            CREATE INDEX IF NOT EXISTS idx_inventory_points_asin ON inventory_points(asin);
             """
             
-            db_manager.execute_update(create_table_sql)
+            db_manager.execute_script(create_table_sql)
             self.logger.debug("库存点表创建或检查完成")
             
         except Exception as e:
@@ -434,28 +434,27 @@ class InventoryMergeProcessor(BaseProcessor):
             self.logger.error(f"历史快照保存异常: {e}")
     
     def _ensure_history_table(self):
-        """确保历史表存在"""
+        """确保历史表存在（PostgreSQL版）"""
         try:
             create_history_sql = """
             CREATE TABLE IF NOT EXISTS inventory_point_history (
-                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                id SERIAL PRIMARY KEY,
                 asin VARCHAR(20) NOT NULL,
                 marketplace VARCHAR(50) NOT NULL,
                 data_date DATE NOT NULL,
-                total_inventory DECIMAL(10,2) DEFAULT 0,
-                average_sales DECIMAL(10,2) DEFAULT 0,
-                turnover_days DECIMAL(8,1) DEFAULT 0,
-                daily_sales_amount DECIMAL(10,2) DEFAULT 0,
-                ad_spend DECIMAL(10,2) DEFAULT 0,
-                ad_sales DECIMAL(10,2) DEFAULT 0,
-                acoas DECIMAL(8,4) DEFAULT 0,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                
-                INDEX idx_asin_date (asin, data_date),
-                INDEX idx_marketplace_date (marketplace, data_date)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                total_inventory NUMERIC(10,2) DEFAULT 0,
+                average_sales NUMERIC(10,2) DEFAULT 0,
+                turnover_days NUMERIC(8,1) DEFAULT 0,
+                daily_sales_amount NUMERIC(10,2) DEFAULT 0,
+                ad_spend NUMERIC(10,2) DEFAULT 0,
+                ad_sales NUMERIC(10,2) DEFAULT 0,
+                acoas NUMERIC(8,4) DEFAULT 0,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE INDEX IF NOT EXISTS idx_inventory_point_hist_asin_date ON inventory_point_history(asin, data_date);
+            CREATE INDEX IF NOT EXISTS idx_inventory_point_hist_marketplace_date ON inventory_point_history(marketplace, data_date);
             """
-            db_manager.execute_update(create_history_sql)
+            db_manager.execute_script(create_history_sql)
         except Exception as e:
             self.logger.error(f"创建历史表失败: {e}")
             raise
@@ -475,15 +474,15 @@ class InventoryMergeProcessor(BaseProcessor):
             eu_result = db_manager.execute_single(eu_points_sql, (data_date,))
             eu_points = eu_result['count'] if eu_result else 0
             
-            turnover_sql = "SELECT COUNT(*) as count FROM inventory_points WHERE data_date = %s AND is_turnover_exceeded = 1"
+            turnover_sql = "SELECT COUNT(*) as count FROM inventory_points WHERE data_date = %s AND is_turnover_exceeded = TRUE"
             turnover_result = db_manager.execute_single(turnover_sql, (data_date,))
             turnover_exceeded = turnover_result['count'] if turnover_result else 0
             
-            stock_sql = "SELECT COUNT(*) as count FROM inventory_points WHERE data_date = %s AND is_out_of_stock = 1"
+            stock_sql = "SELECT COUNT(*) as count FROM inventory_points WHERE data_date = %s AND is_out_of_stock = TRUE"
             stock_result = db_manager.execute_single(stock_sql, (data_date,))
             out_of_stock = stock_result['count'] if stock_result else 0
             
-            effective_sql = "SELECT COUNT(*) as count FROM inventory_points WHERE data_date = %s AND is_effective_point = 1"
+            effective_sql = "SELECT COUNT(*) as count FROM inventory_points WHERE data_date = %s AND is_effective_point = TRUE"
             effective_result = db_manager.execute_single(effective_sql, (data_date,))
             effective_points = effective_result['count'] if effective_result else 0
             

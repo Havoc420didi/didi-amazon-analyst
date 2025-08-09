@@ -11,10 +11,13 @@ database:
   pool_pre_ping: true
   pool_recycle: 3600
 api:
-  base_url: https://api.saihu-erp.com
+  base_url: https://openapi.sellfox.com
   timeout: 60
   retry_count: 3
   retry_delay: 1
+  # 可选：当未在环境变量/.env中配置时可临时提供（不建议提交真实值）
+  # client_id: ""
+  # client_secret: ""
 sync:
   batch_size: 500
   max_history_days: 30

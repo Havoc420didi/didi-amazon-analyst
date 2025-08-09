@@ -6,6 +6,7 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime, date, timedelta
 from .base_scraper import BaseScraper
 from ..models import ProductAnalytics
+from ..auth.saihu_api_client import saihu_api_client
 
 logger = logging.getLogger(__name__)
 
@@ -218,20 +219,31 @@ class ProductAnalyticsScraper(BaseScraper):
         """
         try:
             target_date = datetime.strptime(data_date, '%Y-%m-%d').date()
-            
-            # 调用现有的按日期抓取方法
-            analytics_data = self.fetch_specific_date_data(
-                target_date=target_date,
-                product_ids=kwargs.get('product_ids')
+
+            # 使用签名API客户端抓取指定日期的数据（自动处理分页）
+            rows = saihu_api_client.fetch_all_pages(
+                fetch_func=saihu_api_client.fetch_product_analytics,
+                start_date=data_date,
+                end_date=data_date,
+                page_size=100
             )
-            
+
+            analytics_list: List[ProductAnalytics] = []
+            for item in rows:
+                try:
+                    analytics = ProductAnalytics.from_api_response(item, target_date)
+                    if analytics.is_valid():
+                        analytics_list.append(analytics)
+                except Exception as ex:
+                    logger.warning(f"转换产品分析数据失败: {ex}")
+
             return {
                 'status': 'success',
-                'data': [item.to_dict() for item in analytics_data],
-                'data_count': len(analytics_data),
+                'data': [item.to_dict() for item in analytics_list],
+                'data_count': len(analytics_list),
                 'data_date': data_date
             }
-            
+
         except Exception as e:
             logger.error(f"按日期抓取产品分析数据失败: {e}")
             return {
@@ -248,20 +260,33 @@ class ProductAnalyticsScraper(BaseScraper):
             包含抓取结果的字典
         """
         try:
-            # 默认抓取昨天的数据
-            yesterday = date.today() - timedelta(days=1)
-            
-            analytics_data = self.fetch_yesterday_data(
-                product_ids=kwargs.get('product_ids')
+            # 默认抓取昨天的数据（使用签名API客户端，自动分页）
+            yesterday = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
+
+            rows = saihu_api_client.fetch_all_pages(
+                fetch_func=saihu_api_client.fetch_product_analytics,
+                start_date=yesterday,
+                end_date=yesterday,
+                page_size=100
             )
-            
+
+            analytics_list: List[ProductAnalytics] = []
+            target_date = datetime.strptime(yesterday, '%Y-%m-%d').date()
+            for item in rows:
+                try:
+                    analytics = ProductAnalytics.from_api_response(item, target_date)
+                    if analytics.is_valid():
+                        analytics_list.append(analytics)
+                except Exception as ex:
+                    logger.warning(f"转换产品分析数据失败: {ex}")
+
             return {
                 'status': 'success',
-                'data': [item.to_dict() for item in analytics_data],
-                'data_count': len(analytics_data),
-                'data_date': yesterday.strftime('%Y-%m-%d')
+                'data': [item.to_dict() for item in analytics_list],
+                'data_count': len(analytics_list),
+                'data_date': yesterday
             }
-            
+
         except Exception as e:
             logger.error(f"抓取产品分析数据失败: {e}")
             return {
