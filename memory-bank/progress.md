@@ -9,6 +9,10 @@
 - 运行 `pnpm typecheck` 全量收口，修复剩余隐式 any 等类型问题（`models/user.ts` 等）
 - 构建通过（本地模式跳过类型/ESLint 校验），可快速验证产物
 
+✅ 恢复严格构建并通过
+- 移除 `next.config.mjs` 本地跳过类型/ESLint 配置
+- 运行 `pnpm build`（严格模式），类型与 ESLint 校验通过
+
 使用建议
 - 本地开发：
   - 长开类型监视：`pnpm typecheck:watch`

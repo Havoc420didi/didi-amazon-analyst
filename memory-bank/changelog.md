@@ -11,6 +11,10 @@
 - 运行 `pnpm typecheck` 一次性暴露并修复隐式 any 与返回类型不匹配问题
 - 修复位置：`models/user.ts` 等（隐式 any、排序与 forEach 的参数类型）
 
+### ✅ 严格构建恢复
+- 移除 `next.config.mjs` 的本地跳过选项，恢复类型与 ESLint 严格校验
+- 执行 `pnpm build`，严格构建通过
+
 ---
 
 ## [2025-08-09 17:30-18:10] - 构建修复与依赖清理

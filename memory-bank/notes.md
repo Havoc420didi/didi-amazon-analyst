@@ -23,6 +23,12 @@
 
 ## 历史笔记
 
+### 常用开发命令（新增）
+- 快速并行开发：`pnpm dev:fast`
+- 全量类型检查：`pnpm typecheck`
+- 持续类型检查：`pnpm typecheck:watch`
+- 严格生产构建：`pnpm build`
+
 ### 技术债务记录
 - [ ] inventory_points 表还需要添加 is_eu 字段以完全兼容 Python 脚本
 - [ ] next.config.mjs 中的 turbopack 配置警告需要处理
