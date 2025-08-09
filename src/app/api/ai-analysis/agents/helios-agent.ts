@@ -4,6 +4,7 @@
  */
 
 import { StateGraph, MemorySaver, Annotation } from "@langchain/langgraph";
+import { siliconChat } from '@/lib/ai/siliconflow';
 import { BaseMessage } from "@langchain/core/messages";
 import { ProductAnalysisData, AIAnalysisResult, DiagnosisScenario } from '@/types/ai-analysis';
 import { InventoryPoint } from '@/types/inventory-view';
@@ -207,28 +208,22 @@ export class HeliosAgent {
     const { productData } = state;
     if (!productData) return {};
 
-    const analysis = {
-      totalInventory: productData.total_inventory,
-      fbaAvailable: productData.fba_available,
-      fbaInTransit: productData.fba_in_transit,
-      localWarehouse: productData.local_warehouse,
-      turnoverDays: productData.inventory_turnover_days,
-      avgSales: productData.avg_sales,
-      
-      // 库存健康度判断
-      isInventoryShortage: productData.inventory_turnover_days < 40,
-      isInventoryExcess: productData.inventory_turnover_days > 90,
-      isHealthyInventory: productData.inventory_turnover_days >= 40 && productData.inventory_turnover_days <= 90,
-      
-      // 断货风险评估
-      outOfStockRisk: productData.fba_available <= 0 ? 'high' : 
-                     (productData.fba_available / productData.avg_sales < 3 ? 'medium' : 'low'),
-      
-      // 库存状态
-      inventoryStatus: productData.inventory_status || 'unknown'
-    };
+    const prompt = `库存健康度分析专家\n\n你是一位专精库存管理的亚马逊运营专家，请基于以下产品数据进行库存健康度深度分析：\n\n` +
+      `ID：${productData.asin}\n库存点：${productData.warehouse_location}\n\n` +
+      `总库存：${productData.total_inventory}件\nFBA可用库存：${productData.fba_available}件\n` +
+      `FBA在途库存：${productData.fba_in_transit}件\n本地仓库存：${productData.local_warehouse}件\n` +
+      `库存状态：${productData.inventory_status || '未知'}\n库存周转天数：${productData.inventory_turnover_days ?? '未知'}天\n\n` +
+      `平均日销量：${productData.avg_sales}件\n日均销售额：${productData.daily_revenue}\n` +
+      `库存变化趋势：${(productData.trends?.inventory_change ?? 0) >= 0 ? '+' : ''}${(productData.trends?.inventory_change ?? 0).toFixed(1)}%\n` +
+      `销量变化趋势：${(productData.trends?.sales_change ?? 0) >= 0 ? '+' : ''}${(productData.trends?.sales_change ?? 0).toFixed(1)}%\n\n` +
+      `请严格按“分析：[库存健康度诊断]\n行动：[具体库存管控建议]”输出。`;
 
-    return { inventoryAnalysis: analysis };
+    const res = await siliconChat([
+      { role: 'system', content: '你是亚马逊库存健康度分析专家，遵守规则输出。' },
+      { role: 'user', content: prompt },
+    ]);
+
+    return { inventoryAnalysis: res.content };
   }
 
   /**
@@ -238,45 +233,20 @@ export class HeliosAgent {
     const { productData } = state;
     if (!productData) return {};
 
-    // 计算广告关键指标
-    const ctr = productData.ad_impressions > 0 ? 
-      (productData.ad_clicks / productData.ad_impressions) * 100 : 0;
-    
-    const cvr = productData.ad_clicks > 0 ? 
-      (productData.ad_orders / productData.ad_clicks) * 100 : 0;
-    
-    const acoas = productData.acos || 0;
-    
-    // 根据客单价计算标准转化率
-    const avgPrice = productData.daily_revenue / productData.avg_sales;
-    const standardCvr = this.getStandardConversionRate(avgPrice);
+    const prompt = `广告绩效分析专家\n\n你是一位专精广告优化的亚马逊运营专家，请基于以下产品数据进行广告绩效深度分析：\n\n` +
+      `ID：${productData.asin}\n库存点：${productData.warehouse_location}\n\n` +
+      `平均日销量：${productData.avg_sales}件\n日均销售额：${productData.daily_revenue}\n` +
+      `销售额变化趋势：${(productData.trends?.revenue_change ?? 0) >= 0 ? '+' : ''}${(productData.trends?.revenue_change ?? 0).toFixed(1)}%\n\n` +
+      `广告曝光量：${productData.ad_impressions}\n广告点击量：${productData.ad_clicks}\n广告花费：${productData.ad_spend}\n广告订单数：${productData.ad_orders}\n` +
+      `ACOS：${productData.acos ? (productData.acos * 100).toFixed(2) + '%' : '未知'}\n\n` +
+      `请严格按“分析：[广告绩效诊断]\n行动：[具体广告优化建议]”输出。`;
 
-    const analysis = {
-      ctr,
-      cvr,
-      acoas: acoas * 100, // 转换为百分比
-      avgPrice,
-      standardCvr,
-      
-      // 性能评估
-      ctrHealth: ctr >= 0.5 ? 'good' : 'poor',
-      cvrHealth: cvr >= standardCvr * 0.9 ? 'good' : 'poor',
-      acoasHealth: acoas >= 0.07 && acoas <= 0.15 ? 'good' : 
-                   (acoas < 0.07 ? 'low' : 'high'),
-      
-      // 广告效率问题识别
-      isConversionLow: cvr < standardCvr * 0.9,
-      isAcoasHigh: acoas > 0.15,
-      isAcoasLow: acoas < 0.07,
-      isCtrLow: ctr < 0.5,
-      
-      impressions: productData.ad_impressions,
-      clicks: productData.ad_clicks,
-      spend: productData.ad_spend,
-      orders: productData.ad_orders
-    };
+    const res = await siliconChat([
+      { role: 'system', content: '你是亚马逊广告绩效分析专家，遵守规则输出。' },
+      { role: 'user', content: prompt },
+    ]);
 
-    return { adPerformanceAnalysis: analysis };
+    return { adPerformanceAnalysis: res.content };
   }
 
   /**
@@ -488,36 +458,23 @@ export class HeliosAgent {
    * 输出格式化节点
    */
   private async outputFormattingNode(state: HeliosAgentState): Promise<Partial<HeliosAgentState>> {
-    const { 
-      diagnosisScenario, 
-      inventoryAnalysis, 
-      adPerformanceAnalysis, 
-      salesAnalysis,
-      actionSuggestions,
-      priorityLevel,
-      productData 
-    } = state;
+    const { inventoryAnalysis, adPerformanceAnalysis } = state;
+    if (!inventoryAnalysis || !adPerformanceAnalysis) return { hasErrors: true };
 
-    if (!diagnosisScenario || !inventoryAnalysis || !adPerformanceAnalysis || !actionSuggestions) {
-      return { hasErrors: true };
-    }
+    // 由模型融合两份报告
+    const fusionPrompt = `风控与综合融合专家\n\n请对以下两份报告进行规则检验与综合融合，按指定输出格式返回：\n\n` +
+      `【库存分析报告】\n${inventoryAnalysis}\n\n` +
+      `【广告分析报告】\n${adPerformanceAnalysis}`;
 
-    // 生成分析部分
-    const analysisReport = this.generateAnalysisReport(
-      diagnosisScenario,
-      inventoryAnalysis,
-      adPerformanceAnalysis,
-      salesAnalysis,
-      productData
-    );
+    const res = await siliconChat([
+      { role: 'system', content: '你是亚马逊风控与综合融合专家，按模板输出综合报告。' },
+      { role: 'user', content: fusionPrompt },
+    ], { max_tokens: 2048 });
 
-    // 生成行动部分
-    const actionPlan = this.generateActionPlan(actionSuggestions, priorityLevel);
-
-    return { 
-      analysisReport, 
-      actionPlan, 
-      isComplete: true 
+    return {
+      analysisReport: res.content,
+      actionPlan: '',
+      isComplete: true,
     };
   }
 

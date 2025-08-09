@@ -56,11 +56,14 @@ const generateAnalysisSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('[AI-Generate] POST called');
     const body = await request.json();
+    try { console.log('[AI-Generate] request body keys', Object.keys(body || {})); } catch {}
     
     // 验证请求参数
     const validationResult = generateAnalysisSchema.safeParse(body);
     if (!validationResult.success) {
+      console.warn('[AI-Generate] validation failed', validationResult.error.errors);
       return NextResponse.json({
         success: false,
         error: '请求参数无效',
@@ -81,6 +84,7 @@ export async function POST(request: NextRequest) {
           analysis_period
         );
       } catch (aggregationError) {
+        console.warn('[AI-Generate] aggregateMultiDayData failed', aggregationError);
         return NextResponse.json({
           success: false,
           error: '多日数据聚合失败',
@@ -94,6 +98,7 @@ export async function POST(request: NextRequest) {
     // 使用数据集成服务验证产品数据完整性
     const validation = DataIntegrationService.validateProductData(finalProductData);
     if (!validation.valid) {
+      console.warn('[AI-Generate] product_data validation failed', validation.errors);
       return NextResponse.json({
         success: false,
         error: '产品数据验证失败',
@@ -110,6 +115,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingTasks.data.length > 0) {
+      console.log('[AI-Generate] exists processing task', existingTasks.data[0]?.id);
       return NextResponse.json({
         success: false,
         error: '该产品正在分析中，请稍后再试',
@@ -125,6 +131,7 @@ export async function POST(request: NextRequest) {
       product_data: finalProductData,
       analysis_period
     });
+    console.log('[AI-Generate] task created', { id: task.id, number: task.task_number });
 
     // 异步处理分析（不阻塞响应）
     processAnalysisAsync(task.id, finalProductData).catch(error => {

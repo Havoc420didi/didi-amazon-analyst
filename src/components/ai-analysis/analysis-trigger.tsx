@@ -137,6 +137,13 @@ export function AnalysisTrigger({
 
   // 触发AI分析
   const handleAnalyze = async () => {
+    try {
+      console.log('[AnalysisTrigger] handleAnalyze: start', {
+        asin: inventoryPoint.asin,
+        marketplace: inventoryPoint.marketplace,
+        selectedPeriod,
+      });
+    } catch {}
     setAnalysisState({ status: 'analyzing', progress: 0 });
     setIsDialogOpen(true);
 
@@ -189,6 +196,9 @@ export function AnalysisTrigger({
         }
 
         const taskId = data.data.task_id;
+        try {
+          console.log('[AnalysisTrigger] generate success', { taskId, taskNumber: data.data.task_number, status: data.data.status });
+        } catch {}
         setAnalysisState(prev => ({ ...prev, taskId, progress: 20 }));
 
         // 轮询任务状态
@@ -225,6 +235,7 @@ export function AnalysisTrigger({
 
         switch (task.status) {
           case 'completed':
+            try { console.log('[AnalysisTrigger] task completed', { taskId }); } catch {}
             setAnalysisState({
               status: 'completed',
               result: {
@@ -243,10 +254,12 @@ export function AnalysisTrigger({
             return;
 
           case 'failed':
+            try { console.warn('[AnalysisTrigger] task failed', { taskId }); } catch {}
             throw new Error(task.analysis_content || '分析任务失败');
 
           case 'processing':
             attempts++;
+            try { console.log('[AnalysisTrigger] polling', { taskId, attempts, status: task.status }); } catch {}
             if (attempts < maxAttempts) {
               setTimeout(poll, 3000); // 3秒后重试
             } else {
@@ -257,6 +270,7 @@ export function AnalysisTrigger({
           default:
             // pending状态，继续轮询
             attempts++;
+            try { console.log('[AnalysisTrigger] polling', { taskId, attempts, status: task.status }); } catch {}
             if (attempts < maxAttempts) {
               setTimeout(poll, 2000); // 2秒后重试
             } else {
@@ -326,6 +340,7 @@ export function AnalysisTrigger({
                 <Button
                   variant={variant}
                   size={size}
+                  onClick={() => { try { console.log('[AnalysisTrigger] dialog trigger clicked'); } catch {}; setIsDialogOpen(true); }}
                   onClick={analysisState.status === 'completed' || analysisState.status === 'error' 
                     ? () => setIsDialogOpen(true) 
                     : undefined
