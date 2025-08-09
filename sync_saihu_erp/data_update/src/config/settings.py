@@ -52,7 +52,7 @@ class Settings:
                 'port': int(os.getenv('DB_PORT', '5432')),
                 'user': os.getenv('DB_USER', 'postgres'),
                 'password': os.getenv('DB_PASSWORD', ''),
-                'database': os.getenv('DB_NAME', 'saihu_erp_sync'),
+                'database': os.getenv('DB_NAME', 'amazon_analyst'),
                 'sslmode': 'prefer',
                 'pool_size': 10,
                 'max_overflow': 20,

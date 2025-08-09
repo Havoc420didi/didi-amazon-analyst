@@ -56,16 +56,16 @@ create_database() {
     echo "🗄️  创建PostgreSQL数据库..."
     
     # 检查数据库是否存在
-    if psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'saihu_erp_sync'" | grep -q 1; then
-        echo -e "${YELLOW}⚠️  数据库saihu_erp_sync已存在${NC}"
+    if psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'amazon_analyst'" | grep -q 1; then
+        echo -e "${YELLOW}⚠️  数据库amazon_analyst已存在${NC}"
         read -p "是否继续？(跳过创建) [y/N]: " continue_anyway
         if [[ $continue_anyway != [yY] ]]; then
             return 0
         fi
     else
         # 创建数据库
-        if createdb -U postgres saihu_erp_sync 2>/dev/null; then
-            echo -e "${GREEN}✅ 数据库saihu_erp_sync创建成功${NC}"
+        if createdb -U postgres amazon_analyst 2>/dev/null; then
+            echo -e "${GREEN}✅ 数据库amazon_analyst创建成功${NC}"
         else
             echo -e "${RED}❌ 数据库创建失败${NC}"
             echo "可能的解决方案："
@@ -82,7 +82,7 @@ initialize_database() {
     echo ""
     echo "📊 初始化数据库结构..."
     
-    if psql -U postgres -d saihu_erp_sync -f sql/postgresql_init.sql > /dev/null 2>&1; then
+    if psql -U postgres -d amazon_analyst -f sql/postgresql_init.sql > /dev/null 2>&1; then
         echo -e "${GREEN}✅ 数据库结构初始化成功${NC}"
     else
         echo -e "${RED}❌ 数据库结构初始化失败${NC}"
@@ -123,14 +123,14 @@ show_status() {
     echo "数据库主机: ${DB_HOST:-localhost}"
     echo "数据库端口: ${DB_PORT:-5432}"
     echo "数据库用户: ${DB_USER:-postgres}"
-    echo "数据库名称: ${DB_NAME:-saihu_erp_sync}"
+    echo "数据库名称: ${DB_NAME:-amazon_analyst}"
     echo ""
     echo "环境变量设置示例:"
     echo 'export DB_PASSWORD="your_postgres_password"'
     echo 'export DB_HOST="localhost"'
     echo 'export DB_PORT="5432"'
     echo 'export DB_USER="postgres"'
-    echo 'export DB_NAME="saihu_erp_sync"'
+    echo 'export DB_NAME="amazon_analyst"'
     echo ""
 }
 
@@ -142,7 +142,7 @@ main() {
     export DB_HOST=${DB_HOST:-localhost}
     export DB_PORT=${DB_PORT:-5432}
     export DB_USER=${DB_USER:-postgres}
-    export DB_NAME=${DB_NAME:-saihu_erp_sync}
+    export DB_NAME=${DB_NAME:-amazon_analyst}
     
     check_postgresql
     check_python_deps
@@ -154,7 +154,7 @@ main() {
         initialize_database
     else
         echo -e "${YELLOW}⚠️  跳过数据库创建步骤${NC}"
-        echo "请手动创建数据库并执行: psql -U postgres -d saihu_erp_sync -f sql/postgresql_init.sql"
+        echo "请手动创建数据库并执行: psql -U postgres -d amazon_analyst -f sql/postgresql_init.sql"
     fi
     
     show_status

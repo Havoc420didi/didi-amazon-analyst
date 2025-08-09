@@ -17,7 +17,7 @@ class DatabaseConfig:
             'port': db_config.get('port', 3306),
             'user': db_config.get('user', 'root'),
             'password': db_config.get('password', ''),
-            'database': db_config.get('database', 'saihu_erp_sync'),
+            'database': db_config.get('database', 'amazon_analyst'),
             'charset': db_config.get('charset', 'utf8mb4'),
             'autocommit': False,
             'cursorclass': None
@@ -44,5 +44,6 @@ class DatabaseConfig:
         url = (f"mysql+pymysql://{params['user']}:{params['password']}"
                f"@{params['host']}:{params['port']}/{params['database']}"
                f"?charset={params['charset']}")
+        # Note: This class appears to be for MySQL, but project uses PostgreSQL
         
         return url

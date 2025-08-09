@@ -2,10 +2,10 @@
 -- 赛狐ERP数据同步系统
 
 -- 创建数据库（如果未创建）
--- CREATE DATABASE saihu_erp_sync WITH OWNER postgres;
+-- CREATE DATABASE amazon_analyst WITH OWNER postgres;
 
 -- 使用该数据库
--- \c saihu_erp_sync;
+-- \c amazon_analyst;
 
 -- ===========================================
 -- 创建扩展

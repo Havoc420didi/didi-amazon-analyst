@@ -173,7 +173,7 @@ export TEST_DB_HOST=localhost
 export TEST_DB_PORT=3306
 export TEST_DB_USER=test_user
 export TEST_DB_PASSWORD=test_password
-export TEST_DB_NAME=saihu_erp_sync_test
+export TEST_DB_NAME=amazon_analyst_test
 
 # 设置API基础URL
 export TEST_API_BASE_URL=https://api-test.saihu-erp.com

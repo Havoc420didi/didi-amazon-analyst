@@ -30,7 +30,7 @@ TEST_DB_CONFIG = {
     "port": int(os.getenv("TEST_DB_PORT", "3306")),
     "user": os.getenv("TEST_DB_USER", "root"),
     "password": os.getenv("TEST_DB_PASSWORD", ""),
-    "database": os.getenv("TEST_DB_NAME", "saihu_erp_sync_test"),
+    "database": os.getenv("TEST_DB_NAME", "amazon_analyst_test"),
     "charset": "utf8mb4"
 }
 

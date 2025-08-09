@@ -50,7 +50,7 @@ class PostgreSQLManager:
             'port': db_config.get('port', 5432),
             'user': db_config.get('user', 'postgres'),
             'password': db_config.get('password', ''),
-            'dbname': db_config.get('database', 'saihu_erp_sync'),
+            'dbname': db_config.get('database', 'amazon_analyst'),
             'sslmode': db_config.get('sslmode', 'prefer')
         }
     

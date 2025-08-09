@@ -1,12 +1,12 @@
 -- ===================================================================
--- 赛狐ERP数据同步系统 PostgreSQL表结构
+-- 赛狐ERP数据同步系统 PostgreSQL表结构 (统一数据库模式)
 -- 创建时间: 2025-08-08
--- 用途: 将赛狐ERP数据同步到PostgreSQL数据库
+-- 修改时间: 2025-08-09 - 去掉saihu_前缀，统一表名
+-- 用途: 将赛狐ERP数据同步到PostgreSQL数据库 (与Next.js系统共享)
 -- ===================================================================
 
--- 确保在saihu_erp_sync数据库上操作
-CREATE SCHEMA IF NOT EXISTS saihu_erp_sync;
-SET search_path TO saihu_erp_sync;
+-- 在默认public schema中操作
+-- 使用默认的public schema
 
 -- 开始事务
 BEGIN;
@@ -14,7 +14,7 @@ BEGIN;
 -- ===================================================================
 -- 产品分析数据表 - 增强版 (对应product_analytics)
 -- ===================================================================
-CREATE TABLE IF NOT EXISTS saihu_product_analytics (
+CREATE TABLE IF NOT EXISTS product_analytics (
     id BIGSERIAL PRIMARY KEY,
     asin VARCHAR(32) NOT NULL,
     sku VARCHAR(128),
@@ -75,13 +75,13 @@ CREATE TABLE IF NOT EXISTS saihu_product_analytics (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     -- 唯一约束
-    CONSTRAINT uk_saihu_product_date UNIQUE(asin, marketplace_id, data_date)
+    CONSTRAINT uk_product_date UNIQUE(asin, marketplace_id, data_date)
 );
 
 -- ===================================================================
 -- FBA库存表
 -- ===================================================================
-CREATE TABLE IF NOT EXISTS saihu_fba_inventory (
+CREATE TABLE IF NOT EXISTS fba_inventory (
     id BIGSERIAL PRIMARY KEY,
     sku VARCHAR(128) NOT NULL,
     asin VARCHAR(32),
@@ -105,13 +105,13 @@ CREATE TABLE IF NOT EXISTS saihu_fba_inventory (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     -- 唯一约束
-    CONSTRAINT uk_saihu_fba_date UNIQUE(sku, marketplace_id, snapshot_date)
+    CONSTRAINT uk_fba_date UNIQUE(sku, marketplace_id, snapshot_date)
 );
 
 -- ===================================================================
 -- 库存明细表
 -- ===================================================================
-CREATE TABLE IF NOT EXISTS saihu_inventory_details (
+CREATE TABLE IF NOT EXISTS inventory_details (
     id BIGSERIAL PRIMARY KEY,
     item_id VARCHAR(128) NOT NULL,
     item_name VARCHAR(255),
@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS saihu_inventory_details (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     -- 唯一约束
-    CONSTRAINT uk_saihu_inventory_date UNIQUE(sku, warehouse_code, snapshot_date)
+    CONSTRAINT uk_inventory_date UNIQUE(sku, warehouse_code, snapshot_date)
 );
 
 -- ===================================================================
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS saihu_inventory_details (
 CREATE TYPE sync_task_type AS ENUM ('product_analytics', 'fba_inventory', 'inventory_details');
 CREATE TYPE sync_status_type AS ENUM ('running', 'success', 'failed', 'timeout', 'cancelled');
 
-CREATE TABLE IF NOT EXISTS saihu_sync_task_logs (
+CREATE TABLE IF NOT EXISTS sync_task_logs (
     id BIGSERIAL PRIMARY KEY,
     task_type sync_task_type NOT NULL,
     task_date DATE NOT NULL,
@@ -185,13 +185,13 @@ CREATE TABLE IF NOT EXISTS saihu_sync_task_logs (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     -- 索引
-    CONSTRAINT uk_saihu_sync_task UNIQUE(task_type, task_date)
+    CONSTRAINT uk_sync_task UNIQUE(task_type, task_date)
 );
 
 -- ===================================================================
 -- API配置表
 -- ===================================================================
-CREATE TABLE IF NOT EXISTS saihu_api_configs (
+CREATE TABLE IF NOT EXISTS api_configs (
     id SERIAL PRIMARY KEY,
     config_key VARCHAR(64) NOT NULL UNIQUE,
     config_name VARCHAR(128) NOT NULL,
@@ -211,7 +211,7 @@ CREATE TABLE IF NOT EXISTS saihu_api_configs (
 -- ===================================================================
 CREATE TYPE config_value_type AS ENUM ('string', 'int', 'float', 'json', 'boolean');
 
-CREATE TABLE IF NOT EXISTS saihu_system_configs (
+CREATE TABLE IF NOT EXISTS system_configs (
     id SERIAL PRIMARY KEY,
     config_key VARCHAR(64) NOT NULL UNIQUE,
     config_value TEXT NOT NULL,
@@ -225,7 +225,7 @@ CREATE TABLE IF NOT EXISTS saihu_system_configs (
 -- ===================================================================
 -- 库存合并视图
 -- ===================================================================
-CREATE OR REPLACE VIEW v_saihu_latest_inventory AS
+CREATE OR REPLACE VIEW v_latest_inventory AS
 SELECT 
     COALESCE(fi.sku, id.sku) as sku,
     COALESCE(fi.asin, pa.asin) as asin,
@@ -247,24 +247,24 @@ SELECT
         COALESCE(id.snapshot_date, CURRENT_DATE - INTERVAL '7 days')
     ) as latest_date
     
-FROM saihu_fba_inventory fi
-FULL OUTER JOIN saihu_inventory_details id ON fi.sku = id.sku
-FULL OUTER JOIN saihu_product_analytics pa ON fi.asin = pa.asin OR id.sku = (pa.metrics_data->>'sku')::text
+FROM fba_inventory fi
+FULL OUTER JOIN inventory_details id ON fi.sku = id.sku
+FULL OUTER JOIN product_analytics pa ON fi.asin = pa.asin OR id.sku = (pa.metrics_data->>'sku')::text
 
 WHERE fi.snapshot_date = (
     SELECT MAX(snapshot_date) 
-    FROM saihu_fba_inventory 
+    FROM fba_inventory 
     WHERE COALESCE(sku, '') = COALESCE(fi.sku, '')
 ) OR id.snapshot_date = (
     SELECT MAX(snapshot_date) 
-    FROM saihu_inventory_details 
+    FROM inventory_details 
     WHERE COALESCE(sku, '') = COALESCE(id.sku, '')
 );
 
 -- ===================================================================
 -- 产品销售分析视图
 -- ===================================================================
-CREATE OR REPLACE VIEW v_saihu_product_summary AS
+CREATE OR REPLACE VIEW v_product_summary AS
 SELECT 
     pa.asin,
     pa.sku,
@@ -294,8 +294,8 @@ SELECT
     AVG(pa.rating) as avg_rating,
     SUM(pa.review_count) as total_reviews
     
-FROM saihu_product_analytics pa
-LEFT JOIN v_saihu_latest_inventory vs ON pa.asin = vs.asin
+FROM product_analytics pa
+LEFT JOIN v_latest_inventory vs ON pa.asin = vs.asin
 
 GROUP BY 
     pa.asin, pa.sku, pa.marketplace_name, pa.product_title, 
@@ -304,7 +304,7 @@ GROUP BY
 -- ===================================================================
 -- 函数：清理历史数据
 -- ===================================================================
-CREATE OR REPLACE FUNCTION clean_saihu_history_data()
+CREATE OR REPLACE FUNCTION clean_history_data()
 RETURNS INTEGER AS $$
 DECLARE
     max_days INTEGER := 30;
@@ -313,23 +313,23 @@ DECLARE
 BEGIN
     -- 获取历史数据保留天数
     SELECT COALESCE(config_value::INTEGER, 30) INTO max_days
-    FROM saihu_system_configs 
+    FROM system_configs 
     WHERE config_key = 'max_history_days' AND is_active = true;
     
     cutoff_date := CURRENT_DATE - INTERVAL '1 day' * max_days;
     
     -- 清理产品分析历史数据
-    DELETE FROM saihu_product_analytics WHERE data_date < cutoff_date;
+    DELETE FROM product_analytics WHERE data_date < cutoff_date;
     GET DIAGNOSTICS deleted_count = ROW_COUNT;
     
     -- 清理FBA库存历史数据（保留最近7天）
-    DELETE FROM saihu_fba_inventory WHERE snapshot_date < CURRENT_DATE - INTERVAL '7 days';
+    DELETE FROM fba_inventory WHERE snapshot_date < CURRENT_DATE - INTERVAL '7 days';
     
     -- 清理库存明细历史数据（保留最近7天）
-    DELETE FROM saihu_inventory_details WHERE snapshot_date < CURRENT_DATE - INTERVAL '7 days';
+    DELETE FROM inventory_details WHERE snapshot_date < CURRENT_DATE - INTERVAL '7 days';
     
     -- 清理同步日志历史数据
-    DELETE FROM saihu_sync_task_logs WHERE task_date < cutoff_date;
+    DELETE FROM sync_task_logs WHERE task_date < cutoff_date;
     
     RETURN deleted_count;
 END;
@@ -338,7 +338,7 @@ $$ LANGUAGE plpgsql;
 -- ===================================================================
 -- 插入初始配置数据
 -- ===================================================================
-INSERT INTO saihu_api_configs (config_key, config_name, base_url, endpoint, method, timeout_seconds, rate_limit_per_minute, retry_count) VALUES
+INSERT INTO api_configs (config_key, config_name, base_url, endpoint, method, timeout_seconds, rate_limit_per_minute, retry_count) VALUES
 ('product_analytics', '赛狐产品分析数据接口', 'https://openapi.saihu-erp.com/gateway/app', '/amazon/product/analysis', 'POST', 60, 100, 3),
 ('fba_inventory', '赛狐FBA库存接口', 'https://openapi.saihu-erp.com/gateway/app', '/amazon/inventory/fba', 'POST', 45, 120, 3),
 ('inventory_details', '赛狐库存明细接口', 'https://openapi.saihu-erp.com/gateway/app', '/amazon/inventory/detail', 'POST', 90, 80, 3)
@@ -348,7 +348,7 @@ ON CONFLICT (config_key) DO UPDATE SET
     endpoint = EXCLUDED.endpoint,
     updated_at = CURRENT_TIMESTAMP;
 
-INSERT INTO saihu_system_configs (config_key, config_value, config_type, description) VALUES
+INSERT INTO system_configs (config_key, config_value, config_type, description) VALUES
 ('sync_batch_size', '1000', 'int', '数据同步批处理大小'),
 ('max_history_days', '60', 'int', '最大历史数据保留天数'),
 ('enable_data_validation', 'true', 'boolean', '是否启用数据验证'),
@@ -367,23 +367,23 @@ ON CONFLICT (config_key) DO UPDATE SET
 -- ===================================================================
 -- 创建索引优化查询性能
 -- ===================================================================
-CREATE INDEX IF NOT EXISTS idx_saihu_product_date ON saihu_product_analytics(data_date);
-CREATE INDEX IF NOT EXISTS idx_saihu_product_asin_date ON saihu_product_analytics(asin, data_date);
-CREATE INDEX IF NOT EXISTS idx_saihu_product_marketplace_date ON saihu_product_analytics(marketplace_id, data_date);
-CREATE INDEX IF NOT EXISTS idx_saihu_product_brand_date ON saihu_product_analytics(brand_name, data_date);
-CREATE INDEX IF NOT EXISTS idx_saihu_product_created ON saihu_product_analytics(created_at);
+CREATE INDEX IF NOT EXISTS idx_product_date ON product_analytics(data_date);
+CREATE INDEX IF NOT EXISTS idx_product_asin_date ON product_analytics(asin, data_date);
+CREATE INDEX IF NOT EXISTS idx_product_marketplace_date ON product_analytics(marketplace_id, data_date);
+CREATE INDEX IF NOT EXISTS idx_product_brand_date ON product_analytics(brand_name, data_date);
+CREATE INDEX IF NOT EXISTS idx_product_created ON product_analytics(created_at);
 
-CREATE INDEX IF NOT EXISTS idx_saihu_fba_sku_date ON saihu_fba_inventory(sku, snapshot_date);
-CREATE INDEX IF NOT EXISTS idx_saihu_fba_marketplace_date ON saihu_fba_inventory(marketplace_id, snapshot_date);
-CREATE INDEX IF NOT EXISTS idx_saihu_fba_snapshot ON saihu_fba_inventory(snapshot_date);
+CREATE INDEX IF NOT EXISTS idx_fba_sku_date ON fba_inventory(sku, snapshot_date);
+CREATE INDEX IF NOT EXISTS idx_fba_marketplace_date ON fba_inventory(marketplace_id, snapshot_date);
+CREATE INDEX IF NOT EXISTS idx_fba_snapshot ON fba_inventory(snapshot_date);
 
-CREATE INDEX IF NOT EXISTS idx_saihu_inventory_sku_date ON saihu_inventory_details(sku, snapshot_date);
-CREATE INDEX IF NOT EXISTS idx_saihu_inventory_warehouse_date ON saihu_inventory_details(warehouse_code, snapshot_date);
-CREATE INDEX IF NOT EXISTS idx_saihu_inventory_snapshot ON saihu_inventory_details(snapshot_date);
+CREATE INDEX IF NOT EXISTS idx_inventory_sku_date ON inventory_details(sku, snapshot_date);
+CREATE INDEX IF NOT EXISTS idx_inventory_warehouse_date ON inventory_details(warehouse_code, snapshot_date);
+CREATE INDEX IF NOT EXISTS idx_inventory_snapshot ON inventory_details(snapshot_date);
 
-CREATE INDEX IF NOT EXISTS idx_saihu_sync_task_type_date ON saihu_sync_task_logs(task_type, task_date);
-CREATE INDEX IF NOT EXISTS idx_saihu_sync_status ON saihu_sync_task_logs(status);
-CREATE INDEX IF NOT EXISTS idx_saihu_sync_created ON saihu_sync_task_logs(created_at);
+CREATE INDEX IF NOT EXISTS idx_sync_task_type_date ON sync_task_logs(task_type, task_date);
+CREATE INDEX IF NOT EXISTS idx_sync_status ON sync_task_logs(status);
+CREATE INDEX IF NOT EXISTS idx_sync_created ON sync_task_logs(created_at);
 
 -- ===================================================================
 -- 提交事务
@@ -398,10 +398,10 @@ SELECT
     '表创建成功' as status,
     COUNT(*) as total_tables
 FROM information_schema.tables 
-WHERE table_schema = 'saihu_erp_sync';
+WHERE table_schema = 'public';
 
 -- 查看创建的所有表
 SELECT table_name, table_type 
 FROM information_schema.tables 
-WHERE table_schema = 'saihu_erp_sync' 
+WHERE table_schema = 'public' 
 ORDER BY table_name;

@@ -231,7 +231,7 @@ def main():
     os.environ.setdefault('DB_HOST', 'localhost')
     os.environ.setdefault('DB_PORT', '5432')
     os.environ.setdefault('DB_USER', 'postgres')
-    os.environ.setdefault('DB_NAME', 'saihu_erp_sync')
+    os.environ.setdefault('DB_NAME', 'amazon_analyst')
     
     # 如果设置了环境变量，使用配置的密码
     if not os.getenv('DB_PASSWORD'):

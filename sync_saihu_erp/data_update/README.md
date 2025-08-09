@@ -73,7 +73,7 @@ database:
   port: 3306
   user: root
   password: "your_password"
-  database: saihu_erp_sync
+  database: amazon_analyst
 
 # API配置
 api:
@@ -185,7 +185,7 @@ export DB_HOST=localhost
 export DB_PORT=3306
 export DB_USER=root
 export DB_PASSWORD=your_password
-export DB_NAME=saihu_erp_sync
+export DB_NAME=amazon_analyst
 
 # API配置
 export API_BASE_URL=https://api.saihu-erp.com
