@@ -30,6 +30,7 @@ src/types/                 # TypeScript类型
 - main分支为生产分支
 - 功能开发使用feature分支
 - 提交信息使用约定式提交格式
+- 提交到 GitHub 时，提交信息（commit message）与 Issue 的标题和描述必须使用中文撰写；推荐格式：`type(scope): 中文描述`（遵循约定式提交类型，如 feat、fix、chore、docs）
 
 ### 数据库迁移
 ```bash
