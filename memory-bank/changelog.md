@@ -1,6 +1,41 @@
 # 变更日志
 
-## [2025-08-09] - Memory Bank 例行更新
+## [2025-08-09] - 数据库架构统一化重构
+
+### 🚀 重大系统重构
+- ✨ **数据库表名统一化**: 去除所有 saihu_ 前缀，使用统一表名
+- ✨ **数据库合并**: 将 saihu_erp_sync 数据库合并到 amazon_analyst
+- ✨ **系统统一**: Next.js主ERP系统与Python同步系统共享同一数据库
+
+### 📊 数据库更新
+- 🔄 **表名变更**:
+  - `saihu_product_analytics` → `product_analytics`
+  - `saihu_fba_inventory` → `fba_inventory`  
+  - `saihu_inventory_details` → `inventory_details`
+  - `saihu_sync_task_logs` → `sync_task_logs`
+- 🔄 **数据库名变更**: `saihu_erp_sync` → `amazon_analyst`
+
+### 🛠️ 配置更新
+- 📝 更新 11 个文件的数据库配置和表名引用
+- 📝 修复所有 Python 配置文件中的数据库名称
+- 📝 更新 shell 脚本和文档中的数据库引用
+
+### ✨ 新增功能
+- 🆕 **30天回补脚本**: 新增 `run_30day_backfill_sync.py` 用于历史数据回补
+- 🆕 **统一数据查询**: 支持 Next.js 和 Python 系统的 SQL 联合查询
+
+### 💾 提交信息
+- **提交ID**: `b835ff9`
+- **类型**: refactor(erp-sync)
+- **影响**: 破坏性变更，需要数据库迁移
+
+### 📝 文档更新  
+- 更新 Memory Bank 文档记录本次重构
+- 更新 `activeContext.md` 和 `progress.md`
+
+---
+
+## [2025-08-09] - Memory Bank 例行更新 (早期)
 
 ### 文档更新
 - 更新 `activeContext.md` 与 `progress.md`，记录仓库同步状态与最近一次维护

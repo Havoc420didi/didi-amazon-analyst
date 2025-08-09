@@ -3,6 +3,12 @@
 ### 2025-08-09
 ✅ 同步远端仓库至提交 `46e1286`（origin/main）
 ✅ 更新 Memory Bank 文档（activeContext、progress、changelog）
+✅ **数据库架构统一化** - 提交 `b835ff9`
+- 去除所有表名的 saihu_ 前缀，使用统一表名
+- 数据库名称统一为 amazon_analyst
+- Next.js 主系统和 Python ERP 同步系统共享同一数据库
+- 新增 30 天历史数据回补脚本
+- 更新所有配置文件、脚本和文档
 
 ## 最近完成的任务
 
