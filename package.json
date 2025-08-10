@@ -2,7 +2,7 @@
   "name": "ops-helios",
   "version": "2.5.1",
   "private": true,
-  "author": "Ops Helios Team",
+  "author": "Tepin Team",
   "homepage": "https://agent.opshelios.com/",
   "scripts": {
     "dev": "cross-env NODE_NO_WARNINGS=1 next dev --turbopack",
