@@ -56,10 +56,10 @@ export default function InventoryTable({ items, onSelect }: Props) {
                 <TableCell>{it.localAvailable}</TableCell>
                 <TableCell>{it.totalInventory}</TableCell>
                 <TableCell>{it.averageSales}</TableCell>
-                <TableCell>¥{it.dailySalesAmount.toFixed(2)}</TableCell>
+                <TableCell>$ {it.dailySalesAmount.toFixed(2)}</TableCell>
                 <TableCell>{it.adImpressions}</TableCell>
                 <TableCell>{it.adClicks}</TableCell>
-                <TableCell>¥{it.adSpend.toFixed(2)}</TableCell>
+                <TableCell>$ {it.adSpend.toFixed(2)}</TableCell>
                 <TableCell>{it.adOrderCount}</TableCell>
                 <TableCell>
                   {it.isOutOfStock

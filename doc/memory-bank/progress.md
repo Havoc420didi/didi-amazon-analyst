@@ -1,5 +1,26 @@
 # 项目进度记录
 
+### 2025-08-10 品牌与功能调整
+
+✅ 品牌重命名（文案层）
+- 站点、文档、i18n 文案中的“Amazon Analyst”统一替换为“Ops Helios”
+- 未改动数据库名与连接串（`amazon_analyst` 保持不变）与根目录名，避免运行影响
+
+✅ 分析功能收口
+- 移除“多日聚合”模块，仅保留“单日分析”
+- 精简 `src/components/ai-analysis/analysis-period-selector.tsx`，固定类型为 `single_day`，仅保留截止日期配置与摘要
+- 删除未使用的 `multi-day-analysis-panel.tsx`
+
+✅ 站点/项目信息
+- `package.json` 名称更新为 `ops-helios`，作者与主页更新
+- 页头/页脚品牌与测试页文本同步更新
+
+⚠️ 后续（如需）
+- 若要彻底更名仓库与镜像名（如 docker tag、CI 名称），需追加变更计划
+- 如需恢复“多日聚合”，需重新对齐 API `analysis_period` schema 与聚合服务
+
+---
+
 ### 2025-08-09（晚间）
 
 ✅ 开发提效配置与类型检查收口

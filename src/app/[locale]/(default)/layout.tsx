@@ -25,10 +25,10 @@ export default async function DefaultLayout({
     // 简化版本，如果加载页面数据失败
     return (
       <div style={{ padding: '20px', textAlign: 'center' }}>
-        <h1>Amazon Analyst</h1>
+        <h1>Ops Helios</h1>
         <main className="overflow-x-hidden">{children}</main>
         <footer style={{ marginTop: '40px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
-          <p>© 2025 Amazon Analyst</p>
+          <p>© 2025 Ops Helios</p>
         </footer>
       </div>
     );

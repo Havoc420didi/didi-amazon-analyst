@@ -3,10 +3,10 @@
   "theme": "light",
   "header": {
     "brand": {
-      "title": "Amazon Analyst",
+      "title": "Ops Helios",
       "logo": {
         "src": "/logo.png",
-        "alt": "Amazon Analyst"
+        "alt": "Ops Helios"
       },
       "url": "/"
     },
@@ -39,7 +39,7 @@
     "show_badge": false
   },
   "branding": {
-    "title": "Amazon Analyst is powered by modern technology",
+    "title": "Ops Helios is powered by modern technology",
     "items": [
       {
         "title": "Next.js",
@@ -144,7 +144,7 @@
   "stats": {
     "name": "stats",
     "label": "Stats",
-    "title": "Amazon Sellers Trust Amazon Analyst",
+    "title": "Amazon Sellers Trust Ops Helios",
     "description": "for powerful insights and efficient operations.",
     "icon": "FaRegHeart",
     "items": [
@@ -168,14 +168,14 @@
   "testimonial": {
     "name": "testimonial",
     "label": "Testimonial",
-    "title": "What Amazon Sellers Say About Amazon Analyst",
-    "description": "Hear from Amazon sellers and teams who improved their operations efficiency with Amazon Analyst.",
+    "title": "What Amazon Sellers Say About Ops Helios",
+    "description": "Hear from Amazon sellers and teams who improved their operations efficiency with Ops Helios.",
     "icon": "GoThumbsup",
     "items": [
       {
         "title": "John Smith",
         "label": "Electronics Category Big Seller",
-        "description": "After using Amazon Analyst, our advertising ACOS dropped from 35% to 22%, and inventory turnover improved by 40%. The AI-generated operational recommendations are incredibly accurate, and team efficiency has improved significantly!",
+        "description": "After using Ops Helios, our advertising ACOS dropped from 35% to 22%, and inventory turnover improved by 40%. The AI-generated operational recommendations are incredibly accurate, and team efficiency has improved significantly!",
         "image": {
           "src": "/imgs/users/1.png"
         }
@@ -215,7 +215,7 @@
       {
         "title": "David Kim",
         "label": "Pet Supplies Cross-border E-commerce Founder",
-        "description": "Expanding from North America to 5 European sites, Amazon Analyst helped us quickly understand each market's characteristics. Unified multi-site data management made our decisions more scientific, ROI improved by 85%.",
+        "description": "Expanding from North America to 5 European sites, Ops Helios helped us quickly understand each market's characteristics. Unified multi-site data management made our decisions more scientific, ROI improved by 85%.",
         "image": {
           "src": "/imgs/users/6.png"
         }
@@ -225,7 +225,7 @@
   "faq": {
     "name": "faq",
     "label": "FAQ",
-    "title": "Frequently Asked Questions about Amazon Analyst",
+    "title": "Frequently Asked Questions about Ops Helios",
     "description": "Have other questions? Feel free to contact our customer service team.",
     "items": [
       {
@@ -276,15 +276,15 @@
   "footer": {
     "name": "footer",
     "brand": {
-      "title": "Amazon Analyst",
-      "description": "Amazon Analyst is an AI-powered Amazon operations analysis tool that provides intelligent insights and recommendations to optimize your operations strategy and improve efficiency and profitability.",
+      "title": "Ops Helios",
+      "description": "Ops Helios is an AI-powered Amazon operations analysis tool that provides intelligent insights and recommendations to optimize your operations strategy and improve efficiency and profitability.",
       "logo": {
         "src": "/logo.png",
-        "alt": "Amazon Analyst"
+        "alt": "Ops Helios"
       },
       "url": "/"
     },
-    "copyright": "© 2025 • Amazon Analyst All rights reserved.",
+      "copyright": "© 2025 • Ops Helios All rights reserved.",
     "nav": {
       "items": [
         {
@@ -354,25 +354,25 @@
         {
           "title": "X",
           "icon": "RiTwitterXFill",
-          "url": "https://x.com/amazonanalyst",
+          "url": "https://x.com/opshelios",
           "target": "_blank"
         },
         {
           "title": "Github",
           "icon": "RiGithubFill",
-          "url": "https://github.com/amazonanalyst",
+          "url": "https://github.com/ops-helios",
           "target": "_blank"
         },
         {
           "title": "Discord",  
           "icon": "RiDiscordFill",
-          "url": "https://discord.gg/amazonanalyst",
+          "url": "https://discord.gg/opshelios",
           "target": "_blank"
         },
         {
           "title": "Email",
           "icon": "RiMailLine",
-          "url": "mailto:support@amazonanalyst.ai",
+          "url": "mailto:support@opshelios.ai",
           "target": "_self"
         }
       ]

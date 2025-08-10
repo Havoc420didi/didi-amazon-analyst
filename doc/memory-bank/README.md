@@ -1,4 +1,4 @@
-# Cursor CLI Memory Bank 使用指南
+# Cursor CLI Memory Bank 使用指南（Ops Helios）
 
 ## 🧠 什么是 Memory Bank？
 
@@ -24,7 +24,7 @@ memory-bank/
 ```
 initialize memory bank
 ```
-AI 会根据当前项目自动填充初始内容。
+AI 会根据当前项目自动填充初始内容（当前项目：Ops Helios）。
 
 ### 2. 更新 Memory Bank
 当项目有重要变更时，输入：

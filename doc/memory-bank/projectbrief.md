@@ -1,7 +1,7 @@
-# Amazon Analyst 项目概述
+# Ops Helios 项目概述
 
 ## 项目简介
-Amazon Analyst 是一个基于 Next.js 15 的亚马逊运营分析平台，为亚马逊卖家提供AI驱动的业务洞察。
+Ops Helios 是一个基于 Next.js 15 的亚马逊运营分析平台，为亚马逊卖家提供AI驱动的业务洞察。
 
 ## 核心功能
 - 🤖 **AI分析**: AI驱动的业务洞察和决策建议

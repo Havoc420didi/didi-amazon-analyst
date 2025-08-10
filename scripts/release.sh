@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# Amazon Analyst v0.1.0 Release Script
+# Ops Helios v0.1.0 Release Script
 # 使用说明: ./scripts/release.sh
 
 set -e
 
 VERSION="v0.1.0"
-RELEASE_TITLE="🎉 Amazon Analyst v0.1.0 - 首次发布"
+RELEASE_TITLE="🎉 Ops Helios v0.1.0 - 首次发布"
 RELEASE_BODY_FILE="GITHUB_RELEASE_v0.1.0.md"
 
-echo "🚀 开始发布 Amazon Analyst $VERSION..."
+echo "🚀 开始发布 Ops Helios $VERSION..."
 
 # 检查是否在git仓库中
 if ! git rev-parse --git-dir > /dev/null 2>&1; then
@@ -61,7 +61,7 @@ if command -v gh &> /dev/null; then
 else
     echo "💡 提示: 安装 GitHub CLI (gh) 可以自动创建 Release"
     echo "   手动创建步骤:"
-    echo "   1. 访问: https://github.com/your-username/amazon_analyst/releases/new"
+    echo "   1. 访问: https://github.com/your-username/ops_helios/releases/new"
     echo "   2. 选择标签: $VERSION"
     echo "   3. 发布标题: $RELEASE_TITLE"
     echo "   4. 复制 $RELEASE_BODY_FILE 内容作为发布说明"

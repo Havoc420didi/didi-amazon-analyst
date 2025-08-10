@@ -3,10 +3,10 @@
   "theme": "light",
   "header": {
     "brand": {
-      "title": "Amazon Analyst",
+      "title": "Ops Helios",
       "logo": {
         "src": "/logo.png",
-        "alt": "Amazon Analyst"
+        "alt": "Ops Helios"
       },
       "url": "/"
     },
@@ -104,14 +104,14 @@
   "testimonial": {
     "name": "testimonial",
     "label": "用户评价",
-    "title": "亚马逊卖家如何评价 Amazon Analyst",
-    "description": "听听使用 Amazon Analyst 提升运营效率的亚马逊卖家和团队怎么说。",
+    "title": "亚马逊卖家如何评价 Ops Helios",
+    "description": "听听使用 Ops Helios 提升运营效率的亚马逊卖家和团队怎么说。",
     "icon": "GoThumbsup",
     "items": [
       {
         "title": "刘强东",
         "label": "3C电子产品 大卖家",
-        "description": "使用 Amazon Analyst 后，我们的广告ACOS从35%降到了22%，库存周转率提升了40%。AI生成的运营建议非常精准，团队执行效率大幅提升！",
+        "description": "使用 Ops Helios 后，我们的广告ACOS从35%降到了22%，库存周转率提升了40%。AI生成的运营建议非常精准，团队执行效率大幅提升！",
         "image": {
           "src": "/imgs/users/1.png"
         }
@@ -151,7 +151,7 @@
       {
         "title": "David Kim",
         "label": "宠物用品跨境电商 创始人",
-        "description": "从北美扩展到欧洲5个站点，Amazon Analyst帮我们快速了解每个市场的特点。多站点数据统一管理，让我们的决策更加科学化，ROI提升了85%。",
+        "description": "从北美扩展到欧洲5个站点，Ops Helios 帮我们快速了解每个市场的特点。多站点数据统一管理，让我们的决策更加科学化，ROI提升了85%。",
         "image": {
           "src": "/imgs/users/6.png"
         }
@@ -161,7 +161,7 @@
   "faq": {
     "name": "faq",
     "label": "常见问题",
-    "title": "关于 Amazon Analyst 的常见问题",
+    "title": "关于 Ops Helios 的常见问题",
     "description": "还有其他问题？请随时联系我们的客服团队。",
     "items": [
       {
@@ -212,15 +212,15 @@
   "footer": {
     "name": "footer",
     "brand": {
-      "title": "Amazon Analyst",
-      "description": "Amazon Analyst 是一个亚马逊运营分析工具，通过 AI 技术提供智能分析和建议，帮助您优化运营策略，提高效率和收益。",
+      "title": "Ops Helios",
+      "description": "Ops Helios 是一个亚马逊运营分析工具，通过 AI 技术提供智能分析和建议，帮助您优化运营策略，提高效率和收益。",
       "logo": {
         "src": "/logo.png",
-        "alt": "Amazon Analyst"
+        "alt": "Ops Helios"
       },
       "url": "/"
     },
-    "copyright": "© 2025 • Amazon Analyst 保留所有权利。",
+      "copyright": "© 2025 • Ops Helios 保留所有权利。",
     "nav": {
       "items": [
         {
@@ -290,25 +290,25 @@
         {
           "title": "X",
           "icon": "RiTwitterXFill",
-          "url": "https://x.com/amazonanalyst",
+          "url": "https://x.com/opshelios",
           "target": "_blank"
         },
         {
           "title": "Github",
           "icon": "RiGithubFill",
-          "url": "https://github.com/amazonanalyst",
+          "url": "https://github.com/ops-helios",
           "target": "_blank"
         },
         {
           "title": "Discord",
           "icon": "RiDiscordFill",
-          "url": "https://discord.gg/amazonanalyst",
+          "url": "https://discord.gg/opshelios",
           "target": "_blank"
         },
         {
           "title": "邮箱",
           "icon": "RiMailLine",
-          "url": "mailto:support@amazonanalyst.ai",
+          "url": "mailto:support@opshelios.ai",
           "target": "_self"  
         }
       ]

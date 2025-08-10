@@ -1,7 +1,7 @@
 #!/bin/bash
-# PostgreSQL管理脚本是用于Amazon Analyst项目
+# PostgreSQL管理脚本是用于Ops Helios项目
 
-echo "=== Amazon Analyst PostgreSQL管理工具 ==="
+echo "=== Ops Helios PostgreSQL管理工具 ==="
 echo
 
 # 常用变量

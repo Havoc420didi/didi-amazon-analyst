@@ -20,14 +20,6 @@ const nextConfig = {
   output: "standalone",
   reactStrictMode: false,
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
-  eslint: {
-    // 本地开发加速（CI 下保持严格）
-    ignoreDuringBuilds: process.env.CI ? false : true,
-  },
-  typescript: {
-    // 本地开发加速（CI 下保持严格）
-    ignoreBuildErrors: process.env.CI ? false : true,
-  },
   images: {
     remotePatterns: [
       {

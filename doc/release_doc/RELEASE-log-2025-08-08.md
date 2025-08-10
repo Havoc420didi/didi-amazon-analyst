@@ -1,4 +1,4 @@
-# 🚀 Amazon Analyst - 赛狐ERP数据同步功能发布日志
+# 🚀 Ops Helios - 赛狐ERP数据同步功能发布日志
 
 **发布日期**: 2025年8月8日  
 **版本**: v1.2.0  
@@ -43,7 +43,7 @@
 
 ### 🔧 系统架构
 ```
-Amazon Analyst
+Ops Helios
 ├── Next.js 15 + React 19 前端系统
 ├── Python 赛狐ERP同步系统
 └── PostgreSQL 统一数据库
@@ -62,8 +62,8 @@ Amazon Analyst
 
 ### 1️⃣ 初始配置
 ```bash
-# 安装Python依赖
-cd /root/amazon-analyst/sync_saihu_erp/data_update
+# 安装Python依赖（按新品牌目录示例）
+cd /root/ops-helios/sync_saihu_erp/data_update
 python3 -m venv venv_sync
 source venv_sync/bin/activate
 pip install --break-system-packages -r requirements.txt
@@ -82,20 +82,12 @@ source venv_sync/bin/activate
 python run_sync_now.py
 ```
 
-### 4️⃣ 配置API凭据
-编辑配置文件：`sync_saihu_erp/data_update/config/config.yml`
-```yaml
-api:
-  base_url: https://api.saihu-erp.com
-  # 添加你的赛狐ERP API凭据
-```
-
 ---
 
 ## 📁 重要文件结构
 
 ```
-amazon-analyst/
+ops-helios/
 ├── src/
 │   └── db/
 │       └── saihu_erp_schema.sql       # 赛狐表结构SQL
@@ -108,6 +100,8 @@ amazon-analyst/
 ├── test_database.py                   # 数据库测试脚本
 └── RELEASE-log-2025-08-08.md         # 本发布日志
 ```
+
+> 注：如果你的本地仓库仍使用旧目录名 `amazon_analyst` 或 `amazon-analyst`，请相应替换上述路径。
 
 ---
 

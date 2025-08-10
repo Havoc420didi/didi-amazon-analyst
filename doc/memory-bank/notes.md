@@ -2,6 +2,10 @@
 
 ## 最新笔记
 
+### 2025-08-10 品牌与功能
+- 品牌统一：Amazon Analyst → Ops Helios（前端文案与文档已替换）
+- 功能调整：移除“多日聚合”，保留“单日分析”；后续若恢复需与聚合服务和 API schema 对齐
+
 ### 2025-08-09 18:10 - 构建修复与依赖清理
 - **依赖清理**: 移除 `fumadocs-ui/mdx`、`fumadocs-mdx/config` 相关引用
 - **适配器统一**: 以 `pgClient` 统一 Postgres 访问，封装 `PostgreSQLManager`

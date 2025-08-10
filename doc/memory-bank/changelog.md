@@ -1,5 +1,21 @@
 # 变更日志
 
+## [2025-08-10] - 品牌更名与分析功能收口
+
+### 🏷️ 品牌更名（文案层）
+- 全站与文档将“Amazon Analyst”统一替换为“Ops Helios”
+- 未修改数据库名、仓库目录名与连接串（保持 `amazon_analyst`）
+
+### 🔍 分析功能
+- 移除“多日聚合”模块，仅保留“单日分析”
+- 精简 `analysis-period-selector.tsx`，固定 `type=single_day`，仅保留截止日期选择
+- 删除 `multi-day-analysis-panel.tsx`
+
+### 📦 项目配置
+- `package.json`：`name` 调整为 `ops-helios`，`author` 与 `homepage` 更新
+
+---
+
 ## [2025-08-09 晚间] - 开发提效与类型收口
 
 ### ⚙️ 提效配置

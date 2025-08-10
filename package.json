@@ -1,9 +1,9 @@
 {
-  "name": "amazon-analyst",
+  "name": "ops-helios",
   "version": "2.5.1",
   "private": true,
-  "author": "Amazon Analyst Team",
-  "homepage": "https://amazonanalyst.ai",
+  "author": "Ops Helios Team",
+  "homepage": "https://agent.opshelios.com/",
   "scripts": {
     "dev": "cross-env NODE_NO_WARNINGS=1 next dev --turbopack",
     "build": "next build",

@@ -8,7 +8,7 @@ export default async function SimplePage() {
       <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
         <header style={{ textAlign: 'center', marginBottom: '40px' }}>
           <h1 style={{ fontSize: '3em', marginBottom: '10px', color: '#333' }}>
-            🚀 Amazon Analyst
+            🚀 Ops Helios
           </h1>
           <p style={{ fontSize: '1.2em', color: '#666' }}>
             您的 AI 亚马逊运营总监
@@ -42,7 +42,7 @@ export default async function SimplePage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
             <div style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
               <p style={{ fontStyle: 'italic', marginBottom: '10px' }}>
-                "使用 Amazon Analyst 后，我们的广告ACOS从35%降到了22%，库存周转率提升了40%。AI生成的运营建议非常精准！"
+                "使用 Ops Helios 后，我们的广告ACOS从35%降到了22%，库存周转率提升了40%。AI生成的运营建议非常精准！"
               </p>
               <strong>刘强东 - 3C电子产品大卖家</strong>
             </div>
