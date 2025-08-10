@@ -1,5 +1,42 @@
 # 变更日志
 
+## [2025-01-02] - AI分析功能重构与UI优化
+
+### 🤖 AI分析系统重构
+- **外部API集成**: 从内部LangGraph切换到外部Helios API (`http://localhost:8000/api/helios/stream`)
+- **数据库方言修复**: 修复Drizzle ORM从MySQL方言切换到PostgreSQL方言的问题
+- **流式分析**: 实现Server-Sent Events (SSE)的流式AI分析内容传输
+- **打字机效果**: 前端实现逐字符显示的打字机效果，提升用户体验
+- **内容过滤**: 过滤掉非内容的控制事件（如`start_of_agent`, `end_of_agent`等）
+
+### 🎨 用户界面优化
+- **分析结果简化**: 去除"处理时间"和"风险等级"模块，专注于分析内容
+- **重复显示修复**: 解决AnalysisResult组件重复渲染的问题
+- **CSV模式增强**: 允许在已有分析结果的情况下重新进行AI分析
+- **Markdown支持**: 集成Markdown组件，支持格式化的分析报告显示
+- **UI交互改进**: 优化按钮状态和对话框交互逻辑
+
+### 🔧 技术改进
+- **错误处理**: 改进API错误处理和用户友好的错误提示
+- **状态管理**: 优化React状态管理，避免hooks顺序错误
+- **数据处理**: 实现内容去重和缓冲区管理
+- **自动滚动**: 分析内容区域自动滚动到最新内容
+
+### 📝 修改的文件
+- `src/db/index.ts` - 数据库连接切换到PostgreSQL
+- `src/app/api/ai-analysis/stream/route.ts` - 外部API集成
+- `src/app/api/ai-analysis/generate/route.ts` - 非流式分析API更新
+- `src/components/ai-analysis/analysis-trigger.tsx` - 前端分析触发逻辑
+- `src/components/ai-analysis/analysis-result.tsx` - 分析结果展示优化
+- `src/components/amazon-analyst/inventory-table.tsx` - 表格key唯一性修复
+
+### 🐛 问题修复
+- ✅ SQL查询错误：`Failed query: select count(*) from ai_analysis_tasks`
+- ✅ LangGraph错误：`inventoryAnalysis is already being used as a state attribute`
+- ✅ 前端显示错误：控制事件显示、内容循环、重复渲染
+- ✅ React Hooks错误：`useTransition`导致的hooks顺序问题
+- ✅ 组件导入错误：`Target is not defined`
+
 ## [2025-08-10] - 法务文档与品牌对齐（Ops Helios）
 
 ### 📜 法务与合规

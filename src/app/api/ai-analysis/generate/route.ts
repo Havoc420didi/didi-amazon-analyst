@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// 异步处理分析任务 - 集成LangGraph智能体
+// 异步处理分析任务 - 调用外部 Helios API
 async function processAnalysisAsync(taskId: number, productData: ProductAnalysisData) {
   try {
     // 更新任务状态为处理中
@@ -171,27 +171,117 @@ async function processAnalysisAsync(taskId: number, productData: ProductAnalysis
     // 使用数据集成服务增强分析数据
     const enhancedData = DataIntegrationService.enhanceAnalysisData(productData);
 
-    // 仅使用 Helios 智能体；失败则任务失败
-    const heliosAgent = getHeliosAgent();
-    const result = await heliosAgent.analyze(enhancedData);
-    console.log(`Task ${taskId}: Helios Agent analysis completed`);
+    // 准备外部 API 请求数据
+    const externalPayload = {
+      payload: {
+        asin: enhancedData.asin,
+        marketplace: enhancedData.warehouse_location || 'CN',
+        fba_available: enhancedData.fba_available || 0,
+        fba_in_transit: enhancedData.fba_in_transit || 0,
+        local_warehouse: enhancedData.local_warehouse || 0,
+        avg_sales: enhancedData.avg_sales || 0,
+        daily_revenue: enhancedData.daily_revenue || 0,
+        ad_impressions: enhancedData.ad_impressions || 0,
+        ad_clicks: enhancedData.ad_clicks || 0,
+        ad_spend: enhancedData.ad_spend || 0,
+        ad_orders: enhancedData.ad_orders || 0,
+        acos: enhancedData.ad_spend && enhancedData.ad_orders && enhancedData.avg_sales
+          ? (enhancedData.ad_spend / (enhancedData.ad_orders * (enhancedData.daily_revenue / enhancedData.avg_sales))) 
+          : 0,
+        acoas: enhancedData.ad_spend && enhancedData.daily_revenue 
+          ? (enhancedData.ad_spend / enhancedData.daily_revenue) 
+          : 0
+      }
+    };
 
-    // 保存分析结果（仅记录 Helios 方法）
+    console.log(`Task ${taskId}: Calling external Helios API with payload:`, externalPayload);
+    
+    const startTime = Date.now();
+    
+    // 调用外部 Helios API
+    const response = await fetch('http://localhost:8000/api/helios/stream', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(externalPayload),
+      signal: AbortSignal.timeout(120000) // 2分钟超时
+    });
+
+    if (!response.ok) {
+      throw new Error(`External API error: ${response.status} ${response.statusText}`);
+    }
+
+    // 处理流式响应并收集完整内容
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error('No response body from external API');
+    }
+
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullContent = '';
+    
+    while (true) {
+      const { done, value } = await reader.read();
+      
+      if (done) break;
+      
+      // 解码并累积数据
+      buffer += decoder.decode(value, { stream: true });
+      
+      // 按行分割处理
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || ''; // 保留最后一个不完整的行
+      
+      for (const line of lines) {
+        if (line.trim() === '') continue;
+        
+        // 如果是 SSE 数据行，解析并累积内容
+        if (line.startsWith('data: ')) {
+          const data = line.substring(6);
+          if (data === '[DONE]') break;
+          
+          try {
+            const event = JSON.parse(data);
+            // 累积分析内容
+            if (event.content) {
+              fullContent += event.content + '\n';
+            }
+          } catch (e) {
+            console.warn(`Task ${taskId}: Failed to parse event:`, data);
+          }
+        }
+      }
+    }
+    
+    const processingTime = Math.floor((Date.now() - startTime) / 1000);
+    
+    // 保存分析结果
     await AIAnalysisModel.saveAnalysisResult(
       taskId,
-      result.analysis_content,
-      result.processing_time,
-      result.tokens_used,
+      extractReport(fullContent) || JSON.stringify({
+        message: '分析完成',
+        timestamp: new Date().toISOString()
+      }),
+      processingTime,
+      0, // tokens_used 暂时设为0
       {
-        analysis_method: 'helios_agent',
+        analysis_method: 'external_helios_api',
         enhanced_data_used: true,
         rules_engine_applied: false,
       }
     );
 
-    console.log(`Analysis task ${taskId} completed successfully using helios_agent`);
+    console.log(`Analysis task ${taskId} completed successfully using external Helios API`);
   } catch (error) {
     console.error(`Analysis task ${taskId} processing error:`, error);
     throw error;
   }
+}
+
+function extractReport(full: string): string {
+  const key = '综合分析报告';
+  const idx = full.indexOf(key);
+  return idx !== -1 ? full.slice(idx) : full;
 }

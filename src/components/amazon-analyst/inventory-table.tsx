@@ -37,8 +37,8 @@ export default function InventoryTable({ items, onSelect }: Props) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {items.map((it) => {
-            const key = `${it.asin}-${it.marketplace}`;
+          {items.map((it, idx) => {
+            const key = `${it.asin}-${it.marketplace}-${it?.dataDate ?? idx}`;
             return (
               <TableRow
                 key={key}

@@ -5,7 +5,7 @@
 
 'use client';
 
-import React, { useState, useTransition } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -17,7 +17,6 @@ import {
   DialogTitle, 
   DialogTrigger 
 } from '@/components/ui/dialog';
-import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Brain, 
@@ -64,9 +63,53 @@ export function AnalysisTrigger({
 }: AnalysisTriggerProps) {
   const [analysisState, setAnalysisState] = useState<AnalysisState>({ status: 'idle' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<AnalysisPeriod>(DEFAULT_ANALYSIS_PERIOD);
   const [showPeriodSelector, setShowPeriodSelector] = useState(false);
+  // 流式“打字机”显示
+  const [displayedText, setDisplayedText] = useState('');
+  const [bufferText, setBufferText] = useState('');
+  // 不再延迟显示，直接显示正文增量
+  const typingIntervalRef = useRef<number | null>(null);
+  const displayContainerRef = useRef<HTMLDivElement | null>(null);
+  const displayedRef = useRef('');
+
+  useEffect(() => { displayedRef.current = displayedText; }, [displayedText]);
+
+  // 打字机效果：把 bufferText 按字符输出到 displayedText
+  useEffect(() => {
+    if (analysisState.status !== 'analyzing') {
+      // 停止打字机
+      if (typingIntervalRef.current) {
+        window.clearInterval(typingIntervalRef.current);
+        typingIntervalRef.current = null;
+      }
+      return;
+    }
+    if (typingIntervalRef.current) return;
+    typingIntervalRef.current = window.setInterval(() => {
+      setBufferText(prev => {
+        if (!prev || prev.length === 0) return prev;
+        // 取一个字符放入展示文本
+        const nextChar = prev[0];
+        setDisplayedText(d => d + nextChar);
+        return prev.slice(1);
+      });
+    }, 15);
+    return () => {
+      if (typingIntervalRef.current) {
+        window.clearInterval(typingIntervalRef.current);
+        typingIntervalRef.current = null;
+      }
+    };
+  }, [analysisState.status]);
+
+  // 打字区域自动滚动到最新
+  useEffect(() => {
+    const el = displayContainerRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  }, [displayedText]);
 
   // 判断产品是否需要优先分析
   const getPriorityLevel = (point: InventoryPoint): 'high' | 'medium' | 'low' => {
@@ -145,9 +188,12 @@ export function AnalysisTrigger({
       });
     } catch {}
     setAnalysisState({ status: 'analyzing', progress: 0 });
+    setDisplayedText('');
+    setBufferText('');
     setIsDialogOpen(true);
 
-    startTransition(async () => {
+    setIsPending(true);
+    (async () => {
       try {
         // 构建请求体，根据分析类型决定是否包含product_data
         const requestBody: any = {
@@ -179,8 +225,161 @@ export function AnalysisTrigger({
             ad_orders: 0
           };
         }
-        
-        // 调用分析API
+        // 优先尝试SSE流式分析
+        try {
+          const sseResp = await fetch('/api/ai-analysis/stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody),
+          });
+
+          if (sseResp.ok && sseResp.headers.get('content-type')?.includes('text/event-stream') && sseResp.body) {
+            const reader = sseResp.body.getReader();
+            const decoder = new TextDecoder();
+            let buffered = '';
+            let reachedDone = false;
+
+            while (true) {
+              const { value, done } = await reader.read();
+              if (done) break;
+              const chunk = decoder.decode(value, { stream: true });
+              buffered += chunk;
+              const events = buffered.split('\n\n');
+              buffered = events.pop() || '';
+
+              for (const ev of events) {
+                // 解析 event & data
+                const lines = ev.split('\n');
+                let eventName = 'message';
+                const dataLines: string[] = [];
+                for (const ln of lines) {
+                  if (ln.startsWith('event:')) eventName = ln.slice(6).trim();
+                  if (ln.startsWith('data:')) dataLines.push(ln.slice(5).trimStart());
+                }
+                const dataStr = dataLines.join('\n');
+                if (dataStr === '[DONE]') {
+                  const finalText = (displayedRef.current + bufferText).trim();
+                  setAnalysisState(prev => ({
+                    ...prev,
+                    status: 'completed',
+                    result: prev.result ?? {
+                      analysis_content: finalText,
+                      processing_time: 0,
+                      tokens_used: 0,
+                      recommendations: {
+                        inventory_action: '详见报告正文的库存建议',
+                        sales_strategy: '详见报告正文的销售策略',
+                        ad_optimization: '详见报告正文的广告建议',
+                        risk_level: 'medium',
+                      },
+                    },
+                  }));
+                  reachedDone = true;
+                  continue;
+                }
+                try {
+                  const payload = JSON.parse(dataStr) as { type?: string; content?: string; message?: string; text?: string; progress?: number; agent_name?: string; token?: string; delta?: string; output?: string; chunk?: string };
+                  const evtType = payload.type || eventName;
+                  if (payload.progress !== undefined) {
+                    const nextProgress = Math.min(99, Number(payload.progress || 0));
+                    setAnalysisState(prev => ({ ...prev, progress: nextProgress }));
+                  }
+                  // 忽略控制事件（start_of_agent/end_of_agent/start_of_llm/end_of_llm）在文本区的显示，仅用于进度
+                  // 不再写入 bufferText。
+
+                  // 内容提取（处理增量结构，如 { delta: { content: '字' } }）
+                  let contentText = '';
+                  if (typeof (payload as any).content === 'string') {
+                    contentText = (payload as any).content;
+                  } else if (payload.delta && typeof payload.delta === 'object' && typeof (payload.delta as any).content === 'string') {
+                    contentText = (payload.delta as any).content;
+                  } else if (typeof (payload as any).message === 'string') {
+                    contentText = (payload as any).message;
+                  } else if (typeof (payload as any).text === 'string') {
+                    contentText = (payload as any).text;
+                  } else if (typeof (payload as any).token === 'string') {
+                    contentText = (payload as any).token;
+                  } else if (typeof (payload as any).delta === 'string') {
+                    contentText = (payload as any).delta;
+                  } else if (typeof (payload as any).output === 'string') {
+                    contentText = (payload as any).output;
+                  } else if (typeof (payload as any).chunk === 'string') {
+                    contentText = (payload as any).chunk;
+                  }
+
+                  if (contentText) {
+                    // 去重：若刚输出的尾部已包含相同内容，则跳过，避免循环/重复片段
+                    setBufferText(prev => {
+                      const tailSource = displayedRef.current + prev;
+                      const sliceLen = Math.min(contentText.length, tailSource.length);
+                      const tail = tailSource.slice(tailSource.length - sliceLen);
+                      if (tail === contentText) return prev;
+                      return prev + contentText;
+                    });
+                  } else if (dataStr && evtType !== 'message') {
+                    setBufferText(prev => prev + `[${eventName}] ` + dataStr + '\n');
+                    setAnalysisState(prev => ({ ...prev, progress: Math.min(95, (prev.progress || 30) + 1) }));
+                  }
+
+                  if (evtType === 'error') {
+                    throw new Error(contentText || '流式分析失败');
+                  }
+                  if (evtType === 'completed') {
+                    const finalText = (displayedText + bufferText).trim();
+                    setAnalysisState({
+                      status: 'completed',
+                      result: {
+                        analysis_content: finalText || contentText || '',
+                        processing_time: 0,
+                        tokens_used: 0,
+                        recommendations: {
+                          inventory_action: '库存操作建议已生成',
+                          sales_strategy: '销售策略建议已生成',
+                          ad_optimization: '广告优化建议已生成',
+                          risk_level: 'medium',
+                        },
+                      },
+                      progress: 100,
+                    });
+                    continue;
+                  }
+                  // 非完成事件，推进进度条
+                  setAnalysisState(prev => ({ ...prev, progress: Math.min(95, (prev.progress || 30) + 1) }));
+                } catch {
+                  if (dataStr) {
+                    setBufferText(prev => prev + `[${eventName}] ` + dataStr + '\n');
+                    setAnalysisState(prev => ({ ...prev, progress: Math.min(95, (prev.progress || 30) + 1) }));
+                  }
+                }
+              }
+            }
+            // SSE流程已完成，若未标记完成则补一次，并生成最终报告
+            setAnalysisState(prev => {
+              if (prev.status === 'completed') return prev;
+              const finalText = (displayedRef.current + bufferText).trim();
+              return {
+                ...prev,
+                status: 'completed',
+                result: prev.result ?? {
+                  analysis_content: finalText,
+                  processing_time: 0,
+                  tokens_used: 0,
+                  recommendations: {
+                    inventory_action: '详见报告正文的库存建议',
+                    sales_strategy: '详见报告正文的销售策略',
+                    ad_optimization: '详见报告正文的广告建议',
+                    risk_level: 'medium',
+                  },
+                },
+              };
+            });
+            return;
+          }
+        } catch (e) {
+          console.warn('[AnalysisTrigger] SSE streaming failed, fallback to polling', e);
+        }
+
+        // 回退：非流式创建任务 + 轮询
         const response = await fetch('/api/ai-analysis/generate', {
           method: 'POST',
           headers: {
@@ -210,8 +409,10 @@ export function AnalysisTrigger({
           status: 'error',
           error: error instanceof Error ? error.message : '分析失败'
         });
+      } finally {
+        setIsPending(false);
       }
-    });
+    })();
   };
 
   // 轮询任务状态
@@ -314,7 +515,7 @@ export function AnalysisTrigger({
       case 'analyzing':
         return '分析中...';
       case 'completed':
-        return '查看分析';
+        return 'AI分析'; // CSV模式下，即使完成也显示"AI分析"，允许重新分析
       case 'error':
         return '重新分析';
       default:
@@ -368,8 +569,8 @@ export function AnalysisTrigger({
             </DialogHeader>
 
             <div className="space-y-4">
-              {/* 分析周期选择器 */}
-              {analysisState.status === 'idle' && (
+              {/* 分析周期选择器 - CSV模式下，即使有结果也可以重新分析 */}
+              {(analysisState.status === 'idle' || analysisState.status === 'completed' || analysisState.status === 'error') && (
                 <div className="space-y-4">
                   <AnalysisPeriodSelector
                     onPeriodChange={setSelectedPeriod}
@@ -383,7 +584,7 @@ export function AnalysisTrigger({
                       className="flex-1"
                     >
                       <Brain className="h-4 w-4 mr-2" />
-                      开始AI分析
+                      {analysisState.status === 'completed' ? '重新分析' : '开始AI分析'}
                     </Button>
                     <Button 
                       variant="outline" 
@@ -403,18 +604,14 @@ export function AnalysisTrigger({
                     <span>正在进行AI分析...</span>
                   </div>
                   
-                  {analysisState.progress !== undefined && (
-                    <div className="space-y-2">
-                      <Progress
-                        value={analysisState.progress}
-                        className="h-2 bg-primary/20"
-                        indicatorClassName="bg-gradient-to-r from-primary via-sky-500 to-secondary"
-                      />
-                      <p className="text-sm text-muted-foreground">
-                        分析进度: {analysisState.progress}%
-                      </p>
+                  {/* 进度条与文案已移除 */}
+              {/* 流式内容打字机显示 */}
+              <div className="rounded-md border bg-muted/40 p-3 max-h-[300px] overflow-auto" ref={displayContainerRef}>
+                <div className="font-mono text-sm whitespace-pre-wrap break-words min-h-[140px]">
+                  {displayedText || '等待AI输出...'}
+                  <span className="ml-1 inline-block animate-pulse">▋</span>
+                </div>
                     </div>
-                  )}
                   
                   <Alert>
                     <Clock className="h-4 w-4" />
@@ -422,6 +619,13 @@ export function AnalysisTrigger({
                       AI智能体正在分析产品数据，通常需要30-60秒完成。请保持页面打开。
                     </AlertDescription>
                   </Alert>
+                </div>
+              )}
+
+              {analysisState.status === 'completed' && (
+                <div className="flex items-center gap-2 text-green-600">
+                  <CheckCircle className="h-4 w-4" />
+                  <span>分析完成</span>
                 </div>
               )}
 
@@ -433,14 +637,6 @@ export function AnalysisTrigger({
                     {analysisState.error}
                   </AlertDescription>
                 </Alert>
-              )}
-
-              {/* 分析结果 */}
-              {analysisState.status === 'completed' && analysisState.result && (
-                <AnalysisResult 
-                  result={analysisState.result}
-                  inventoryPoint={inventoryPoint}
-                />
               )}
 
               {/* 产品基本信息 */}
@@ -463,6 +659,13 @@ export function AnalysisTrigger({
                   </div>
                 </div>
               </div>
+
+              {/* 分析完成后在库存状况模块下显示综合分析报告 */}
+              {analysisState.status === 'completed' && analysisState.result && (
+                <div className="mt-4">
+                  <AnalysisResult result={analysisState.result} inventoryPoint={inventoryPoint} />
+                </div>
+              )}
             </div>
           </DialogContent>
         </Dialog>

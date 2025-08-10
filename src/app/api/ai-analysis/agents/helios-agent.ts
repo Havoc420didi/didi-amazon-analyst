@@ -106,10 +106,10 @@ export class HeliosAgent {
       // 数据验证节点
       .addNode("dataValidation", this.dataValidationNode.bind(this))
       
-      // 并行分析节点
-      .addNode("inventoryAnalysis", this.inventoryAnalysisNode.bind(this))
-      .addNode("adPerformanceAnalysis", this.adPerformanceAnalysisNode.bind(this))
-      .addNode("salesAnalysis", this.salesAnalysisNode.bind(this))
+      // 并行分析节点（节点名避免与状态属性同名）
+      .addNode("inventoryAnalysisStep", this.inventoryAnalysisNode.bind(this))
+      .addNode("adPerformanceAnalysisStep", this.adPerformanceAnalysisNode.bind(this))
+      .addNode("salesAnalysisStep", this.salesAnalysisNode.bind(this))
       
       // 综合诊断节点
       .addNode("comprehensiveDiagnosis", this.comprehensiveDiagnosisNode.bind(this))
@@ -133,15 +133,15 @@ export class HeliosAgent {
         "dataValidation",
         this.shouldProceedAfterValidation.bind(this),
         {
-          continue: "inventoryAnalysis",
+          continue: "inventoryAnalysisStep",
           error: "errorHandling"
         }
       )
       
       // 并行分析流程
-      .addEdge("inventoryAnalysis", "adPerformanceAnalysis")
-      .addEdge("adPerformanceAnalysis", "salesAnalysis")
-      .addEdge("salesAnalysis", "comprehensiveDiagnosis")
+      .addEdge("inventoryAnalysisStep", "adPerformanceAnalysisStep")
+      .addEdge("adPerformanceAnalysisStep", "salesAnalysisStep")
+      .addEdge("salesAnalysisStep", "comprehensiveDiagnosis")
       
       // 诊断和行动生成
       .addEdge("comprehensiveDiagnosis", "actionGeneration")
