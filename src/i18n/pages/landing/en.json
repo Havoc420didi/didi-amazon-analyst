@@ -303,66 +303,7 @@
       "copyright": "© 2025 • Ops Helios • Tepin Team All rights reserved.",
     "nav": {
       "items": [
-        {
-          "title": "About",
-          "children": [
-            {
-              "title": "Features",
-              "url": "/#feature",
-              "target": "_self"
-            },
-            {
-              "title": "Showcases",
-              "url": "/#showcase",
-              "target": "_self"
-            },
-            {
-              "title": "Pricing",
-              "url": "/#pricing",
-              "target": "_self"
-            }
-          ]
-        },
-        {
-          "title": "Resources",
-          "children": [
-            {
-              "title": "User Guide",
-              "url": "/posts",
-              "target": "_self"
-            },
-            {
-              "title": "API Documentation",
-              "url": "/api-keys",
-              "target": "_self"
-            },
-            {
-              "title": "Help Center",
-              "url": "/#faq",
-              "target": "_self"
-            }
-          ]
-        },
-        {
-          "title": "Friends",
-          "children": [
-            {
-              "title": "ThinkAny",
-              "url": "https://thinkany.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "HeyBeauty",
-              "url": "https://heybeauty.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "Pagen",
-              "url": "https://pagen.so",
-              "target": "_blank"
-            }
-          ]
-        }
+      
       ]
     },
     "social": {

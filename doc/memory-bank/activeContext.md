@@ -7,6 +7,7 @@
 - **最后更新**: 2025-08-10  
   - 品牌重命名：Amazon Analyst → Ops Helios（代码与文档可见文案已替换）  
   - 分析功能：移除“多日聚合”，仅保留“单日分析”（`analysis-period-selector.tsx` 精简）
+  - 法务：更新《隐私政策》《服务条款》，统一为 Ops Helios，标注 Built by Tepin Team（特拼团队打造）
 
 ### 仓库与版本状态
 - 本地分支 `main` 已与 `origin/main` 同步

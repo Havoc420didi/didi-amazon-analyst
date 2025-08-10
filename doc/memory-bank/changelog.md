@@ -1,5 +1,13 @@
 # 变更日志
 
+## [2025-08-10] - 法务文档与品牌对齐（Ops Helios）
+
+### 📜 法务与合规
+- 更新 `src/app/(legal)/privacy-policy/page.mdx` 与 `src/app/(legal)/terms-of-service/page.mdx`
+- 品牌统一为 “Ops Helios”，并在显著位置加入 “Built by Tepin Team（特拼团队打造）”
+- 补充与本项目相关的说明：Saihu ERP 集成、Google Analytics、Stripe 支付、AI 供应商（SiliconFlow、Kling）
+- 影响范围：无 API/数据库变更，仅文案与法务内容
+
 ## [2025-08-10 晚间] - 主题与着陆页优化（VibeScan 风格）
 
 ### 🎨 配色与组件
