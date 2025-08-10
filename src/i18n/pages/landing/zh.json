@@ -19,14 +19,22 @@
         }
       ]
     },
-    "buttons": [],
+    "buttons": [
+      {
+        "title": "立即开始分析",
+        "url": "/analysis",
+        "target": "_self",
+        "variant": "gradient",
+        "size": "lg"
+      }
+    ],
     "show_sign": true,
     "show_theme": true,
     "show_locale": true
   },
   "hero": {
-    "title": "您的 AI 亚马逊运营总监",
-    "highlight_text": "AI 亚马逊运营总监",
+    "title": "您的 AI 运营总监",
+    "highlight_text": "AI 运营总监",
     "description": "7x24小时全天候监控产品运营数据，通过深度数据分析，<br/>为您的运营团队提供清晰、可执行的指令。",
     "announcement": {
       "label": "新功能",
@@ -34,7 +42,16 @@
       "url": "/#feature"
     },
     "tip": "💡 立即注册，开启您的智能运营之旅",
-    "buttons": [],
+    "buttons": [
+      {
+        "title": "立即开始分析",
+        "url": "/analysis",
+        "target": "_self",
+        "variant": "gradient",
+        "size": "xl",
+        "icon": "GoArrowUpRight"
+      }
+    ],
     "show_happy_users": true,
     "show_badge": false
   },

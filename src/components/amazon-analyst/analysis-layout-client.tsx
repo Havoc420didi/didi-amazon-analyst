@@ -18,7 +18,7 @@ export default function AnalysisLayoutClient({ items, isLoggedIn = false }: Prop
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
       {/* 左侧表格 */}
       <div className="lg:col-span-8">
-        <Card>
+        <Card className="bg-gradient-to-b from-background to-accent/40 border-border/60">
           <CardHeader>
             <CardTitle>库存点列表（CSV）</CardTitle>
           </CardHeader>
@@ -33,7 +33,7 @@ export default function AnalysisLayoutClient({ items, isLoggedIn = false }: Prop
 
       {/* 右侧 AI 分析面板 */}
       <div className="lg:col-span-4">
-        <Card className="sticky top-6">
+        <Card className="sticky top-6 bg-gradient-to-b from-background to-accent/40 border-border/60">
           <CardHeader>
             <CardTitle>AI分析</CardTitle>
           </CardHeader>

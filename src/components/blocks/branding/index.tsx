@@ -6,7 +6,7 @@ export default function Branding({ section }: { section: SectionType }) {
   }
 
   return (
-    <section id={section.name} className="py-16">
+    <section id={section.name} className="pt-6 pb-14 md:pt-6 md:pb-16">
       <div className="container flex flex-row items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <h2 className="text-center: text-muted-foreground lg:text-left">

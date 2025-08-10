@@ -209,7 +209,7 @@ export function AnalysisResult({ result, inventoryPoint, onRating }: AnalysisRes
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-64 w-full">
-                <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                <div className="whitespace-pre-wrap text-sm leading-relaxed p-4 rounded-lg bg-accent/40">
                   {analysisSection || '暂无分析内容'}
                 </div>
               </ScrollArea>
@@ -231,9 +231,9 @@ export function AnalysisResult({ result, inventoryPoint, onRating }: AnalysisRes
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {actionItems.length > 0 ? (
-                  actionItems.map((action, index) => (
-                    <div key={index} className="flex items-start gap-3 p-3 bg-muted rounded-lg">
+                  {actionItems.length > 0 ? (
+                    actionItems.map((action, index) => (
+                      <div key={index} className="flex items-start gap-3 p-3 bg-accent/20 rounded-lg">
                       <div className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
                         {index + 1}
                       </div>

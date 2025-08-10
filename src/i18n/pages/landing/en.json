@@ -19,13 +19,21 @@
         }
       ]
     },
-    "buttons": [],
+    "buttons": [
+      {
+        "title": "Start Free Analysis",
+        "url": "/analysis",
+        "target": "_self",
+        "variant": "gradient",
+        "size": "lg"
+      }
+    ],
     "show_sign": true,
     "show_theme": true,
     "show_locale": true
   },
   "hero": {
-    "title": "Your AI Amazon Operations Director",
+    "title": "Your AI Operations Director",
     "highlight_text": "AI Operations Director",
     "description": "Monitor product performance data 24/7 and provide your operations team with clear, actionable instructions through deep data analysis.",
     "announcement": {
@@ -33,10 +41,18 @@
       "title": "🎉 Now supporting ad campaign analysis and optimization suggestions!",
       "url": "/#feature"
     },
-    "tip": "💡 Register now to start your intelligent operations journey",
-    "buttons": [],
+    "buttons": [
+      {
+        "title": "Start Free Analysis",
+        "url": "/analysis",
+        "target": "_self",
+        "variant": "gradient",
+        "size": "xl",
+        "icon": "GoArrowUpRight"
+      }
+    ],
     "show_happy_users": true,
-    "show_badge": false
+    "show_badge": true
   },
   "branding": {
     "title": "Ops Helios is powered by modern technology",

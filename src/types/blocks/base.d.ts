@@ -12,7 +12,7 @@ export type ButtonVariant =
   | null
   | undefined;
 
-export type ButtonSize = "sm" | "md" | "lg";
+export type ButtonSize = "sm" | "md" | "lg" | "xl";
 
 export interface Button {
   title?: string;

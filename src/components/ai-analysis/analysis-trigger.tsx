@@ -338,7 +338,7 @@ export function AnalysisTrigger({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  variant={variant}
+                  variant={variant === 'default' ? 'gradient' : variant}
                   size={size}
                   onClick={() => { try { console.log('[AnalysisTrigger] dialog trigger clicked'); } catch {}; setIsDialogOpen(true); }}
                   disabled={isPending || analysisState.status === 'analyzing'}
@@ -405,7 +405,11 @@ export function AnalysisTrigger({
                   
                   {analysisState.progress !== undefined && (
                     <div className="space-y-2">
-                      <Progress value={analysisState.progress} className="h-2" />
+                      <Progress
+                        value={analysisState.progress}
+                        className="h-2 bg-primary/20"
+                        indicatorClassName="bg-gradient-to-r from-primary via-sky-500 to-secondary"
+                      />
                       <p className="text-sm text-muted-foreground">
                         分析进度: {analysisState.progress}%
                       </p>

@@ -18,7 +18,7 @@ export default function InventoryTable({ items, onSelect }: Props) {
     <div className="w-full overflow-auto">
       <Table>
         <TableHeader>
-          <TableRow>
+          <TableRow className="bg-accent/40">
             <TableHead>ASIN</TableHead>
             <TableHead>品名</TableHead>
             <TableHead>库存点</TableHead>
@@ -42,7 +42,7 @@ export default function InventoryTable({ items, onSelect }: Props) {
             return (
               <TableRow
                 key={key}
-                className={cn(selected === key && 'bg-muted/40')}
+                className={cn(selected === key && 'bg-accent/20')}
                 onClick={() => {
                   setSelected(key);
                   onSelect(it);
