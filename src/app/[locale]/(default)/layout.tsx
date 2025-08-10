@@ -28,7 +28,7 @@ export default async function DefaultLayout({
         <h1>Ops Helios</h1>
         <main className="overflow-x-hidden">{children}</main>
         <footer style={{ marginTop: '40px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
-          <p>© 2025 Ops Helios</p>
+          <p>© 2025 Ops Helios • Tepin Team</p>
         </footer>
       </div>
     );
