@@ -124,12 +124,12 @@ class SyncJobs:
             self._log_task_failure(task_id, error_result)
             return error_result
     
-    def sync_product_analytics_history(self, days: int = 7) -> Dict[str, Any]:
+    def sync_product_analytics_history(self, days: int = 30) -> Dict[str, Any]:
         """
-        同步历史产品分析数据（前N天）
+        同步历史产品分析数据（前N天），默认30天
         
         Args:
-            days: 历史天数，默认7天
+            days: 历史天数，默认30天覆盖完整历史周期
             
         Returns:
             同步结果汇总

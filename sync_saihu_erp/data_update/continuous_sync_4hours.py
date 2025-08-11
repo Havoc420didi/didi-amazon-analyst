@@ -106,6 +106,17 @@ class ContinuousSync:
                 print(f"   📊 成功天数: {seven_days_result.get('success_count', 0)}/7")
                 print(f"   📈 失败天数: {seven_days_result.get('failure_count', 0)}/7")
             
+            # 5. 每月月初执行30天历史回填（完整历史数据）
+            today = date.today()
+            if today.day == 1:  # 每月1号执行30天完整回填
+                print("📊 执行30天历史产品分析数据完整回填...")
+                thirty_days_result = self.sync_jobs.sync_product_analytics_history(days=30)
+                thirty_days_success = thirty_days_result.get('status') == 'completed'
+                if thirty_days_success:
+                    print(f"✅ 30天完整回填成功: {thirty_days_result.get('success_count', 0)}/30 天")
+                else:
+                    print(f"❌ 30天完整回填失败: {thirty_days_result.get('error', '未知错误')}")
+            
             # 延迟1秒避免API频率限制
             time.sleep(1)
             

@@ -6,6 +6,7 @@
 
 import sys
 import os
+import argparse
 from datetime import datetime, date, timedelta
 import json
 import time
@@ -18,9 +19,21 @@ from src.config.settings import settings
 from src.utils.logging_utils import setup_logging
 
 def main():
-    """主函数：执行完整的数据同步"""
+    """主函数：执行完整的数据同步，支持30天历史数据回填"""
+    # 添加命令行参数支持
+    parser = argparse.ArgumentParser(description='赛狐ERP数据同步脚本')
+    parser.add_argument('--days', type=int, default=1, 
+                       help="同步多少天的历史产品分析数据，默认1天，可设为30进行30天完整回填")
+    parser.add_argument('--type', choices=['analytics', 'fba', 'inventory', 'all'], 
+                       default='all', help="同步类型：analytics(仅产品分析)、fba、inventory、all(全部)")
+    
+    args = parser.parse_args()
+    
     print("🚀 开始执行赛狐ERP数据同步...")
     print(f"📅 执行时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"🎯 同步模式: {args.days}天历史数据 + {args.type}类型")
+    if args.days == 30:
+        print("📊 模式: 30天完整历史数据回填（包含库存合并）")
     
     # 设置日志
     setup_logging()
@@ -61,16 +74,26 @@ def main():
         
         report_status('started', '赛狐ERP数据同步已启动')
         
-        # 1. 同步昨天的产品分析数据
-        print("\n📊 1. 同步产品分析数据（昨天）...")
-        report_progress('正在同步产品分析数据', 20)
-        yesterday = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
-        analytics_result = sync_jobs.sync_product_analytics_by_date(yesterday)
-        results['tasks'].append({
-            'task': 'product_analytics_yesterday',
-            'date': yesterday,
-            'result': analytics_result
-        })
+        # 根据模式选择同步策略
+        if args.days == 30:
+            print("\n📊 1. 同步30天历史产品分析数据...")
+            report_progress('正在同步30天历史数据', 20)
+            analytics_result = sync_jobs.sync_product_analytics_history(days=30)
+            results['tasks'].append({
+                'task': 'product_analytics_30day',
+                'days': 30,
+                'result': analytics_result
+            })
+        else:
+            print("\n📊 1. 同步产品分析数据（昨天）...")
+            report_progress('正在同步产品分析数据', 20)
+            yesterday = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
+            analytics_result = sync_jobs.sync_product_analytics_by_date(yesterday)
+            results['tasks'].append({
+                'task': 'product_analytics_yesterday',
+                'date': yesterday,
+                'result': analytics_result
+            })
         
         if analytics_result.get('status') == 'success':
             print(f"✅ 产品分析数据同步成功: {analytics_result.get('raw_count', 0)} 条原始数据")
