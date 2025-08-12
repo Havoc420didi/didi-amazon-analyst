@@ -269,18 +269,267 @@ export const rpaSystemStatus = pgTable(
   ]
 );
 
-// RPA Configurations table
-export const rpaConfigurations = pgTable(
-  "rpa_configurations",
+// Dynamic Inventory Permissions Table - 基于operator字段的动态权限表
+export const inventorypermissions = pgTable(
+  "inventorypermissions",
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    version: varchar({ length: 50 }).notNull().default('1.0.0'),
-    configuration: text().notNull(), // JSON格式配置
-    isActive: boolean().notNull().default(true),
-    createdAt: timestamp({ withTimezone: true }).defaultNow(),
+    
+    // 操作员字段 - 与数据库表的operator字段保持一致
+    operator: varchar({ length: 100 }).notNull(), // 关键字段：与表中的operator字段映射
+    operator_uuid: varchar({ length: 255 }), // 关联users.uuid (可为空)
+    
+    // 数据权限维度
+    data_source: varchar({ length: 50 }).notNull().default('inventory_deals'), // 数据来源表
+    warehouse_location: varchar({ length: 50 }), // 可为空表示all warehouses
+    asin: varchar({ length: 20 }), // 可为空表示all products
+    sales_person: varchar({ length: 100 }), // 可为空表示all sales persons
+    
+    // 动态权限配置
+    permission_rule: text('permission_rule').notNull(), // JSON格式存储权限规则
+    
+    // 数据级别控制 (基于operator字段)
+    data_access_level: varchar({ length: 30 }).notNull().default('all'), // 'filter_by_operator', 'full_access', 'readonly'
+    
+    // 字段级权限
+    visible_fields: text('visible_fields'), // JSON格式存储可见字段列表
+    masked_fields: text('masked_fields'), // JSON格式存储脱敏字段配置  
+    
+    // 基于operator的脱敏规则
+    masking_config: text('masking_config'), // JSON格式基于operator的脱敏配置
+    
+    // 特殊权限开关
+    can_view_delegated: boolean().notNull().default(false), // 是否可以看到委派给operator的数据
+    can_view_team: boolean().notNull().default(false), // 是否可以看到相同团队operator的数据
+    can_view_all: boolean().notNull().default(false), // 是否可以看到所有operator的数据
+    
+    // 生效条件
+    conditions: text('conditions'), // JSON格式存储判断条件
+    
+    // 时间控制
+    effective_date: date().notNull().defaultNow(),
+    expiry_date: date(),
+    
+    // 审计信息
+    config_author: varchar({ length: 255 }).notNull(), // 配置创建者
+    is_active: boolean().notNull().default(true),
+    description: text(),
+    
+    created_at: timestamp({ withTimezone: true }).defaultNow(),
+    updated_at: timestamp({ withTimezone: true }).defaultNow(),
   },
   (table) => [
-    index("idx_rpa_config_active").on(table.isActive),
-    index("idx_rpa_config_version").on(table.version),
+    // 操作员权限索引
+    index("idx_operator_permissions").on(table.operator, table.data_source),
+    
+    // 仓库权限索引
+    index("idx_warehouse_permissions").on(table.warehouse_location, table.is_active),
+    
+    // ASIN权限索引
+    index("idx_asin_permissions").on(table.asin, table.operator, table.is_active),
+    
+    // 综合查询索引
+    index("idx_permissions_query").on(
+      table.operator,
+      table.data_source,
+      table.warehouse_location,
+      table.is_active,
+      table.effective_date
+    ),
+    
+    // 团队权限索引
+    index("idx_team_permissions").on(table.data_access_level, table.is_active),
+    
+    // 唯一约束：同一操作员对同一维度只能有一条有效规则
+    uniqueIndex("unique_operator_permission").on(
+      table.operator,
+      table.data_source,
+      table.warehouse_location,
+      table.asin,
+      table.sales_person
+    ),
+  ]
+);
+
+// Operator Permission Rules - 操作员权限规则配置
+export const operatorpermissionrules = pgTable(
+  "operatorpermissionrules",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    operator: varchar({ length: 100 }).notNull(),
+    rule_name: varchar({ length: 50 }).notNull(),
+    
+    // 规则类型和配置
+    rule_type: varchar({ length: 30 }).notNull(), // 'self_only', 'team_view', 'delegated_only', 'custom'
+    rule_config: text('rule_config').notNull(), // JSON格式存储规则配置
+    
+    // 数据筛选条件
+    filter_criteria: text('filter_criteria'), // JSON格式存储筛选条件
+    
+    // 脱敏策略
+    masking_strategy: text('masking_strategy'), // JSON格式存储脱敏策略（基于operator）
+    
+    // 权限级别映射
+    access_mapping: text('access_mapping'), // JSON格式存储operator到访问级别的映射
+    
+    // 继承关系
+    inherits_from: varchar({ length: 100 }), // 从其他operator继承的权限
+    
+    // 激活状态
+    is_primary: boolean().notNull().default(false), // 是否为主规则
+    priority: integer().notNull().default(0), // 规则优先级
+    
+    created_by: varchar({ length: 255 }).notNull(),
+    last_updated: timestamp({ withTimezone: true }).defaultNow(),
+    is_active: boolean().notNull().default(true),
+    description: text(),
+    
+    created_at: timestamp({ withTimezone: true }).defaultNow(),
+    updated_at: timestamp({ withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    index("idx_operator_rules").on(table.operator, table.rule_type, table.is_active),
+    index("idx_rule_priority").on(table.priority, table.is_primary),
+    uniqueIndex("unique_operator_rule").on(table.operator, table.rule_name, table.is_active),
+  ]
+);
+
+// Warehouse Operator Mapping - 仓库操作员映射表 (支持多层operator权限)
+export const warehouseoperatormapping = pgTable(
+  "warehouseoperatormapping",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    warehouse_location: varchar({ length: 50 }).notNull(),
+    operator: varchar({ length: 100 }).notNull(),
+    
+    // 操作员层级关系
+    primary_operator: varchar({ length: 100 }), // 主operator
+    secondary_operators: text('secondary_operators'), // JSON格式存储次级operators
+    
+    // 权限继承
+    inherit_permissions: boolean().notNull().default(true),
+    custom_permissions: text('custom_permissions'), // JSON格式存储自定义权限
+    
+    // 层级控制
+    hierarchy_level: integer().notNull().default(1), // 权限层级
+    
+    is_active: boolean().notNull().default(true),
+    created_at: timestamp({ withTimezone: true }).defaultNow(),
+    updated_at: timestamp({ withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    index("idx_warehouse_operator").on(table.warehouse_location, table.operator, table.is_active),
+    index("idx_hierarchy_mapping").on(table.primary_operator, table.hierarchy_level),
+    uniqueIndex("unique_warehouse_operator").on(table.warehouse_location, table.operator),
+  ]
+);
+
+// RPA Configurations table
+
+// Inventory Deal Snapshots table - 库存快照聚合表
+export const inventoryDeals = pgTable(
+  "inventory_deals",
+  {
+    id: bigint({ mode: 'number' }).primaryKey().generatedAlwaysAsIdentity(),
+    
+    // 基础维度信息
+    snapshot_date: date().notNull(), // 库存点日期 (T-1)
+    asin: varchar({ length: 20 }).notNull(), // ASIN
+    product_name: varchar({ length: 500 }).notNull(), // 品名
+    sales_person: varchar({ length: 100 }).notNull(), // 业务员
+    warehouse_location: varchar({ length: 50 }).notNull(), // 库存点（对应marketplace_id）
+    
+    // 时间窗口标识
+    time_window: varchar({ length: 10 }).notNull(), // 'T1', 'T3', 'T7', 'T30'
+    time_window_days: integer().notNull(), // 1, 3, 7, 30
+    window_start_date: date().notNull(), // 窗口开始日期
+    window_end_date: date().notNull(), // 窗口结束日期（T-1）
+    
+    // 库存数据（始终取T-1最新值）
+    fba_available: integer().notNull().default(0), // FBA可用
+    fba_in_transit: integer().notNull().default(0), // FBA在途
+    local_warehouse: integer().notNull().default(0), // 本地仓
+    total_inventory: integer().notNull().default(0), // 总库存
+    
+    // 销售数据（窗口内累加）
+    total_sales_amount: decimal({ precision: 12, scale: 2 }).notNull().default('0'), // 总销售额
+    total_sales_quantity: integer().notNull().default(0), // 总销售数量
+    avg_daily_sales: decimal({ precision: 10, scale: 2 }).notNull().default('0'), // 平均销量（数量）
+    avg_daily_revenue: decimal({ precision: 10, scale: 2 }).notNull().default('0'), // 日均销售额
+    
+    // 广告数据（累加和重计算）
+    total_ad_impressions: bigint({ mode: 'number' }).notNull().default(0), // 广告曝光量（累加）
+    total_ad_clicks: integer().notNull().default(0), // 广告点击量（累加）
+    total_ad_spend: decimal({ precision: 12, scale: 2 }).notNull().default('0'), // 广告花费（累加）
+    total_ad_orders: integer().notNull().default(0), // 广告订单量（累加）
+    
+    // 广告百分比指标（重新计算）
+    ad_ctr: decimal({ precision: 8, scale: 6 }).notNull().default('0'), // 广告点击率 = total_clicks / total_impressions
+    ad_conversion_rate: decimal({ precision: 8, scale: 6 }).notNull().default('0'), // 广告转化率 = total_ad_orders / total_clicks
+    acos: decimal({ precision: 8, scale: 6 }).notNull().default('0'), // ACOS = total_ad_spend / total_ad_sales
+    
+    // 计算指标
+    inventory_turnover_days: decimal({ precision: 10, scale: 2 }).notNull().default('0'), // 库存周转天数
+    inventory_status: varchar({ length: 20 }).notNull().default('正常'), // 库存状态
+    
+    // 数据质量和元信息
+    source_records_count: integer().notNull().default(0), // 源数据记录数
+    calculation_method: varchar({ length: 50 }).notNull().default('sum_aggregate'), // 计算方法标识
+    data_completeness_score: decimal({ precision: 3, scale: 2 }).notNull().default('1.00'), // 数据完整性评分
+    
+    // 审计字段
+    batch_id: varchar({ length: 50 }), // 批处理ID
+    processing_duration_ms: integer(), // 处理耗时（毫秒）
+    created_at: timestamp({ withTimezone: true }).defaultNow(),
+    updated_at: timestamp({ withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    // 主要业务查询索引
+    index("idx_inventory_deals_main").on(
+      table.snapshot_date,
+      table.asin,
+      table.warehouse_location,
+      table.time_window
+    ),
+    
+    // 时间范围查询索引
+    index("idx_inventory_deals_time_range").on(
+      table.snapshot_date,
+      table.time_window
+    ),
+    
+    // 业务员查询索引
+    index("idx_inventory_deals_sales_person").on(
+      table.sales_person,
+      table.snapshot_date
+    ),
+    
+    // ASIN查询索引
+    index("idx_inventory_deals_asin").on(
+      table.asin,
+      table.warehouse_location,
+      table.snapshot_date
+    ),
+    
+    // 库存状态查询索引
+    index("idx_inventory_deals_inventory_status").on(
+      table.inventory_status,
+      table.total_inventory,
+      table.snapshot_date
+    ),
+    
+    // 批处理查询索引
+    index("idx_inventory_deals_batch").on(
+      table.batch_id,
+      table.created_at
+    ),
+    
+    // 唯一性约束：每个ASIN在每个库存点每天每个时间窗口只能有一条记录
+    uniqueIndex("unique_inventory_deal_snapshot").on(
+      table.asin,
+      table.warehouse_location,
+      table.snapshot_date,
+      table.time_window
+    ),
   ]
 );
