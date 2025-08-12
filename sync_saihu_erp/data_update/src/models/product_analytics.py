@@ -86,8 +86,60 @@ class ProductAnalytics(BaseModel):
                  metrics_json: Optional[str] = None,
                  created_at: Optional[datetime] = None,
                  updated_at: Optional[datetime] = None,
+                 # 新增的环比字段
+                 sales_amount_last: Optional[Decimal] = None,
+                 sales_amount_percent: Optional[Decimal] = None,
+                 sales_quantity_last: Optional[int] = None,
+                 sales_quantity_percent: Optional[Decimal] = None,
+                 ad_cost_last: Optional[Decimal] = None,
+                 ad_cost_percent: Optional[Decimal] = None,
+                 ad_sales_last: Optional[Decimal] = None,
+                 ad_sales_percent: Optional[Decimal] = None,
+                 refund_amount_this: Optional[Decimal] = None,
+                 refund_amount_last: Optional[Decimal] = None,
+                 refund_amount_percent: Optional[Decimal] = None,
+                 return_count_last: Optional[int] = None,
+                 return_count_percent: Optional[Decimal] = None,
+                 return_rate_last: Optional[Decimal] = None,
+                 return_rate_percent: Optional[Decimal] = None,
+                 rating_last: Optional[Decimal] = None,
+                 rating_percent: Optional[Decimal] = None,
+                 rating_count_last: Optional[int] = None,
+                 rating_count_percent: Optional[Decimal] = None,
+                 sessions_last: Optional[int] = None,
+                 sessions_percent: Optional[Decimal] = None,
+                 page_views_last: Optional[int] = None,
+                 page_views_percent: Optional[Decimal] = None,
+                 buy_box_percent_this: Optional[Decimal] = None,
+                 buy_box_percent_last: Optional[Decimal] = None,
+                 buy_box_percent_percent: Optional[Decimal] = None,
+                 profit_amount_last: Optional[Decimal] = None,
+                 profit_amount_percent: Optional[Decimal] = None,
+                 profit_rate_last: Optional[Decimal] = None,
+                 profit_rate_percent: Optional[Decimal] = None,
+                 natural_clicks_this: Optional[int] = None,
+                 natural_clicks_last: Optional[int] = None,
+                 natural_clicks_percent: Optional[Decimal] = None,
+                 natural_orders_this: Optional[int] = None,
+                 natural_orders_last: Optional[int] = None,
+                 natural_orders_percent: Optional[Decimal] = None,
+                 promotion_orders_this: Optional[int] = None,
+                 promotion_orders_last: Optional[int] = None,
+                 promotion_orders_percent: Optional[Decimal] = None,
+                 promotion_sales_this: Optional[int] = None,
+                 promotion_sales_last: Optional[int] = None,
+                 promotion_sales_percent: Optional[Decimal] = None,
+                 cancel_orders_this: Optional[int] = None,
+                 cancel_orders_last: Optional[int] = None,
+                 cancel_orders_percent: Optional[Decimal] = None,
+                 review_rate_this: Optional[Decimal] = None,
+                 review_rate_last: Optional[Decimal] = None,
+                 review_rate_percent: Optional[Decimal] = None,
+                 net_sales_amount_this: Optional[Decimal] = None,
+                 net_sales_amount_last: Optional[Decimal] = None,
+                 net_sales_amount_percent: Optional[Decimal] = None,
                  **kwargs):
-        """初始化产品分析数据"""
+        
         # 基础字段
         self.id = id
         self.product_id = product_id
@@ -174,6 +226,59 @@ class ProductAnalytics(BaseModel):
         self.created_at = created_at
         self.updated_at = updated_at
         
+        # 新增的环比字段
+        self.sales_amount_last = sales_amount_last or Decimal('0.00')
+        self.sales_amount_percent = sales_amount_percent or Decimal('0.0000')
+        self.sales_quantity_last = sales_quantity_last or 0
+        self.sales_quantity_percent = sales_quantity_percent or Decimal('0.0000')
+        self.ad_cost_last = ad_cost_last or Decimal('0.00')
+        self.ad_cost_percent = ad_cost_percent or Decimal('0.0000')
+        self.ad_sales_last = ad_sales_last or Decimal('0.00')
+        self.ad_sales_percent = ad_sales_percent or Decimal('0.0000')
+        self.refund_amount_this = refund_amount_this or Decimal('0.00')
+        self.refund_amount_last = refund_amount_last or Decimal('0.00')
+        self.refund_amount_percent = refund_amount_percent or Decimal('0.0000')
+        self.return_count_last = return_count_last or 0
+        self.return_count_percent = return_count_percent or Decimal('0.0000')
+        self.return_rate_last = return_rate_last or Decimal('0.0000')
+        self.return_rate_percent = return_rate_percent or Decimal('0.0000')
+        self.rating_last = rating_last or Decimal('0.00')
+        self.rating_percent = rating_percent or Decimal('0.0000')
+        self.rating_count_last = rating_count_last or 0
+        self.rating_count_percent = rating_count_percent or Decimal('0.0000')
+        self.sessions_last = sessions_last or 0
+        self.sessions_percent = sessions_percent or Decimal('0.0000')
+        self.page_views_last = page_views_last or 0
+        self.page_views_percent = page_views_percent or Decimal('0.0000')
+        self.buy_box_percent_this = buy_box_percent_this or Decimal('0.0000')
+        self.buy_box_percent_last = buy_box_percent_last or Decimal('0.0000')
+        self.buy_box_percent_percent = buy_box_percent_percent or Decimal('0.0000')
+        self.profit_amount_last = profit_amount_last or Decimal('0.00')
+        self.profit_amount_percent = profit_amount_percent or Decimal('0.0000')
+        self.profit_rate_last = profit_rate_last or Decimal('0.0000')
+        self.profit_rate_percent = profit_rate_percent or Decimal('0.0000')
+        self.natural_clicks_this = natural_clicks_this or 0
+        self.natural_clicks_last = natural_clicks_last or 0
+        self.natural_clicks_percent = natural_clicks_percent or Decimal('0.0000')
+        self.natural_orders_this = natural_orders_this or 0
+        self.natural_orders_last = natural_orders_last or 0
+        self.natural_orders_percent = natural_orders_percent or Decimal('0.0000')
+        self.promotion_orders_this = promotion_orders_this or 0
+        self.promotion_orders_last = promotion_orders_last or 0
+        self.promotion_orders_percent = promotion_orders_percent or Decimal('0.0000')
+        self.promotion_sales_this = promotion_sales_this or 0
+        self.promotion_sales_last = promotion_sales_last or 0
+        self.promotion_sales_percent = promotion_sales_percent or Decimal('0.0000')
+        self.cancel_orders_this = cancel_orders_this or 0
+        self.cancel_orders_last = cancel_orders_last or 0
+        self.cancel_orders_percent = cancel_orders_percent or Decimal('0.0000')
+        self.review_rate_this = review_rate_this or Decimal('0.0000')
+        self.review_rate_last = review_rate_last or Decimal('0.0000')
+        self.review_rate_percent = review_rate_percent or Decimal('0.0000')
+        self.net_sales_amount_this = net_sales_amount_this or Decimal('0.00')
+        self.net_sales_amount_last = net_sales_amount_last or Decimal('0.00')
+        self.net_sales_amount_percent = net_sales_amount_percent or Decimal('0.0000')
+        
         # 额外的指标数据
         self._additional_metrics = kwargs
     
@@ -191,53 +296,131 @@ class ProductAnalytics(BaseModel):
                 return {}
         return self._additional_metrics or {}
     
-    def calculate_ctr(self) -> Decimal:
-        """计算点击率 (CTR = clicks / impressions)"""
-        if self.impressions and self.impressions > 0:
-            return Decimal(str(self.clicks / self.impressions))
-        return Decimal('0.0000')
-    
-    def calculate_revenue_per_click(self) -> Decimal:
-        """计算每次点击收入 (RPC = sales_amount / clicks)"""
-        if self.clicks and self.clicks > 0:
-            return self.sales_amount / self.clicks
-        return Decimal('0.00')
-    
-    def is_valid(self) -> bool:
-        """验证数据有效性"""
-        # 至少需要有ASIN
-        if not self.asin:
-            return False
-            
-        if not self.data_date:
-            return False
-        
-        if self.sales_amount is not None and self.sales_amount < 0:
-            return False
-        
-        if self.sales_quantity is not None and self.sales_quantity < 0:
-            return False
-        
-        if self.conversion_rate is not None and (self.conversion_rate < 0 or self.conversion_rate > 100):
-            return False
-        
-        if self.acos is not None and self.acos < 0:
-            return False
-        
-        return True
-    
     def to_dict(self) -> Dict[str, Any]:
-        """转换为字典"""
-        data = super().to_dict()
+        """转换为字典格式"""
+        data = {
+            'id': self.id,
+            'product_id': self.product_id,
+            'asin': self.asin,
+            'sku': self.sku,
+            'parent_asin': self.parent_asin,
+            'spu': self.spu,
+            'msku': self.msku,
+            'data_date': self.data_date.isoformat() if self.data_date else None,
+            'sales_amount': float(self.sales_amount) if self.sales_amount else 0.0,
+            'sales_quantity': self.sales_quantity,
+            'impressions': self.impressions,
+            'clicks': self.clicks,
+            'conversion_rate': float(self.conversion_rate) if self.conversion_rate else 0.0,
+            'acos': float(self.acos) if self.acos else 0.0,
+            'marketplace_id': self.marketplace_id,
+            'dev_name': self.dev_name,
+            'operator_name': self.operator_name,
+            'currency': self.currency,
+            'shop_id': self.shop_id,
+            'dev_id': self.dev_id,
+            'operator_id': self.operator_id,
+            'tag_id': self.tag_id,
+            'brand_id': self.brand_id,
+            'category_id': self.category_id,
+            'online_status': self.online_status,
+            'asin_type': self.asin_type,
+            'stock_status': self.stock_status,
+            'ad_cost': float(self.ad_cost) if self.ad_cost else 0.0,
+            'ad_sales': float(self.ad_sales) if self.ad_sales else 0.0,
+            'cpc': float(self.cpc) if self.cpc else 0.0,
+            'cpa': float(self.cpa) if self.cpa else 0.0,
+            'ad_orders': self.ad_orders,
+            'ad_conversion_rate': float(self.ad_conversion_rate) if self.ad_conversion_rate else 0.0,
+            'order_count': self.order_count,
+            'refund_count': self.refund_count,
+            'refund_rate': float(self.refund_rate) if self.refund_rate else 0.0,
+            'return_count': self.return_count,
+            'return_rate': float(self.return_rate) if self.return_rate else 0.0,
+            'rating': float(self.rating) if self.rating else 0.0,
+            'rating_count': self.rating_count,
+            'title': self.title,
+            'brand_name': self.brand_name,
+            'category_name': self.category_name,
+            'profit_amount': float(self.profit_amount) if self.profit_amount else 0.0,
+            'profit_rate': float(self.profit_rate) if self.profit_rate else 0.0,
+            'avg_profit': float(self.avg_profit) if self.avg_profit else 0.0,
+            'available_days': float(self.available_days) if self.available_days else 0.0,
+            'fba_inventory': self.fba_inventory,
+            'total_inventory': self.total_inventory,
+            'shop_ids': self.shop_ids,
+            'dev_ids': self.dev_ids,
+            'operator_ids': self.operator_ids,
+            'marketplace_ids': self.marketplace_ids,
+            'label_ids': self.label_ids,
+            'brand_ids': self.brand_ids,
+            'ad_types': self.ad_types,
+            'sessions': self.sessions,
+            'page_views': self.page_views,
+            'buy_box_price': float(self.buy_box_price) if self.buy_box_price else None,
+            'spu_name': self.spu_name,
+            'brand': self.brand,
+            'open_date': self.open_date.isoformat() if self.open_date else None,
+            'is_low_cost_store': self.is_low_cost_store,
+            'metrics_json': self.metrics_json,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            # 新增的环比字段
+            'sales_amount_last': float(self.sales_amount_last) if self.sales_amount_last else 0.0,
+            'sales_amount_percent': float(self.sales_amount_percent) if self.sales_amount_percent else 0.0,
+            'sales_quantity_last': self.sales_quantity_last,
+            'sales_quantity_percent': float(self.sales_quantity_percent) if self.sales_quantity_percent else 0.0,
+            'ad_cost_last': float(self.ad_cost_last) if self.ad_cost_last else 0.0,
+            'ad_cost_percent': float(self.ad_cost_percent) if self.ad_cost_percent else 0.0,
+            'ad_sales_last': float(self.ad_sales_last) if self.ad_sales_last else 0.0,
+            'ad_sales_percent': float(self.ad_sales_percent) if self.ad_sales_percent else 0.0,
+            'refund_amount_this': float(self.refund_amount_this) if self.refund_amount_this else 0.0,
+            'refund_amount_last': float(self.refund_amount_last) if self.refund_amount_last else 0.0,
+            'refund_amount_percent': float(self.refund_amount_percent) if self.refund_amount_percent else 0.0,
+            'return_count_last': self.return_count_last,
+            'return_count_percent': float(self.return_count_percent) if self.return_count_percent else 0.0,
+            'return_rate_last': float(self.return_rate_last) if self.return_rate_last else 0.0,
+            'return_rate_percent': float(self.return_rate_percent) if self.return_rate_percent else 0.0,
+            'rating_last': float(self.rating_last) if self.rating_last else 0.0,
+            'rating_percent': float(self.rating_percent) if self.rating_percent else 0.0,
+            'rating_count_last': self.rating_count_last,
+            'rating_count_percent': float(self.rating_count_percent) if self.rating_count_percent else 0.0,
+            'sessions_last': self.sessions_last,
+            'sessions_percent': float(self.sessions_percent) if self.sessions_percent else 0.0,
+            'page_views_last': self.page_views_last,
+            'page_views_percent': float(self.page_views_percent) if self.page_views_percent else 0.0,
+            'buy_box_percent_this': float(self.buy_box_percent_this) if self.buy_box_percent_this else 0.0,
+            'buy_box_percent_last': float(self.buy_box_percent_last) if self.buy_box_percent_last else 0.0,
+            'buy_box_percent_percent': float(self.buy_box_percent_percent) if self.buy_box_percent_percent else 0.0,
+            'profit_amount_last': float(self.profit_amount_last) if self.profit_amount_last else 0.0,
+            'profit_amount_percent': float(self.profit_amount_percent) if self.profit_amount_percent else 0.0,
+            'profit_rate_last': float(self.profit_rate_last) if self.profit_rate_last else 0.0,
+            'profit_rate_percent': float(self.profit_rate_percent) if self.profit_rate_percent else 0.0,
+            'natural_clicks_this': self.natural_clicks_this,
+            'natural_clicks_last': self.natural_clicks_last,
+            'natural_clicks_percent': float(self.natural_clicks_percent) if self.natural_clicks_percent else 0.0,
+            'natural_orders_this': self.natural_orders_this,
+            'natural_orders_last': self.natural_orders_last,
+            'natural_orders_percent': float(self.natural_orders_percent) if self.natural_orders_percent else 0.0,
+            'promotion_orders_this': self.promotion_orders_this,
+            'promotion_orders_last': self.promotion_orders_last,
+            'promotion_orders_percent': float(self.promotion_orders_percent) if self.promotion_orders_percent else 0.0,
+            'promotion_sales_this': self.promotion_sales_this,
+            'promotion_sales_last': self.promotion_sales_last,
+            'promotion_sales_percent': float(self.promotion_sales_percent) if self.promotion_sales_percent else 0.0,
+            'cancel_orders_this': self.cancel_orders_this,
+            'cancel_orders_last': self.cancel_orders_last,
+            'cancel_orders_percent': float(self.cancel_orders_percent) if self.cancel_orders_percent else 0.0,
+            'review_rate_this': float(self.review_rate_this) if self.review_rate_this else 0.0,
+            'review_rate_last': float(self.review_rate_last) if self.review_rate_last else 0.0,
+            'review_rate_percent': float(self.review_rate_percent) if self.review_rate_percent else 0.0,
+            'net_sales_amount_this': float(self.net_sales_amount_this) if self.net_sales_amount_this else 0.0,
+            'net_sales_amount_last': float(self.net_sales_amount_last) if self.net_sales_amount_last else 0.0,
+            'net_sales_amount_percent': float(self.net_sales_amount_percent) if self.net_sales_amount_percent else 0.0,
+        }
         
-        # 处理日期类型
-        if isinstance(self.data_date, date):
-            data['data_date'] = self.data_date.isoformat()
-        
-        # 处理Decimal类型
-        for key in ['sales_amount', 'conversion_rate', 'acos']:
-            if key in data and isinstance(data[key], Decimal):
-                data[key] = float(data[key])
+        # 添加额外指标
+        data.update(self._additional_metrics)
         
         return data
     
@@ -312,7 +495,60 @@ class ProductAnalytics(BaseModel):
             'spuName': 'spu_name',
             
             # 产品标识
-            'productIdList': 'product_id'  # 取第一个产品ID
+            'productIdList': 'product_id',  # 取第一个产品ID
+            
+            # 新增的环比字段映射
+            'salePriceLast': 'sales_amount_last',
+            'salePricePercent': 'sales_amount_percent',
+            'productTotalNumLast': 'sales_quantity_last',
+            'productTotalNumPercent': 'sales_quantity_percent',
+            'adCostLast': 'ad_cost_last',
+            'adCostPercent': 'ad_cost_percent',
+            'adTotalSalesLast': 'ad_sales_last',
+            'adTotalSalesPercent': 'ad_sales_percent',
+            'refundPriceThis': 'refund_amount_this',
+            'refundPriceLast': 'refund_amount_last',
+            'refundPricePercent': 'refund_amount_percent',
+            'returnSaleNumLast': 'return_count_last',
+            'returnSaleNumPercent': 'return_count_percent',
+            'returnSaleRateLast': 'return_rate_last',
+            'returnSaleRatePercent': 'return_rate_percent',
+            'ratingLast': 'rating_last',
+            'ratingPercent': 'rating_percent',
+            'ratingCountLast': 'rating_count_last',
+            'ratingCountPercent': 'rating_count_percent',
+            'sessionsLast': 'sessions_last',
+            'sessionsPercent': 'sessions_percent',
+            'pageViewLast': 'page_views_last',
+            'pageViewPercent': 'page_views_percent',
+            'buyBoxPercentThis': 'buy_box_percent_this',
+            'buyBoxPercentLast': 'buy_box_percent_last',
+            'buyBoxPercentPercent': 'buy_box_percent_percent',
+            'profitPriceLast': 'profit_amount_last',
+            'profitPricePercent': 'profit_amount_percent',
+            'profitRateLast': 'profit_rate_last',
+            'profitRatePercent': 'profit_rate_percent',
+            'naturalClickThis': 'natural_clicks_this',
+            'naturalClickLast': 'natural_clicks_last',
+            'naturalClickPercent': 'natural_clicks_percent',
+            'naturalOrderNumThis': 'natural_orders_this',
+            'naturalOrderNumLast': 'natural_orders_last',
+            'naturalOrderNumPercent': 'natural_orders_percent',
+            'promotionOrderNumThis': 'promotion_orders_this',
+            'promotionOrderNumLast': 'promotion_orders_last',
+            'promotionOrderNumPercent': 'promotion_orders_percent',
+            'promotionSaleNumThis': 'promotion_sales_this',
+            'promotionSaleNumLast': 'promotion_sales_last',
+            'promotionSaleNumPercent': 'promotion_sales_percent',
+            'cancelOrderNumThis': 'cancel_orders_this',
+            'cancelOrderNumLast': 'cancel_orders_last',
+            'cancelOrderNumPercent': 'cancel_orders_percent',
+            'reviewRateThis': 'review_rate_this',
+            'reviewRateLast': 'review_rate_last',
+            'reviewRatePercent': 'review_rate_percent',
+            'salesPriceNetThis': 'net_sales_amount_this',
+            'salesPriceNetLast': 'net_sales_amount_last',
+            'salesPriceNetPercent': 'net_sales_amount_percent',
         }
         
         # JSON字段映射（存储完整的列表数据）
@@ -356,14 +592,25 @@ class ProductAnalytics(BaseModel):
                     mapped_data[mapped_key] = datetime.strptime(api_value, '%Y-%m-%d').date()
                 elif mapped_key in ['sales_amount', 'conversion_rate', 'acos', 'ad_cost', 'ad_sales', 'cpc', 'cpa', 
                                   'ad_conversion_rate', 'refund_rate', 'return_rate', 'rating', 'profit_amount', 
-                                  'profit_rate', 'avg_profit', 'available_days']:
+                                  'profit_rate', 'avg_profit', 'available_days', 'sales_amount_last', 'sales_amount_percent',
+                                  'sales_quantity_percent', 'ad_cost_last', 'ad_cost_percent', 'ad_sales_last', 'ad_sales_percent',
+                                  'refund_amount_this', 'refund_amount_last', 'refund_amount_percent', 'return_count_percent',
+                                  'return_rate_last', 'return_rate_percent', 'rating_last', 'rating_percent', 'rating_count_percent',
+                                  'sessions_percent', 'page_views_percent', 'buy_box_percent_this', 'buy_box_percent_last',
+                                  'buy_box_percent_percent', 'profit_amount_last', 'profit_amount_percent', 'profit_rate_last',
+                                  'profit_rate_percent', 'natural_clicks_percent', 'natural_orders_percent', 'promotion_orders_percent',
+                                  'promotion_sales_percent', 'cancel_orders_percent', 'review_rate_this', 'review_rate_last',
+                                  'review_rate_percent', 'net_sales_amount_this', 'net_sales_amount_last', 'net_sales_amount_percent']:
                     try:
                         mapped_data[mapped_key] = Decimal(str(api_value)) if api_value is not None and api_value != '' else Decimal('0.00')
                     except (ValueError, TypeError):
                         mapped_data[mapped_key] = Decimal('0.00')
                 elif mapped_key in ['sales_quantity', 'impressions', 'clicks', 'ad_orders', 'order_count', 
                                   'refund_count', 'return_count', 'rating_count', 'fba_inventory', 'total_inventory',
-                                  'sessions', 'page_views']:
+                                  'sessions', 'page_views', 'sales_quantity_last', 'return_count_last', 'rating_count_last',
+                                  'sessions_last', 'page_views_last', 'natural_clicks_this', 'natural_clicks_last',
+                                  'natural_orders_this', 'natural_orders_last', 'promotion_orders_this', 'promotion_orders_last',
+                                  'promotion_sales_this', 'promotion_sales_last', 'cancel_orders_this', 'cancel_orders_last']:
                     try:
                         mapped_data[mapped_key] = int(api_value) if api_value is not None and api_value != '' else 0
                     except (ValueError, TypeError):
@@ -399,10 +646,3 @@ class ProductAnalytics(BaseModel):
             instance.set_metrics(additional_metrics)
         
         return instance
-    
-    def get_unique_key(self) -> tuple:
-        """获取唯一键用于去重"""
-        return (self.product_id, self.data_date)
-    
-    def __str__(self) -> str:
-        return f"ProductAnalytics(product_id={self.product_id}, date={self.data_date}, sales={self.sales_amount})"
