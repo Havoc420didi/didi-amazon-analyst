@@ -559,7 +559,7 @@ export class InventoryDataValidator {
     startDate.setDate(startDate.getDate() - 60);
     
     const query = sql.raw(`
-      SELECT * FROM product_analysis2 
+      SELECT * FROM product_analytics 
       WHERE asin = $1 
         AND marketplace_id = $2
         AND data_date >= $3 
@@ -717,10 +717,10 @@ export class InventoryDataValidator {
    * 辅助方法：获取预期产品数量
    */
   private async getExpectedProductCount(targetDate: Date): Promise<number> {
-    // 从product_analysis2估算活跃产品数量
+    // 从product_analytics估算活跃产品数量
     const result = await db.execute(sql.raw(`
       SELECT COUNT(DISTINCT CONCAT(asin, '|', marketplace_id)) as count
-      FROM product_analysis2 
+      FROM product_analytics 
       WHERE data_date = $1
     `, [targetDate]));
     

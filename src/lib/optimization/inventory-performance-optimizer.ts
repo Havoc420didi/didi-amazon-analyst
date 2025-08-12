@@ -15,32 +15,32 @@ import { sql } from 'drizzle-orm';
 
 // 索引优化配置
 export const INDEX_OPTIMIZATION_CONFIG = {
-  // product_analysis2表索引优化
-  product_analysis2: {
+  // product_analytics表索引优化
+  product_analytics: {
     // 主要聚合查询索引 - 支持按ASIN+日期范围+市场快速查找
     aggregation_primary: {
-      name: 'idx_pa2_aggregation_primary',
+      name: 'idx_pa_aggregation_primary',
       columns: ['asin', 'marketplace_id', 'data_date', 'dev_name'],
       type: 'BTREE',
       description: '支持主要聚合查询的复合索引'
     },
     // 时间范围查询索引 - 分区裁剪优化
     time_range: {
-      name: 'idx_pa2_time_range',
+      name: 'idx_pa_time_range',
       columns: ['data_date', 'asin', 'marketplace_id'], 
       type: 'BTREE',
       description: '支持时间范围查询和分区裁剪'
     },
     // 库存数据查询索引
     inventory_data: {
-      name: 'idx_pa2_inventory',
+      name: 'idx_pa_inventory',
       columns: ['total_inventory', 'fba_inventory', 'data_date'],
       type: 'BTREE', 
       description: '支持库存数据过滤和排序'
     },
     // 广告数据聚合索引
     ad_metrics: {
-      name: 'idx_pa2_ad_metrics',
+      name: 'idx_pa_ad_metrics',
       columns: ['asin', 'data_date', 'impressions', 'clicks', 'ad_cost'],
       type: 'BTREE',
       description: '支持广告数据聚合计算'
@@ -109,7 +109,7 @@ export class InventoryPerformanceOptimizer {
     console.log('🚀 开始创建性能优化索引...');
     
     try {
-      // 创建product_analysis2表的优化索引
+      // 创建product_analytics表的优化索引
       await this.createProductAnalysis2Indexes();
       
       // 创建inventory_deals表的优化索引
@@ -124,36 +124,36 @@ export class InventoryPerformanceOptimizer {
   }
   
   /**
-   * 创建product_analysis2表的索引
+   * 创建product_analytics表的索引
    */
   private async createProductAnalysis2Indexes(): Promise<void> {
-    const config = INDEX_OPTIMIZATION_CONFIG.product_analysis2;
+    const config = INDEX_OPTIMIZATION_CONFIG.product_analytics;
     
     // 主要聚合查询索引
     await db.execute(sql.raw(`
       CREATE INDEX IF NOT EXISTS ${config.aggregation_primary.name}
-      ON product_analysis2 (${config.aggregation_primary.columns.join(', ')});
+      ON product_analytics (${config.aggregation_primary.columns.join(', ')});
     `));
     
     // 时间范围查询索引
     await db.execute(sql.raw(`
       CREATE INDEX IF NOT EXISTS ${config.time_range.name}
-      ON product_analysis2 (${config.time_range.columns.join(', ')});
+      ON product_analytics (${config.time_range.columns.join(', ')});
     `));
     
     // 库存数据查询索引
     await db.execute(sql.raw(`
       CREATE INDEX IF NOT EXISTS ${config.inventory_data.name}
-      ON product_analysis2 (${config.inventory_data.columns.join(', ')});
+      ON product_analytics (${config.inventory_data.columns.join(', ')});
     `));
     
     // 广告数据聚合索引
     await db.execute(sql.raw(`
       CREATE INDEX IF NOT EXISTS ${config.ad_metrics.name}
-      ON product_analysis2 (${config.ad_metrics.columns.join(', ')});
+      ON product_analytics (${config.ad_metrics.columns.join(', ')});
     `));
     
-    console.log('📊 product_analysis2表索引创建完成');
+    console.log('📊 product_analytics表索引创建完成');
   }
   
   /**
@@ -184,8 +184,8 @@ export class InventoryPerformanceOptimizer {
     console.log('📊 开始更新表统计信息...');
     
     try {
-      // 分析product_analysis2表
-      await db.execute(sql.raw(`ANALYZE product_analysis2;`));
+      // 分析product_analytics表
+      await db.execute(sql.raw(`ANALYZE product_analytics;`));
       
       // 分析inventory_deals表  
       await db.execute(sql.raw(`ANALYZE inventory_deals;`));
@@ -230,7 +230,7 @@ export class InventoryPerformanceOptimizer {
         COALESCE(ad_orders, 0) as ad_orders,
         COALESCE(ad_conversion_rate, 0) as ad_conversion_rate,
         COALESCE(acos, 0) as acos
-      FROM product_analysis2 
+      FROM product_analytics 
       WHERE data_date >= $1 
         AND data_date <= $2
         AND asin IS NOT NULL 
@@ -357,7 +357,7 @@ export class InventoryPerformanceOptimizer {
       const nextMonth = new Date();
       nextMonth.setMonth(nextMonth.getMonth() + 1);
       
-      await this.createMonthlyPartition('product_analysis2', nextMonth);
+      await this.createMonthlyPartition('product_analytics', nextMonth);
       await this.createMonthlyPartition('inventory_deals', nextMonth);
       
       // 删除过期分区
@@ -405,7 +405,7 @@ export class InventoryPerformanceOptimizer {
       SELECT schemaname, tablename 
       FROM pg_tables 
       WHERE tablename LIKE '%_y%m%' 
-        AND tablename LIKE 'product_analysis2_%' 
+        AND tablename LIKE 'product_analytics_%' 
         OR tablename LIKE 'inventory_deals_%'
     `));
     

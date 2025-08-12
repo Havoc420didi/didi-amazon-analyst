@@ -1,116 +1,124 @@
 #!/usr/bin/env node
 
-const { Pool } = require('pg');
+const { Client } = require('pg');
 require('dotenv').config();
 
-// 默认连接到本地PostgreSQL
-const pool = new Pool({
-  host: 'localhost',
-  port: 5432,
-  user: 'amazon_analyst',
-  password: 'amazon_analyst_2024',
-  database: 'amazon_analyst'
-});
+async function checkDatabaseTables() {
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL || process.env.POSTGRESQL_URL,
+  });
 
-async function checkTables() {
   try {
-    console.log('🗄️ 检查PostgreSQL数据库表结构...\n');
-    
-    // 1. 检查所有表
-    const tableQuery = `
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public' 
+    await client.connect();
+    console.log('✅ 数据库连接成功');
+
+    // 1. 检查所有表格
+    console.log('\n📋 现有数据库表格列表:');
+    const tablesQuery = `
+      SELECT 
+        table_name,
+        table_type,
+        (SELECT COUNT(*) FROM information_schema.columns WHERE table_name = t.table_name) as column_count
+      FROM information_schema.tables t
+      WHERE table_schema = 'public'
       ORDER BY table_name;
     `;
     
-    const tables = await pool.query(tableQuery);
-    console.log('✅ 找到的表：');
-    tables.rows.forEach(table => {
-      console.log(`  - ${table.table_name}`);
-    });
+    const tablesResult = await client.query(tablesQuery);
+    console.table(tablesResult.rows);
 
-    if (tables.rows.length === 0) {
-      console.log('❌ 没有找到任何表');
-      return;
-    }
-
-    // 2. 检查每个表的结构
-    for (const table of tables.rows) {
-      console.log(`\n📊 ${table.table_name} 表结构：`);
-      
-      const columnQuery = `
-        SELECT 
-          column_name,
-          data_type,
-          is_nullable,
-          column_default
-        FROM information_schema.columns 
-        WHERE table_schema = 'public' 
-        AND table_name = $1 
-        ORDER BY ordinal_position;
-      `;
-      
-      const columns = await pool.query(columnQuery, [table.table_name]);
-      
-      columns.rows.forEach(col => {
-        console.log(`  ${col.column_name}: ${col.data_type} ${col.is_nullable === 'NO' ? 'NOT NULL' : 'NULL'}${col.column_default ? ` DEFAULT ${col.column_default}` : ''}`);
-      });
-
-      // 3. 检查索引
-      const indexQuery = `
-        SELECT indexname, indexdef 
-        FROM pg_indexes 
-        WHERE schemaname = 'public' AND tablename = $1;
-      `;
-      
-      const indexes = await pool.query(indexQuery, [table.table_name]);
-      if (indexes.rows.length > 0) {
-        console.log(`  🔑 索引：`);
-        indexes.rows.forEach(idx => {
-          console.log(`    - ${idx.indexname}`);
-        });
-      }
-
-      // 4. 检查数据量
-      const countQuery = `SELECT COUNT(*) as count FROM "${table.table_name}";`;
-      const count = await pool.query(countQuery);
-      console.log(`  📈 记录数：${count.rows[0].count}`);
-    }
-
-    // 5. 检查特殊的需求：product_inventory表
-    console.log('\n🔍 查找product_inventory相关表...');
-    const productRelatedQuery = `
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      AND (table_name LIKE '%product%' OR table_name LIKE '%inventory%')
-      ORDER BY table_name;
+    // 2. 检查product_analytics2表是否存在
+    console.log('\n🔍 检查product_analytics2表:');
+    const checkProductAnalytics2Query = `
+      SELECT 
+        table_name,
+        column_name,
+        data_type,
+        is_nullable,
+        column_default
+      FROM information_schema.columns 
+      WHERE table_name = 'product_analytics2'
+      ORDER BY ordinal_position;
     `;
     
-    const productTables = await pool.query(productRelatedQuery);
-    console.log('📦 产品/库存相关表：');
-    productTables.rows.forEach(table => {
-      console.log(`  - ${table.table_name}`);
-    });
+    const productAnalytics2Result = await client.query(checkProductAnalytics2Query);
+    
+    if (productAnalytics2Result.rows.length > 0) {
+      console.log('✅ product_analytics2表存在，包含以下字段:');
+      console.table(productAnalytics2Result.rows);
+    } else {
+      console.log('❌ product_analytics2表不存在');
+    }
+
+    // 3. 检查inventory_deals表是否存在
+    console.log('\n🔍 检查inventory_deals表:');
+    const checkInventoryDealsQuery = `
+      SELECT 
+        table_name,
+        column_name,
+        data_type,
+        is_nullable,
+        column_default
+      FROM information_schema.columns 
+      WHERE table_name = 'inventory_deals'
+      ORDER BY ordinal_position;
+    `;
+    
+    const inventoryDealsResult = await client.query(checkInventoryDealsQuery);
+    
+    if (inventoryDealsResult.rows.length > 0) {
+      console.log('✅ inventory_deals表存在，包含以下字段:');
+      console.table(inventoryDealsResult.rows);
+    } else {
+      console.log('❌ inventory_deals表不存在');
+    }
+
+    // 4. 检查表的数据量
+    console.log('\n📊 各表数据量统计:');
+    const countQuery = `
+      SELECT 
+        schemaname,
+        tablename,
+        n_tup_ins as inserts,
+        n_tup_upd as updates,
+        n_tup_del as deletes,
+        n_live_tup as live_rows,
+        n_dead_tup as dead_rows
+      FROM pg_stat_user_tables
+      ORDER BY n_live_tup DESC;
+    `;
+    
+    const countResult = await client.query(countQuery);
+    console.table(countResult.rows);
+
+    // 5. 检查索引
+    console.log('\n🔗 主要表的索引信息:');
+    const indexQuery = `
+      SELECT 
+        t.table_name,
+        i.indexname,
+        i.indexdef
+      FROM pg_indexes i
+      JOIN information_schema.tables t ON i.tablename = t.table_name
+      WHERE t.table_schema = 'public'
+        AND t.table_name IN ('product_analytics2', 'inventory_deals', 'inventory_records')
+      ORDER BY t.table_name, i.indexname;
+    `;
+    
+    const indexResult = await client.query(indexQuery);
+    if (indexResult.rows.length > 0) {
+      console.table(indexResult.rows);
+    } else {
+      console.log('没有找到相关表的索引信息');
+    }
 
   } catch (error) {
-    console.error('❌ 数据库连接失败:', error.message);
-    console.log('\n💡 请确保：');
-    console.log('  1. PostgreSQL正在运行');
-    console.log('  2. 数据库amazon_analyst已创建');
-    console.log('  3. 用户amazon_analyst已创建并有权限');
-    console.log('\n🎯 使用以下命令初始化数据库：');
-    console.log('   pnpm db:push');
-    console.log('   pnpm db:migrate');
+    console.error('❌ 数据库操作失败:', error.message);
+    console.error('错误详情:', error);
   } finally {
-    await pool.end();
+    await client.end();
   }
 }
 
-// 如果直接运行此脚本
-if (require.main === module) {
-  checkTables().catch(console.error);
-}
-
-module.exports = { checkTables };
+// 执行检查
+checkDatabaseTables();

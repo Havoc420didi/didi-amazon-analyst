@@ -1,9 +1,9 @@
 /**
  * 库存快照聚合算法
- * 从product_analysis2表聚合数据生成inventory_deal快照
+ * 从product_analytics表聚合数据生成inventory_deal快照
  * 
  * 核心逻辑：
- * 1. 从product_analysis2拉取T-60到T-1的数据（60天窗口）
+ * 1. 从product_analytics拉取T-60到T-1的数据（60天窗口）
  * 2. 按ASIN + warehouse_location维度聚合
  * 3. 库存数据：始终取T-1最新值
  * 4. 销售数据：在时间窗口内累加
@@ -139,7 +139,7 @@ export class InventorySnapshotAggregator {
   }
   
   /**
-   * 从product_analysis2拉取源数据
+   * 从product_analytics拉取源数据
    * 拉取T-60到T-1的数据范围，保证30天窗口有足够数据
    */
   private async fetchSourceData(targetDate: Date): Promise<SourceDataRow[]> {
@@ -147,15 +147,14 @@ export class InventorySnapshotAggregator {
     const startDate = new Date(targetDate);
     startDate.setDate(startDate.getDate() - 60); // T-60
     
-    // 注意：这里假设已有product_analysis2表的Drizzle定义，实际需要添加
-    // 暂用原生SQL查询作为示例
+    // 从实际存在的product_analytics表获取数据
     const query = `
       SELECT 
         asin,
         data_date,
-        marketplace_id,
-        dev_name,
-        spu_name,
+        COALESCE(marketplace_id, 'default') as marketplace_id,
+        COALESCE(dev_name, '') as dev_name,
+        COALESCE(spu_name, '') as spu_name,
         COALESCE(fba_inventory, 0) as fba_inventory,
         COALESCE(total_inventory, 0) as total_inventory,
         COALESCE(sales_amount, 0) as sales_amount,
@@ -166,12 +165,11 @@ export class InventorySnapshotAggregator {
         COALESCE(ad_orders, 0) as ad_orders,
         COALESCE(ad_conversion_rate, 0) as ad_conversion_rate,
         COALESCE(acos, 0) as acos
-      FROM product_analysis2 
+      FROM product_analytics 
       WHERE data_date >= $1 
         AND data_date <= $2
         AND asin IS NOT NULL 
-        AND marketplace_id IS NOT NULL
-      ORDER BY asin, marketplace_id, data_date
+      ORDER BY asin, COALESCE(marketplace_id, 'default'), data_date
     `;
     
     // 实际项目中应该用db.execute或相应的Drizzle查询
