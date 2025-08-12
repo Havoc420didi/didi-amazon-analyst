@@ -365,6 +365,8 @@ def main():
     
     # 创建生成器实例
     generator = InventoryDealsGenerator()
+
+    error_list = []
     
     # 生成快照数据
     today = date.today()
@@ -376,8 +378,11 @@ def main():
         success = generator.generate_inventory_deals(target_date)
         if not success:
             print(f"❌ 生成 {target_date.strftime('%Y-%m-%d')} 的库存点快照数据失败")
+            error_list.append(target_date.strftime('%Y-%m-%d'))
         else:
             print(f"✅ 生成 {target_date.strftime('%Y-%m-%d')} 的库存点快照数据成功")
+
+    print(f"❌ 生成失败日期: {error_list}")
 
 if __name__ == '__main__':
     main()
