@@ -369,13 +369,13 @@ def main():
     # 生成快照数据
     today = date.today()
     end_date = today - timedelta(days=1)
-    for i in range(14, 30):  # 7-30
+    for i in range(22, 30):  # 7-30
         # INFO 7-29 有点问题
+        # 7-22 
         target_date = end_date - timedelta(days=i)
         success = generator.generate_inventory_deals(target_date)
         if not success:
             print(f"❌ 生成 {target_date.strftime('%Y-%m-%d')} 的库存点快照数据失败")
-            sys.exit(1)
         else:
             print(f"✅ 生成 {target_date.strftime('%Y-%m-%d')} 的库存点快照数据成功")
 
