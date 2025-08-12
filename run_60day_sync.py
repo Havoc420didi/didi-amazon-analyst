@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 执行60天产品分析数据同步脚本
-从最后同步的时间开始，再同步30天，实现总共60天的数据同步
+从数据库中最早的同步数据往前再同步30天，实现总共60天的数据覆盖
+逻辑：假设数据库已有最近30天数据，则从最早日期往前推30天进行补充同步
 """
 
 import sys
@@ -19,56 +20,55 @@ from src.config.settings import settings
 from src.utils.logging_utils import setup_logging
 from src.database import db_manager
 
-def get_last_sync_date():
-    """获取数据库中最后同步的日期"""
+def get_earliest_sync_date():
+    """获取数据库中最早同步的日期"""
     try:
-        # 查询product_analytics表中最新的数据日期
+        # 查询product_analytics表中最早的数据日期
         result = db_manager.execute_single(
-            "SELECT MAX(data_date) as last_date FROM product_analytics"
+            "SELECT MIN(data_date) as earliest_date FROM product_analytics"
         )
         
-        if result and result.get('last_date'):
-            last_date = result['last_date']
-            print(f"📅 数据库中最后同步日期: {last_date}")
-            return last_date
+        if result and result.get('earliest_date'):
+            earliest_date = result['earliest_date']
+            print(f"📅 数据库中最早同步日期: {earliest_date}")
+            return earliest_date
         else:
-            print("⚠️ 数据库中无历史数据，将从30天前开始同步")
+            print("⚠️ 数据库中无历史数据，将从60天前开始同步")
             return None
             
     except Exception as e:
-        print(f"❌ 获取最后同步日期失败: {e}")
+        print(f"❌ 获取最早同步日期失败: {e}")
         return None
 
-def calculate_sync_range(last_sync_date=None, additional_days=30):
+def calculate_sync_range(earliest_sync_date=None, additional_days=30):
     """
     计算同步日期范围
     
     Args:
-        last_sync_date: 最后同步的日期，如果为None则从30+additional_days天前开始
-        additional_days: 额外需要同步的天数，默认30天
+        earliest_sync_date: 最早同步的日期，如果为None则从60天前开始
+        additional_days: 向前扩展的天数，默认30天
         
     Returns:
         tuple: (start_date, end_date) 需要同步的日期范围
     """
     today = date.today()
     
-    if last_sync_date:
-        # 从最后同步日期的下一天开始
-        if isinstance(last_sync_date, str):
-            last_sync_date = datetime.strptime(last_sync_date, '%Y-%m-%d').date()
+    if earliest_sync_date:
+        # 从最早同步日期往前推additional_days天开始同步
+        if isinstance(earliest_sync_date, str):
+            earliest_sync_date = datetime.strptime(earliest_sync_date, '%Y-%m-%d').date()
         
-        start_date = last_sync_date + timedelta(days=1)
-        end_date = start_date + timedelta(days=additional_days - 1)
+        # 新的同步起始日期是最早日期往前推30天
+        start_date = earliest_sync_date - timedelta(days=additional_days)
+        # 结束日期是最早同步日期的前一天（避免重复同步）
+        end_date = earliest_sync_date - timedelta(days=1)
         
-        # 确保不超过昨天
-        yesterday = today - timedelta(days=1)
-        if end_date > yesterday:
-            end_date = yesterday
-        
-        print(f"📊 继续同步模式:")
-        print(f"   最后同步日期: {last_sync_date}")
+        print(f"📊 扩展同步模式:")
+        print(f"   数据库最早日期: {earliest_sync_date}")
+        print(f"   向前扩展{additional_days}天")
         print(f"   新同步范围: {start_date} 到 {end_date}")
         print(f"   新增天数: {(end_date - start_date).days + 1}")
+        print(f"   预期总覆盖天数: 约{additional_days + 30}天")
         
     else:
         # 如果没有历史数据，同步最近60天
@@ -139,6 +139,7 @@ def sync_date_range(sync_jobs, start_date, end_date):
 def main():
     """主函数：执行60天数据同步"""
     print("🚀 开始执行60天产品分析数据同步...")
+    print("📋 策略：从数据库最早日期往前扩展30天，实现60天总覆盖")
     print(f"📅 执行时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 70)
     
@@ -181,19 +182,19 @@ def main():
         from src.utils.web_integration import report_status, report_progress, report_error, report_completed
         report_status('started', '60天扩展数据同步已启动')
         
-        # 步骤1: 获取最后同步日期
+        # 步骤1: 获取最早同步日期
         print("\n📊 步骤1: 分析现有数据")
-        last_sync_date = get_last_sync_date()
+        earliest_sync_date = get_earliest_sync_date()
         
         # 步骤2: 计算需要同步的日期范围
         print("\n📊 步骤2: 计算同步范围")
-        start_date, end_date = calculate_sync_range(last_sync_date, additional_days=30)
+        start_date, end_date = calculate_sync_range(earliest_sync_date, additional_days=30)
         
         # 检查是否需要同步
         if start_date > end_date:
-            print("✅ 数据已是最新，无需额外同步")
-            results['message'] = '数据已是最新状态'
-            results['status'] = 'up_to_date'
+            print("✅ 无法向前扩展数据（起始日期晚于结束日期）")
+            results['message'] = '无法向前扩展，可能数据范围已达极限'
+            results['status'] = 'no_expansion_needed'
             return results
         
         # 步骤3: 执行日期范围同步
